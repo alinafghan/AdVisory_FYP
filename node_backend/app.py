@@ -6,9 +6,8 @@ import numpy as np
 # Initialize Flask app
 app = Flask(__name__)
 
-# Load the pre-trained XGBoost model
 model = xgb.Booster()
-model.load_model('xgboost_model.json')  # Path to your saved model
+model.load_model('xgboost_model.json')  
 
 # Feature names extracted from the model
 FEATURE_NAMES = [
