@@ -1,4 +1,4 @@
-##first do pip install flask and pip install xgboost
+##first do pip install flask and xgboost
 from flask import Flask, request, jsonify
 import xgboost as xgb
 import numpy as np
@@ -10,20 +10,34 @@ app = Flask(__name__)
 model = xgb.Booster()
 model.load_model('xgboost_model.json')  # Path to your saved model
 
+# Feature names extracted from the model
+FEATURE_NAMES = [
+    "Target_Audience", "Campaign_Goal", "Duration", "Channel_Used", 
+    "Conversion_Rate", "Acquisition_Cost", "Location", "Language", 
+    "Clicks", "Impressions", "Engagement_Score", "Customer_Segment", 
+    "Scaled_ROI", "Year", "Month", "Day", "ROI_log", "Cost_Per_Click", 
+    "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
+    "Cost_Per_Engagement"
+]
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Get the input data from the request (expected as JSON)
+        # Get the input data from the request
         data = request.get_json()
-        input_data = np.array(data['input']).reshape(1, -1)  # Ensure it's in the correct shape
+        if 'input' not in data:
+            return jsonify({'error': 'Invalid input format. Expected JSON with "input" key.'}), 400
         
-        # Convert input data to DMatrix format
-        dmatrix = xgb.DMatrix(input_data)
+        # Convert input to numpy array and reshape
+        input_data = np.array(data['input'], dtype=np.float32).reshape(1, -1)
         
+        # Convert input data to DMatrix with feature names
+        dmatrix = xgb.DMatrix(input_data, feature_names=FEATURE_NAMES)
+
         # Make prediction
         prediction = model.predict(dmatrix)
         
-        # Return the prediction as a JSON response
+        # Return the prediction
         return jsonify({'prediction': prediction.tolist()})
     
     except Exception as e:

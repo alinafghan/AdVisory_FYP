@@ -1,19 +1,3 @@
-// const express = require("express");
-// const fs = require("fs");
-// const path = require("path");
-
-// const app = express();
-
-// // Routing path
-// app.get("/", (req, res) => {
-//   res.send("Hello World!");
-// });
-
-// // Start the server
-// app.listen(3000, () => {
-//   console.log("Server started on port 3000");
-// });
-
 const express = require("express");
 const fetch = require("node-fetch"); // Import node-fetch to make HTTP requests
 const app = express();
@@ -21,8 +5,11 @@ const app = express();
 // Define the route to call the REST API
 app.get("/", async (req, res) => {
   try {
-    // Input data that you want to send to the Python REST API for prediction
-    const inputData = [1.0, 2.0, 3.0, 4.0]; // Adjust based on your model's expected input
+    // Input data for prediction
+    const inputData = [
+      1, 1, 1, 1, 1.0, 1.0, 1, 1, 1.0, 1.0, 1, 1, 1.0, 2023, 12, 25, 1.0, 1.0,
+      1.0, 1.0, 1.0, 1.0,
+    ];
 
     // Make the request to your Python REST API (Flask server)
     const response = await fetch("http://localhost:5000/predict", {
