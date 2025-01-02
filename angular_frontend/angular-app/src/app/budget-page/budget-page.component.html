@@ -1,0 +1,104 @@
+<p>Obtain optimal budget prediction</p>
+<p>Enter your parameters below</p>
+
+<div>
+    <h2>Budget Page</h2>
+    
+    <label for="param1">
+        Parameter 1:
+        <input id="param1" type="text"  [(ngModel)]="param1"/>
+      </label>
+
+      <label for="param2">
+        Parameter 2:
+        <input id="param2" type="text"  [(ngModel)]="param2"/>
+      </label>
+      <label for="param3">
+        Parameter 3:
+        <input id="param3" type="text"  [(ngModel)]="param3"/>
+      </label>
+      <label for="param4">
+        Parameter 4:
+        <input id="param4" type="text"  [(ngModel)]="param4"/>
+      </label>
+        <label for="param5">
+            Parameter 5:
+            <input id="param5" type="text"  [(ngModel)]="param5"/>
+            </label>
+            <label for="param6">
+                Parameter 6:
+                <input id="param6" type="text"  [(ngModel)]="param6"/>
+                </label>
+                <label for="param7">
+                    Parameter 7:
+                    <input id="param7" type="text"  [(ngModel)]="param7"/>
+                    </label>
+                    <label for="param8">
+                        Parameter 8:
+                        <input id="param8" type="text"  [(ngModel)]="param8"/>
+                        </label>
+                        <label for="param9">
+                            Parameter 9:
+                            <input id="param9" type="text"  [(ngModel)]="param9"/>
+                            </label>
+                            <label for="param10">
+                                Parameter 10:
+                                <input id="param10" type="text"  [(ngModel)]="param10"/>
+                                </label>
+                                <label for="param11">
+                                    Parameter 11:
+                                    <input id="param11" type="text"  [(ngModel)]="param11"/>
+                                    </label>
+                                    <label for="param12">
+                                        Parameter 12:
+                                        <input id="param12" type="text"  [(ngModel)]="param12"/>
+                                        </label>
+                                        <label for="param13">
+                                            Parameter 13:
+                                            <input id="param13" type="text"  [(ngModel)]="param13"/>
+                                            </label>
+                                            <label for="param14">
+                                                Parameter 14:
+                                                <input id="param14" type="text"  [(ngModel)]="param14"/>
+                                                </label>
+                                                <label for="param15">
+                                                    Parameter 15:
+                                                    <input id="param15" type="text"  [(ngModel)]="param15"/>
+                                                    </label>
+                                                    <label for="param16">
+                                                        Parameter 16:
+                                                        <input id="param16" type="text"  [(ngModel)]="param16"/>
+                                                        </label>
+                                                        <label for="param17">
+                                                            Parameter 17:
+                                                            <input id="param17" type="text"  [(ngModel)]="param17"/>
+                                                            </label>
+                                                            <label for="param18">
+                                                                Parameter 18:
+                                                                <input id="param18" type="text"  [(ngModel)]="param18"/>
+                                                                </label>
+                                                                <label for="param19">
+                                                                    Parameter 19:
+                                                                    <input id = "param19" type="text"  [(ngModel)]="param19"/>
+                                                                </label>
+                                                                <label for="param20">
+                                                                    Parameter 20:
+                                                                    <input id = "param20" type="text"  [(ngModel)]="param20"/>
+                                                                </label>
+                                                                <label for="param21">
+                                                                    Parameter 21:
+                                                                    <input id = "param21" type="text"  [(ngModel)]="param21"/>
+                                                                </label>
+
+                                                                <button (click)="submitForm()">Get Prediction</button>
+                                            
+                                                            
+                                                            <!-- Display the result -->
+                                                        
+                                                            <div *ngIf="predictionResult">
+                                                                <p>Your optimal budget would be</p>
+                                                              <h3>{{ predictionResult }}</h3>
+                                                            </div>
+                                                          </div>
+                                                                
+                                                                
