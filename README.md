@@ -4,20 +4,20 @@ AdVisory is an AI-powered social media campaign management and audit website des
 We intend to leverage GenAI to transform how advertisers and web designers approach their work. 
 
 # To run
-In a terminal, run the following commands:
+In a terminal, run:
 ```bash
 cd node_backend
 pip install -r requirements.txt
 python app.py
 ```
 
-Then, in another terminal, run these commands:
+Then, in a new terminal, run:
 ```bash
 cd node_backend
 node app.js
 ``` 
 
-In a third terminal, run these commands
+Then, in a third terminal, run:
 ```bash
 cd angular_frontend/angular-app
 ng serve
