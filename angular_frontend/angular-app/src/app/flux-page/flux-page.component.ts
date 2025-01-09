@@ -5,7 +5,7 @@ import { FluxService } from './flux.service'; // Ensure the path is correct
 @Component({
   selector: 'app-flux-page',
   standalone: true,
-  imports: [CommonModule], // Import CommonModule to use *ngIf
+  imports: [CommonModule], // import CommonModule to use *ngIf
   templateUrl: './flux-page.component.html',
   styleUrls: ['./flux-page.component.css']
 })
@@ -25,9 +25,15 @@ export class FluxPageComponent {
 
     this.fluxService.generateImage('default-prompt').subscribe({
       next: (response: any) => {
-        if (response['Generated Image'] && response['Generated Image'][0]) {
-          this.generatedImage = response['Generated Image'][0];
+        if (response['Generated Image']) {
+          const base64ImageData = response['Generated Image'];
+          const decodedImage = `data:image/webp;base64,${base64ImageData}`;
+          this.generatedImage = decodedImage;
           console.log('Generated Image URL:', this.generatedImage);
+          console.log('Decoded Image URL:', decodedImage);
+
+          // this.generatedImage = `http://localhost:5000${response['Generated Image']}`;
+          // console.log('Generated Image URL:', this.generatedImage);
         } else {
           this.errorMessage = 'Unexpected response from server.';
         }

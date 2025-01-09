@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FluxService {
-  private apiUrl = 'http://localhost:5000/flux'; 
+  private apiUrl = 'http://localhost:5000/flux';
 
   constructor(private http: HttpClient) {}
 
