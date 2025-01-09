@@ -1,10 +1,15 @@
 ##first do pip install flask and xgboost
 from flask import Flask, request, jsonify
+from flask_cors import CORS 
 import xgboost as xgb
 import numpy as np
+import os
+from gradio_client import Client
 
 # Initialize Flask app
 app = Flask(__name__)
+
+CORS(app)  
 
 model = xgb.Booster()
 model.load_model('xgboost_model.json')  
@@ -41,6 +46,24 @@ def predict():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
+@app.route('/flux', methods=['POST'])
+def flux():
+    flux_client = Client("black-forest-labs/FLUX.1-schnell")
+    result = flux_client.predict(
+		prompt="an advertisement for a social media management service called AdVisory",
+		seed=0,
+		randomize_seed=True,
+		width=576,
+		height=1024, #16:9 aspect ration
+		num_inference_steps=4,
+		api_name="/infer")
+    print(result)
+    return jsonify({'Generated Image': result})
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "up"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
