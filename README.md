@@ -7,11 +7,18 @@ We intend to leverage GenAI to transform how advertisers and web designers appro
 
 in backend folder run:
 
+
+
+```bash
 python app.py
 node app.js
+```
 
-in frontend folder run: 
+in frontend folder run:
 
+
+```bash
 cd angular-app
 ng serve
+```
 
