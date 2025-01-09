@@ -1,4 +1,4 @@
-<p>Obtain optimal budget prediction</p>
+<!-- <p>Obtain optimal budget prediction</p>
 <p>Enter your parameters below</p>
 
 <div>
@@ -93,12 +93,205 @@
                                                                 <button (click)="submitForm()">Get Prediction</button>
                                             
                                                             
-                                                            <!-- Display the result -->
-                                                        
+                                                         
+                                                       
                                                             <div *ngIf="predictionResult">
                                                                 <p>Your optimal budget would be</p>
                                                               <h3>{{ predictionResult }}</h3>
                                                             </div>
-                                                          </div>
-                                                                
-                                                                
+                                                          </div> -->
+
+
+                                                          <!DOCTYPE html>
+                                                          <html lang="en">
+                                                          
+                                                          <head>
+                                                              <meta charset="UTF-8">
+                                                              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                              <title>Budget Prediction</title>
+                                                              <script src="https://cdn.tailwindcss.com"></script>
+                                                          </head>
+                                                          
+                                                          <body class="font-sans bg-gray-100 p-8">
+                                                              <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+                                                          
+                                                                  <!-- Title and Description -->
+                                                                  <div class="text-center mb-8">
+                                                                      <p class="text-2xl text-gray-800">Obtain Optimal Budget Prediction</p>
+                                                                      <p class="text-lg text-gray-600 mt-2">Enter your parameters below</p>
+                                                                  </div>
+                                                          
+                                                                  <!-- Form Section -->
+                                                                  <form (submit)="submitForm()" class="space-y-6">
+                                                          
+                                                                      <!-- Parameter Inputs -->
+                                                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                                          <div>
+                                                                              <label for="param1" class="block text-gray-700">
+                                                                                  Parameter 1:
+                                                                                  <input id="param1" type="text" [(ngModel)]="param1"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param2" class="block text-gray-700">
+                                                                                  Parameter 2:
+                                                                                  <input id="param2" type="text" [(ngModel)]="param2"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param3" class="block text-gray-700">
+                                                                                  Parameter 3:
+                                                                                  <input id="param3" type="text" [(ngModel)]="param3"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param4" class="block text-gray-700">
+                                                                                  Parameter 4:
+                                                                                  <input id="param4" type="text" [(ngModel)]="param4"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param5" class="block text-gray-700">
+                                                                                  Parameter 5:
+                                                                                  <input id="param5" type="text" [(ngModel)]="param5"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param6" class="block text-gray-700">
+                                                                                  Parameter 6:
+                                                                                  <input id="param6" type="text" [(ngModel)]="param6"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param7" class="block text-gray-700">
+                                                                                  Parameter 7:
+                                                                                  <input id="param7" type="text" [(ngModel)]="param7"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param8" class="block text-gray-700">
+                                                                                  Parameter 8:
+                                                                                  <input id="param8" type="text" [(ngModel)]="param8"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param9" class="block text-gray-700">
+                                                                                  Parameter 9:
+                                                                                  <input id="param9" type="text" [(ngModel)]="param9"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param10" class="block text-gray-700">
+                                                                                  Parameter 10:
+                                                                                  <input id="param10" type="text" [(ngModel)]="param10"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param11" class="block text-gray-700">
+                                                                                  Parameter 11:
+                                                                                  <input id="param11" type="text" [(ngModel)]="param11"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param12" class="block text-gray-700">
+                                                                                  Parameter 12:
+                                                                                  <input id="param12" type="text" [(ngModel)]="param12"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param13" class="block text-gray-700">
+                                                                                  Parameter 13:
+                                                                                  <input id="param13" type="text" [(ngModel)]="param13"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param14" class="block text-gray-700">
+                                                                                  Parameter 14:
+                                                                                  <input id="param14" type="text" [(ngModel)]="param14"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param15" class="block text-gray-700">
+                                                                                  Parameter 15:
+                                                                                  <input id="param15" type="text" [(ngModel)]="param15"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param16" class="block text-gray-700">
+                                                                                  Parameter 16:
+                                                                                  <input id="param16" type="text" [(ngModel)]="param16"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param17" class="block text-gray-700">
+                                                                                  Parameter 17:
+                                                                                  <input id="param17" type="text" [(ngModel)]="param17"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param18" class="block text-gray-700">
+                                                                                  Parameter 18:
+                                                                                  <input id="param18" type="text" [(ngModel)]="param18"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param19" class="block text-gray-700">
+                                                                                  Parameter 19:
+                                                                                  <input id="param19" type="text" [(ngModel)]="param19"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param20" class="block text-gray-700">
+                                                                                  Parameter 20:
+                                                                                  <input id="param20" type="text" [(ngModel)]="param20"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                          <div>
+                                                                              <label for="param21" class="block text-gray-700">
+                                                                                  Parameter 21:
+                                                                                  <input id="param21" type="text" [(ngModel)]="param21"
+                                                                                      class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
+                                                                              </label>
+                                                                          </div>
+                                                                      </div>
+                                                          
+                                                                      <!-- Submit Button -->
+                                                                      <div class="flex justify-center">
+                                                                          <button type="submit"
+                                                                              class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition duration-300">
+                                                                              Get Prediction
+                                                                          </button>
+                                                                      </div>
+                                                                  </form>
+                                                          
+                                                                  <!-- Display the result -->
+                                                                  <div *ngIf="predictionResult" class="mt-8 text-center">
+                                                                      <p class="text-xl text-gray-700">Your optimal budget would be:</p>
+                                                                      <h3 class="text-3xl font-bold text-orange-500">{{ predictionResult }}</h3>
+                                                                  </div>
+                                                          
+                                                              </div>
+                                                          </body>
+                                                          
+                                                          </html>
+                                                          
