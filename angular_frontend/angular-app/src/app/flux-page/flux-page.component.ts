@@ -11,14 +11,14 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./flux-page.component.css']
 })
 export class FluxPageComponent {
-  generatedImage: string | null = null; // URL of the generated image
-  isLoading: boolean = false; // Loading state
-  errorMessage: string | null = null; // Error message for failed requests
+  generatedImage: string | null = null; 
+  isLoading: boolean = false; 
+  errorMessage: string | null = null; 
 
-  prompt: string = "an ad for facebook "; // Default values
+  prompt: string = "An advertisement for "; 
   seed: number = 0;
   randomizeSeed: boolean = true;
-  width: number = 576;
+  width: number = 1024;
   height: number = 1024;
   num_inference_steps: number = 4;
 
@@ -53,11 +53,11 @@ export class FluxPageComponent {
     this.fluxService.generateImage(requestData).subscribe({
       next: (response: any) => {
         if (response['Generated Image']) {
-          const base64ImageData = response['Generated Image'];
+          const base64ImageData = response['Generated Image']; //decoding into base64
           const decodedImage = `data:image/webp;base64,${base64ImageData}`;
           this.generatedImage = decodedImage;
           console.log('Generated Image URL:', this.generatedImage);
-          console.log('Decoded Image URL:', decodedImage);
+          console.log('Decoded Image URL:', decodedImage); //
 
           // this.generatedImage = `http://localhost:5000${response['Generated Image']}`;
           // console.log('Generated Image URL:', this.generatedImage);
