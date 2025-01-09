@@ -1,9 +1,10 @@
 ##first do pip install flask and xgboost
-from flask import Flask, request, jsonify
+import base64
+import os
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS 
 import xgboost as xgb
 import numpy as np
-import os
 from gradio_client import Client
 
 # Initialize Flask app
@@ -51,7 +52,7 @@ def predict():
 def flux():
     flux_client = Client("black-forest-labs/FLUX.1-schnell")
     result = flux_client.predict(
-		prompt="an advertisement for a social media management service called AdVisory",
+		prompt="a dog",
 		seed=0,
 		randomize_seed=True,
 		width=576,
@@ -59,7 +60,23 @@ def flux():
 		num_inference_steps=4,
 		api_name="/infer")
     print(result)
-    return jsonify({'Generated Image': result})
+
+    image_path = result[0]  # Get the image file path
+    if os.path.exists(image_path):
+        # Return a URL to serve the image
+        with open(image_path, "rb") as f:
+            encoded_image = base64.b64encode(f.read()).decode("utf-8")
+        return jsonify({'Generated Image': encoded_image})
+    else:
+        return jsonify({'error': 'Image generation failed.'}), 500
+
+# @app.route('/serve-image', methods=['GET'])
+# def serve_image():
+#     image_path = request.args.get('path')
+#     if image_path and os.path.exists(image_path):
+#         return send_file(image_path, mimetype='image/webp')
+#     else:
+#         return jsonify({'error': 'File not found.'}), 404
 
 @app.route('/health', methods=['GET'])
 def health_check():
