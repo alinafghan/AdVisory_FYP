@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,9 +10,10 @@ export class FluxService {
 
   constructor(private http: HttpClient) {}
 
-  generateImage(defaultPrompt: string): Observable<any> {
-    const requestBody = {};
-    console.log('Sending request to Flux API:', requestBody);
-    return this.http.post<any>(this.apiUrl, requestBody);
-  }
+  generateImage(requestData: any): Observable<any> {
+    const headers = new HttpHeaders({
+        'Content-Type': 'application/json' // Ensure the request sends JSON data
+      });
+    console.log('Sending request to Flux API:', requestData);
+    return this.http.post<any>(this.apiUrl, requestData, { headers });  }
 }
