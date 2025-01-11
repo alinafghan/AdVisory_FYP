@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 CORS(app)  
 
+#budget start###############################################################################
 model = xgb.Booster()
 model.load_model('xgboost_model.json')  
 
@@ -24,7 +25,6 @@ FEATURE_NAMES = [
     "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
     "Cost_Per_Engagement"
 ]
-
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -47,6 +47,8 @@ def predict():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+    
+#########################budget end #########################################################################
 
 @app.route('/flux', methods=['POST'])
 def flux():
@@ -78,6 +80,9 @@ def flux():
         return jsonify({'Generated Image': encoded_image})
     else:
         return jsonify({'error': 'Image generation failed.'}), 500
+
+################################flux end ###############################################
+
 
 # @app.route('/serve-image', methods=['GET'])
 # def serve_image():
