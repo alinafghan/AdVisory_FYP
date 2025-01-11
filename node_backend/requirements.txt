@@ -2,3 +2,4 @@ flask
 xgboost
 gradio_client
 flask-cors
+numpy
