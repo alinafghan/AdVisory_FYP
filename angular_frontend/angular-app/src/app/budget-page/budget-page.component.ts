@@ -41,7 +41,10 @@ export class BudgetPageComponent {
     locationOptions = [
       
       {label: 'Austin', value: 0},
-      {label: 'Las Vegas', value: 1},{ label:'Los Angeles', value: 2},{ label:'Miami', value: 3},{ label:'New York', value: 4}
+      {label: 'Las Vegas', value: 1},
+      { label:'Los Angeles', value: 2},
+      { label:'Miami', value: 3},
+      { label:'New York', value: 4}
     ];
 
     languageOptions = [
@@ -49,6 +52,14 @@ export class BudgetPageComponent {
       {label: 'English', value: 0},
       {label: 'French', value: 1},{ label:'Spanish', value: 2}
     ];
+
+    customerSegmentOptions = [
+      {label: 'Fashion', value: 0},
+      {label: 'Food', value: 1},
+      { label:'Health', value: 2},
+      { label:'Home', value: 3},
+      { label:'Technology', value: 4}
+    ]
 
 
   target_audience = '';
@@ -88,15 +99,21 @@ export class BudgetPageComponent {
       Impressions: this.impressions,
       Engagement_Score: this.engagement_score,
       Customer_Segment: this.cust_segment,
-      Scaled_ROI: 0.6,
-      Year: 2025,
-      Month: 1,
-      Day: 13,
-      ROI_log: 0.6,
+      // Scaled_ROI: 0.6,
+      // Year: 2025,
+      // Month: 1,
+      // Day: 13,
+      // ROI_log: 0.6,
       Cost_Per_Click: this.cpc,
       Click_Through_Rate: this.ctr,
       Cost_Per_Impression: this.cpc,
       Engagement_Rate: this.engagement_rate,
+                               
+      // 5.0,        # ROI (float64)
+
+      // 900.0,       # Conversions (float64)
+
+      // 0.2,        # Cost_Per_Engagement (float64)
     };
 
     console.log("params being sent", params)
