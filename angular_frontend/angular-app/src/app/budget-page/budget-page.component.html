@@ -115,14 +115,16 @@
                          class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
                  </label>
              </div>
-             <div>                   
-
-                 <label for="cust_segment" class="block text-gray-700">
-                     Customer Segment:
-                     <input id="cust_segment" type="text" [(ngModel)]="cust_segment" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
+             <div>
+                <label for="cust_segment" class="block text-gray-700">
+                    Product Type:
+                    <select id="cust_segment" name = "cust_segment" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
+<option *ngFor="let option of customerSegmentOptions" [value]="option.value">
+    {{ option.label }}
+</option>
+                    </select>
+                </label>
+            </div>
              <div>
                  <label for="cpc" class="block text-gray-700">
                      Cost Per Click

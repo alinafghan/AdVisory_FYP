@@ -19,12 +19,13 @@ model.load_model('xgboost_model.json')
 # Feature names extracted from the model
 FEATURE_NAMES = [
     "Target_Audience", "Campaign_Goal", "Duration", "Channel_Used", 
-    "Conversion_Rate", "Acquisition_Cost", "Location", "Language", 
-    "Clicks", "Impressions", "Engagement_Score", "Customer_Segment", 
-    "Scaled_ROI", "Year", "Month", "Day", "ROI_log", "Cost_Per_Click", 
+    "Conversion_Rate", "Acquisition_Cost","ROI", "Location", "Language", 
+    "Clicks", "Impressions", "Engagement_Score", "Customer_Segment", "Conversions",
+    "Cost_Per_Click", 
     "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
     "Cost_Per_Engagement"
 ]
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -41,9 +42,12 @@ def predict():
 
         # Make prediction
         prediction = model.predict(dmatrix)
+
+        #we did in log scale so return
+        prediction_og = np.exp(prediction)
         
         # Return the prediction
-        return jsonify({'prediction': prediction.tolist()})
+        return jsonify({'prediction': prediction_og.tolist()})
     
     except Exception as e:
         return jsonify({'error': str(e)}), 400
