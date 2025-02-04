@@ -5,7 +5,11 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS 
 import xgboost as xgb
 import numpy as np
-from gradio_client import Client
+from flask_cors import CORS
+import pandas as pd
+from trends_analyzer import TrendAnalyzer  
+import logging
+
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -53,6 +57,99 @@ def predict():
         return jsonify({'error': str(e)}), 400
     
 #########################budget end #########################################################################
+
+# Initialize the TrendAnalyzer
+analyzer = TrendAnalyzer()
+
+@app.route('/analyze', methods=['POST'])
+def analyze_trends():
+    try:
+        data = request.get_json()
+        keywords = data.get('keywords', [])
+        
+        if not keywords:
+            return jsonify({'error': 'No keywords provided'}), 400
+            
+        # Process pipeline
+        processed_data = analyzer.fetch_trend_data(keywords)
+        if not processed_data:
+            return jsonify({'error': 'Failed to fetch trend data'}), 500
+            
+        models, forecasts = analyzer.train_prediction_models(processed_data)
+        if not forecasts:
+            return jsonify({'error': 'Failed to generate forecasts'}), 500
+            
+        insights = analyzer.get_trend_insights(forecasts)
+        if not insights:
+            return jsonify({'error': 'Failed to generate insights'}), 500
+            
+        recommendations = analyzer.generate_ad_recommendations(insights)
+        if not recommendations:
+            return jsonify({'error': 'Failed to generate recommendations'}), 500
+            
+        return jsonify({
+            'insights': insights,
+            'recommendations': recommendations
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in analyze_trends: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/predictions/<keyword>', methods=['GET'])
+def get_predictions(keyword):
+    try:
+        # Fetch trend data for single keyword
+        processed_data = analyzer.fetch_trend_data([keyword])
+        if not processed_data or keyword not in processed_data:
+            return jsonify({'error': f'No data available for {keyword}'}), 404
+            
+        # Generate predictions
+        models, forecasts = analyzer.train_prediction_models({keyword: processed_data[keyword]})
+        if not forecasts or keyword not in forecasts:
+            return jsonify({'error': 'Failed to generate predictions'}), 500
+            
+        # Extract prediction data
+        forecast_data = forecasts[keyword][['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(30)
+        prediction_data = forecast_data.to_dict(orient='records')
+        
+        return jsonify({
+            'keyword': keyword,
+            'predictions': prediction_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in get_predictions: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/search', methods=['POST'])
+def search_trends():
+    try:
+        data = request.get_json()
+        query = data.get('query', '').strip().lower()
+
+        if not query:
+            return jsonify({'error': 'Search query is required'}), 400
+
+        # Fetch all trends (or use cached data)
+        all_trends = fetch_all_trends()  # Replace with your logic to fetch all trends
+
+        # Filter trends based on the search query
+        filtered_trends = {
+            keyword: insight
+            for keyword, insight in all_trends.items()
+            if query in keyword.lower()
+        }
+
+        return jsonify({
+            'insights': filtered_trends,
+            'recommendations': []  # Add logic to filter recommendations if needed
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+################################trends end###############################################
 
 @app.route('/flux', methods=['POST'])
 def flux():

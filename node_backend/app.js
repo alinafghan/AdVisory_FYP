@@ -1,15 +1,25 @@
 const express = require("express");
-const fetch = require("node-fetch"); // Import node-fetch to make HTTP requests
-const predictionRouter = require("./routes/BudgetModelRoute"); // Import the prediction route
-const cors = require("cors"); //middleware for working w angular frontend
+const fetch = require("node-fetch");
+const cors = require("cors"); 
+const predictionRouter = require("./routes/BudgetModelRoute"); 
+const trendsRoutes = require("./routes/TrendsModelRoute"); 
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// /predict is the prediction router
+// Routes
 app.use("/predict", predictionRouter);
+app.use("/trends", trendsRoutes); // ✅ Now trendsRoutes is properly imported
 
+// Default route (optional)
+app.get("/", (req, res) => {
+  res.send("Server is running!");
+});
+
+// Start the server
 app.listen(3000, () => {
   console.log("Server started on port 3000");
 });

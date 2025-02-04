@@ -1,0 +1,62 @@
+<div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+  <!-- Search Bar -->
+  <div class="mb-8">
+    <input
+      type="text"
+      placeholder="Search trends..."
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      [(ngModel)]="searchQuery"
+      (input)="onSearch()"
+    />
+  </div>
+
+  <!-- Results -->
+  <div *ngIf="trendInsights && !isLoading" class="space-y-6">
+    <!-- Trend Insights -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div *ngFor="let insight of trendInsights | keyvalue" class="bg-gray-50 p-4 rounded-lg">
+        <h3 class="text-lg font-semibold text-gray-800">{{ insight.key }}</h3>
+        <div class="mt-2 space-y-2">
+          <p class="text-gray-600">Peak Day: {{ insight.value.peak_day }}</p>
+          <p class="text-gray-600">Trend: {{ insight.value.trend_direction }}</p>
+          <p class="text-gray-600">Growth Rate: {{ insight.value.growth_rate }}%</p>
+          <p class="text-gray-600">Predicted Popularity: {{ insight.value.predicted_popularity }}</p>
+          <p class="text-gray-600">Estimated Search Volume: {{ insight.value.estimated_search_volume }}</p>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Recommendations -->
+    <div *ngIf="recommendations.length > 0" class="mt-8">
+      <h3 class="text-xl text-gray-800 mb-4">Recommendations</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div *ngFor="let rec of recommendations" class="bg-orange-50 p-4 rounded-lg">
+          <h4 class="font-semibold text-gray-800">{{ rec.keyword }}</h4>
+          <ul class="mt-2 space-y-2">
+            <li class="text-gray-600">{{ rec.timing }}</li>
+            <li class="text-gray-600">{{ rec.content_suggestion }}</li>
+            <li class="text-gray-600">Budget: {{ rec.budget_allocation }}</li>
+            <li class="text-gray-600">Predicted Popularity: {{ rec.trend_metrics.predicted_popularity }}</li>
+            <li class="text-gray-600">Estimated Search Volume: {{ rec.trend_metrics.estimated_search_volume }}</li>
+            <li class="text-gray-600">Growth Rate: {{ rec.trend_metrics.growth_rate }}%</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="(!trendInsights && !recommendations.length) && !isLoading" class="text-center text-gray-600">
+    <p>No data available to display.</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center text-gray-600">
+    <p>Loading trends...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="text-center text-red-600">
+    <p>{{ error }}</p>
+  </div>
+</div>
