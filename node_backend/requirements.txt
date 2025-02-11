@@ -3,3 +3,6 @@ xgboost
 gradio_client
 flask-cors
 numpy
+scikit-learn
+prophet
+pytrends
