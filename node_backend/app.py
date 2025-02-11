@@ -9,6 +9,7 @@ from flask_cors import CORS
 import pandas as pd
 from trends_analyzer import TrendAnalyzer  
 import logging
+from gradio_client import Client
 
 
 # Initialize Flask app
