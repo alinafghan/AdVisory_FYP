@@ -1,4 +1,13 @@
-const uri =
-  "mongodb+srv://alina2262:Alina_2262@cluster0.rutjg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+require("dotenv").config();
+const mongoose = require("mongoose");
 
-module.exports = uri;
+const mongoURI = process.env.MONGO_URI;
+
+const connectDB = async () => {
+  await mongoose
+    .connect(mongoURI)
+    .then(() => console.log("✅ MongoDB Connected Successfully"))
+    .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+};
+
+module.exports = connectDB;
