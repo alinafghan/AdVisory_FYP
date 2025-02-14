@@ -1,0 +1,4 @@
+const uri =
+  "mongodb+srv://alina2262:Alina_2262@cluster0.rutjg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+module.exports = uri;
