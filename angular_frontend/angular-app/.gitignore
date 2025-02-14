@@ -36,7 +36,31 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+node_backend/.venv/
 
 # System files
 .DS_Store
 Thumbs.db
+
+
+# Ignore large binary files
+*.dll
+*.exe
+*.so
+*.dylib
+*.jar
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Specific large file directories
+node_backend/*/site-packages/*/lib/*.dll
+**/lib/large_binaries/
+
+# Machine learning and data science specific large files
+*.h5
+*.pkl
+*.model
+*.tar.gz

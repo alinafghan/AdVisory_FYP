@@ -8,6 +8,7 @@ const cors = require("cors"); //middleware for working w angular frontend
 //ROUTERS
 const predictionRouter = require("./routes/BudgetModelRoute"); // Import the prediction route
 const userRouter = require("./routes/UserRouter");
+const trendsRoutes = require("./routes/TrendsModelRoute");
 
 //DB CONFIG
 // const dbConfig = require("./config/db.config"); //this will work in place of mongoURI in case db connection string not working, but USE UR OWN STRING IN A .ENV FILE
@@ -21,6 +22,8 @@ mongoose
 ////////////////////////////////////////////////////////////////////////////////////
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
@@ -43,6 +46,14 @@ app.get("/test", async (req, res) => {
       .status(500)
       .json({ error: "❌ Database connection failed", details: error.message });
   }
+});
+// Routes
+app.use("/predict", predictionRouter);
+app.use("/trends", trendsRoutes); // ✅ Now trendsRoutes is properly imported
+
+// Default route (optional)
+app.get("/", (req, res) => {
+  res.send("Server is running!");
 });
 
 app.listen(3000, () => {

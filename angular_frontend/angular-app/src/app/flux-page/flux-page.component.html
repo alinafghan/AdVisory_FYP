@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flux Image Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="font-sans bg-gray-100 p-8">
+  <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+
+    <!-- Title and Description -->
+    <div class="text-center mb-8">
+      <p class="text-3xl font-bold text-gray-800">Generate Advertisement</p>
+      <p class="text-lg text-gray-600 mt-2">Customize the parameters and generate your creative advertisement</p>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Input Form -->
+      <div>
+        <div class="mb-4">
+          <label for="prompt" class="block text-sm font-medium text-gray-700">Prompt:</label>
+          <input type="text" id="prompt" name="prompt" [(ngModel)]="prompt" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+
+        <div class="mb-4">
+          <label for="seed" class="block text-sm font-medium text-gray-700">Seed:</label>
+          <input type="number" id="seed" name="seed" [(ngModel)]="seed" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+
+        <div class="mb-4 flex items-center">
+          <label for="randomizeSeed" class="block text-sm font-medium text-gray-700 mr-2">Randomize Seed:</label>
+          <input type="checkbox" id="randomizeSeed" name="randomizeSeed" [(ngModel)]="randomizeSeed" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">Recommended Dimensions:</label>
+          <p class="text-sm text-gray-500">Vertical: 1080 x 1920</p>
+          <p class="text-sm text-gray-500">YouTube Video Thumbnail: 1280 x 720</p>
+          <p class="text-sm text-gray-500">3:4 Post: 1080 x 1440</p>
+        </div>
+
+        <div class="mb-4">
+          <label for="width" class="block text-sm font-medium text-gray-700">Width:</label>
+          <input type="number" id="width" name="width" [(ngModel)]="width" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+
+        <div class="mb-4">
+          <label for="height" class="block text-sm font-medium text-gray-700">Height:</label>
+          <input type="number" id="height" name="height" [(ngModel)]="height" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+
+        <div class="mb-4">
+          <label for="num_inference_steps" class="block text-sm font-medium text-gray-700">Num Inference Steps:</label>
+          <input type="number" id="num_inference_steps" name="num_inference_steps" [(ngModel)]="num_inference_steps" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+
+        <!-- Generate Button -->
+        <div class="text-center">
+          <button
+            (click)="generateAdImage()"
+            class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 w-full"
+            [disabled]="isLoading">
+            Generate Image
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="mt-4 text-center">
+          <p class="text-blue-500 font-semibold">Generating your ad image... Please wait.</p>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage && !isLoading" class="mt-4 text-center">
+          <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
+        </div>
+      </div>
+
+      <!-- Display Generated Image -->
+      <div class="flex justify-center items-center bg-gray-50 rounded-lg shadow-md p-4">
+        <div *ngIf="generatedImage && !isLoading; else placeholder">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Your Generated Advertisement:</h3>
+          <img [src]="generatedImage" alt="Generated Ad" class="rounded-lg shadow-md max-w-full">
+        </div>
+        <ng-template #placeholder>
+          <p class="text-gray-400 text-center">Your generated image will appear here.</p>
+        </ng-template>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
