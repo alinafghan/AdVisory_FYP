@@ -12,10 +12,25 @@ import { Router } from '@angular/router';
 })
 
 export class LoginComponent {
+
+  
+
   user: User = { username: '', password: '' };
-  errorMessage: string = ''; 
+  errorMessage: string = '';
 
    constructor(private authService: AuthService, private router: Router) {}
+
+   ngOnInit() {
+    // If redirected from Facebook login, check if there's a token in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+      console.log('Facebook login successful, storing token');
+      localStorage.setItem('authToken', token); // Save token
+      this.router.navigate(['/home']); // Redirect to home
+    }
+   }
 
    onSubmit() {
     console.log('Submitting user data:', this.user);
@@ -43,5 +58,10 @@ export class LoginComponent {
         }
       }
     );
+  }
+
+  onfblogin() {
+    console.log('Redirecting to Facebook login...');
+    this.authService.fblogin(); // Calls the backend to handle FB login
   }
 }
