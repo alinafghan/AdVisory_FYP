@@ -20,6 +20,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+    credentials: true, // Allow sending cookies (if needed)
+  })
+);
 
 //ROUTES
 // /predict is the prediction router
