@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 const User = require("../models/user_model");
+const FB_user = require("../models/facebook_user_model");
 
 // Register a new user
 const register = async (req, res, next) => {
@@ -51,4 +53,72 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login };
+const APP_ID = "541525585715121";
+const APP_SECRET = "35f28757da55d50d9de2a04e059e1d75";
+const REDIRECT_URI = "http://localhost:3000/auth/facebook/callback";
+
+const fblogin = (req, res) => {
+  const url = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${APP_ID}&redirect_uri=${REDIRECT_URI}&scope=email`;
+  return res.redirect(url);
+};
+
+const fbcallback = async (req, res) => {
+  if (!req.query.code) {
+    return res.status(400).json({ message: "Authorization code not provided" });
+  }
+
+  try {
+    const { code } = req.query;
+
+    // Exchange code for an access token
+    const tokenResponse = await axios.get(
+      `https://graph.facebook.com/v18.0/oauth/access_token`,
+      {
+        params: {
+          client_id: APP_ID,
+          client_secret: APP_SECRET,
+          redirect_uri: REDIRECT_URI,
+          code: code,
+        },
+      }
+    );
+
+    const access_token = tokenResponse.data.access_token;
+
+    // Fetch user profile from Facebook
+    const profileResponse = await axios.get(
+      `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${access_token}`
+    );
+
+    const profile = profileResponse.data;
+
+    // Check if user already exists in database
+    let user = await User.findOne({ email: profile.email });
+
+    if (!user) {
+      // If user does not exist, create a new one
+      user = new FB_user({
+        username: profile.name,
+        email: profile.email,
+        facebookId: profile.id,
+      });
+
+      await user.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.redirect(`http://localhost:4200/login?token=${token}`);
+  } catch (error) {
+    console.error(
+      "Facebook OAuth Error:",
+      error.response?.data || error.message
+    );
+    res.redirect("http://localhost:4200/login?error=facebook_auth_failed");
+  }
+};
+
+module.exports = { register, login, fblogin, fbcallback };
