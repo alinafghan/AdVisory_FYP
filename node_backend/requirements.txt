@@ -2,3 +2,8 @@ flask
 xgboost
 gradio_client
 flask-cors
+# pytrends
+# prophet
+# scikit-learn
+# bs4
+# textblob
