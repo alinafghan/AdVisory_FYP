@@ -9,6 +9,7 @@ const predictionRouter = require("./routes/BudgetModelRoute"); // Import the pre
 const userRouter = require("./routes/UserRouter");
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
+const fbAdsRouter = require("./routes/FBAdsRouter");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(
 //ROUTES
 // /predict is the prediction router
 app.use("/auth", authRouter);
+app.use("/fb_ads", fbAdsRouter);
 app.use("/predict", predictionRouter);
 app.use("/user", userRouter);
 app.use("/predict", predictionRouter);
