@@ -7,6 +7,10 @@ import xgboost as xgb
 import numpy as np
 from gradio_client import Client
 
+#for enhancing
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+import torch
+
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -89,9 +93,45 @@ def flux():
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({"status": "up"}), 200
+    return jsonify({"status": "upPPPP"}), 200
+
+######################### ENHANCE ################################
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Model checkpoint
+model_checkpoint = "gokaygokay/Flux-Prompt-Enhance"
+
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint).to(device)
+
+# Setup the pipeline for text-to-text generation
+enhancer = pipeline('text2text-generation',
+                    model=model,
+                    tokenizer=tokenizer,
+                    repetition_penalty=1.2,
+                    device=device)
+
+@app.route('/enhance', methods=['POST'])
+def enhance_prompt():
+    try:
+        data = request.get_json()
+        if 'prompt' not in data:
+            return jsonify({'error': 'Invalid input. Expected JSON with "prompt" key.'}), 400
+        
+        prefix = "enhance prompt: "
+        input_prompt = prefix + data['prompt']
+        
+        # Generate the enhanced prompt
+        results = enhancer(input_prompt, max_length=256)
+        enhanced_prompt = results[0]['generated_text']
+        
+        return jsonify({'enhanced_prompt': enhanced_prompt})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-    
