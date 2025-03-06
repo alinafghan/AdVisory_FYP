@@ -54,6 +54,7 @@ def predict():
 
 @app.route('/flux', methods=['POST'])
 def flux():
+
     data = request.get_json()
 
     prompt = data.get('prompt')
@@ -62,6 +63,8 @@ def flux():
     width = data.get('width') #576
     height = data.get('height') #1024
     num_inference_steps = data.get('num_inference_steps') #4
+
+    print(f"Prompt: {prompt}")
 
     flux_client = Client("black-forest-labs/FLUX.1-schnell")
     result = flux_client.predict(
@@ -98,15 +101,10 @@ def health_check():
 ######################### ENHANCE ################################
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# Model checkpoint
 model_checkpoint = "gokaygokay/Flux-Prompt-Enhance"
-
-# Load tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint).to(device)
 
-# Setup the pipeline for text-to-text generation
 enhancer = pipeline('text2text-generation',
                     model=model,
                     tokenizer=tokenizer,
@@ -123,7 +121,6 @@ def enhance_prompt():
         prefix = "enhance prompt: "
         input_prompt = prefix + data['prompt']
         
-        # Generate the enhanced prompt
         results = enhancer(input_prompt, max_length=256)
         enhanced_prompt = results[0]['generated_text']
         

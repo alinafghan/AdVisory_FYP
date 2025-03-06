@@ -20,64 +20,140 @@
     <!-- Content Wrapper -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Input Form -->
-      <div>
-        <div class="mb-4">
-          <label for="prompt" class="block text-sm font-medium text-gray-700">Prompt:</label>
-          <input type="text" id="prompt" name="prompt" [(ngModel)]="prompt" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
+      <form [formGroup]="adForm" (ngSubmit)="generateAdImage()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <!-- Advertisement Type Selection -->
+            <div class="mb-4">
+              <label for="category" class="block text-sm font-medium text-gray-700">Advertisement Type:</label>
+              <select id="category" formControlName="category" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <option value="">Select Type</option>
+                <option value="Product Launches">Product Launches</option>
+                <option value="Event Promotions">Event Promotions</option>
+                <option value="Seasonal Sales">Seasonal Sales</option>
+                <option value="Brand Awareness">Brand Awareness</option>
+              </select>
+            </div>
 
-        <div class="mb-4">
-          <label for="seed" class="block text-sm font-medium text-gray-700">Seed:</label>
-          <input type="number" id="seed" name="seed" [(ngModel)]="seed" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
+            <!-- Dynamic Fields Based on Advertisement Type -->
+            <div *ngIf="adForm.get('category')?.value === 'Product Launches'">
+              <div class="mb-4">
+                <label for="productName" class="block text-sm font-medium text-gray-700">Product Name:</label>
+                <input type="text" id="productName" formControlName="productName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">              </div>
+              <div class="mb-4">
+                <label for="targetAudience" class="block text-sm font-medium text-gray-700">Target Audience:</label>
+                <input type="text" id="targetAudience" formControlName="targetAudience" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+              <div class="mb-4">
+                <label for="specialOffer" class="block text-sm font-medium text-gray-700">Special Offer:</label>
+                <input type="text" id="specialOffer" formControlName="specialOffer" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+            </div>
 
-        <div class="mb-4 flex items-center">
-          <label for="randomizeSeed" class="block text-sm font-medium text-gray-700 mr-2">Randomize Seed:</label>
-          <input type="checkbox" id="randomizeSeed" name="randomizeSeed" [(ngModel)]="randomizeSeed" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-        </div>
+            <div *ngIf="adForm.get('category')?.value === 'Event Promotions'">
+              <div class="mb-4">
+                <label for="eventName" class="block text-sm font-medium text-gray-700">Event Name:</label>
+                <input type="text" id="eventName" formControlName="eventName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+              <div class="mb-4">
+                <label for="eventDate" class="block text-sm font-medium text-gray-700">Event Date:</label>
+                <input type="date" id="eventDate" formControlName="eventDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+              <div class="mb-4">
+                <label for="eventLocation" class="block text-sm font-medium text-gray-700">Event Location:</label>
+                <input type="text" id="eventLocation" formControlName="eventLocation" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+              <div class="mb-4">
+                <label for="uniqueSellingPoints" class="block text-sm font-medium text-gray-700">Unique Selling Points:</label>
+                <textarea id="uniqueSellingPoints" formControlName="uniqueSellingPoints" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+              </div>
+            </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">Recommended Dimensions:</label>
-          <p class="text-sm text-gray-500">Vertical: 1080 x 1920</p>
-          <p class="text-sm text-gray-500">YouTube Video Thumbnail: 1280 x 720</p>
-          <p class="text-sm text-gray-500">3:4 Post: 1080 x 1440</p>
-        </div>
+            <div *ngIf="adForm.get('category')?.value === 'Seasonal Sales'">
+              <div class="mb-4">
+                <label for="salePeriod" class="block text-sm font-medium text-gray-700">Sale Period:</label>
+                <input type="text" id="salePeriod" formControlName="salePeriod" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+              <div class="mb-4">
+                <label for="mainAttractions" class="block text-sm font-medium text-gray-700">Main Attractions:</label>
+                <input type="text" id="mainAttractions" formControlName="mainAttractions" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+            </div>
 
-        <div class="mb-4">
-          <label for="width" class="block text-sm font-medium text-gray-700">Width:</label>
-          <input type="number" id="width" name="width" [(ngModel)]="width" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
+            <div *ngIf="adForm.get('category')?.value === 'Brand Awareness'">
+              <div class="mb-4">
+                <label for="brandMessage" class="block text-sm font-medium text-gray-700">Brand Message:</label>
+                <input type="text" id="brandMessage" formControlName="brandMessage" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+              <div class="mb-4">
+                <label for="keyVisuals" class="block text-sm font-medium text-gray-700">Key Visuals:</label>
+                <input type="text" id="keyVisuals" formControlName="keyVisuals" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              </div>
+            </div>
 
-        <div class="mb-4">
-          <label for="height" class="block text-sm font-medium text-gray-700">Height:</label>
-          <input type="number" id="height" name="height" [(ngModel)]="height" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
+            <!-- Additional Details Textarea -->
+            <div class="mb-4">
+              <label for="additionalDetails" class="block text-sm font-medium text-gray-700">Additional Details:</label>
+              <textarea
+                id="additionalDetails"
+                formControlName="prompt"
+                rows="3"
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Provide additional details about the product, event, sale, or brand..."
+              ></textarea>
+            </div>
+          </div>
 
-        <div class="mb-4">
-          <label for="num_inference_steps" class="block text-sm font-medium text-gray-700">Num Inference Steps:</label>
-          <input type="number" id="num_inference_steps" name="num_inference_steps" [(ngModel)]="num_inference_steps" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
+          <div>
+            <div class="mb-4">
+              <label for="prompt" class="block text-sm font-medium text-gray-700">Prompt:</label>
+              <input type="text" id="prompt" name="prompt" [(ngModel)]="prompt" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
 
-        <!-- Generate Button -->
-        <div class="text-center">
-          <button
-            (click)="generateAdImage()"
-            class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 w-full"
-            [disabled]="isLoading">
-            Generate Image
-          </button>
-        </div>
+            <div class="mb-4">
+              <label for="seed" class="block text-sm font-medium text-gray-700">Seed:</label>
+              <input type="number" id="seed" name="seed" [(ngModel)]="seed" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
 
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="mt-4 text-center">
-          <p class="text-blue-500 font-semibold">Generating your ad image... Please wait.</p>
-        </div>
+            <div class="mb-4 flex items-center">
+              <label for="randomizeSeed" class="block text-sm font-medium text-gray-700 mr-2">Randomize Seed:</label>
+              <input type="checkbox" id="randomizeSeed" name="randomizeSeed" [(ngModel)]="randomizeSeed" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            </div>
 
-        <!-- Error Message -->
-        <div *ngIf="errorMessage && !isLoading" class="mt-4 text-center">
-          <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700">Recommended Dimensions:</label>
+              <p class="text-sm text-gray-500">Vertical: 1080 x 1920</p>
+              <p class="text-sm text-gray-500">YouTube Video Thumbnail: 1280 x 720</p>
+              <p class="text-sm text-gray-500">3:4 Post: 1080 x 1440</p>
+            </div>
+
+            <div class="mb-4">
+              <label for="width" class="block text-sm font-medium text-gray-700">Width:</label>
+              <input type="number" id="width" name="width" [(ngModel)]="width" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div class="mb-4">
+              <label for="height" class="block text-sm font-medium text-gray-700">Height:</label>
+              <input type="number" id="height" name="height" [(ngModel)]="height" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <div class="mb-4">
+              <label for="num_inference_steps" class="block text-sm font-medium text-gray-700">Num Inference Steps:</label>
+              <input type="number" id="num_inference_steps" name="num_inference_steps" [(ngModel)]="num_inference_steps" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+
+            <!-- Generate Button -->
+            <div class="text-center">
+              <button
+                type="submit"
+                class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 w-full"
+                [disabled]="isLoading">
+                Generate Image
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </form>
 
       <!-- Display Generated Image -->
       <div class="flex justify-center items-center bg-gray-50 rounded-lg shadow-md p-4">
@@ -90,7 +166,6 @@
         </ng-template>
       </div>
     </div>
-
   </div>
 </body>
 
