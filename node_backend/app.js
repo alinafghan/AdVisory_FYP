@@ -9,6 +9,7 @@ const predictionRouter = require("./routes/BudgetModelRoute"); // Import the pre
 const userRouter = require("./routes/UserRouter");
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
+const adRouter = require("./routes/adsRouter");
 
 const app = express();
 
@@ -26,9 +27,10 @@ app.use(
     credentials: true, // Allow sending cookies (if needed)
   })
 );
-
+console.log("Its working");
 //ROUTES
 // /predict is the prediction router
+app.use("/ads", adRouter);
 app.use("/auth", authRouter);
 app.use("/predict", predictionRouter);
 app.use("/user", userRouter);

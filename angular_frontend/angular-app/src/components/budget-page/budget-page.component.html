@@ -1,171 +1,81 @@
-<!DOCTYPE html>
+                                                           <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Budget Prediction</title>
- <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Allocation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-6">
+
+                                                           <div class="max-w-3xl mx-auto p-6 bg-gray-900 shadow-lg rounded-lg">
+                                                            <h2 class="text-2xl font-bold text-center mb-4 text-white">Budget Allocation</h2>
                                                           
- <body class="font-sans bg-gray-100 p-8">
-<div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+                                                            <!-- Campaign Selection -->
+                                                            <div class="mb-4">
+                                                              <label for="campaign" class="block text-lg font-medium text-gray-300">Select Campaign:</label>
+                                                              <select 
+                                                                id="campaign" 
+                                                                [(ngModel)]="selectedCampaign" 
+                                                                (change)="fetchAds()" 
+                                                                class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                              >
+                                                                <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
+                                                                  {{ campaign.campaignId }}
+                                                                </option>
+                                                              </select>
+                                                            </div>
                                                           
-
-<div class="text-center mb-8">
-<p class="text-2xl text-gray-800">Obtain Optimal Budget Prediction</p>
-      <p class="text-lg text-gray-600 mt-2">Enter your parameters below</p>
- </div>
-
-     <form (ngSubmit)="submitForm()" class="space-y-6">
-         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label for="target_audience" class="block text-gray-700">
-                    Target Audience:
-                    <select id="target_audience" name = "target_audience" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of targetAudienceOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-            <div>
-                <label for="campaign_goal" class="block text-gray-700">
-                    Campaign Goal:
-                    <select id="campaign_goal" name = "campaign_goal" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of campaignGoalOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-            <div>
-                <label for="duration" class="block text-gray-700">
-                    Campaign Duration:
-                    <select id="duration" name = "duration" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of durationOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-            <div>
-                <label for="channel_used" class="block text-gray-700">
-                    Channel Used:
-                    <select id="channel_used" name = "channel_used" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of channelOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-
-            <div>
-                <label for="location" class="block text-gray-700">
-                    Location:
-                    <select id="location" name = "location" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of locationOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-            <div>
-                <label for="language" class="block text-gray-700">
-                    Language:
-                    <select id="language" name = "language" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of languageOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-
-             <div>
-                 <label for="conv_rate" class="block text-gray-700">
-                     Conversion Rate:
-                     <input id="conv_rate" type="text" [(ngModel)]="conv_rate" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="acq_cost" class="block text-gray-700">
-                     Acquisition Cost:
-                     <input id="acq_cost" type="text" [(ngModel)]="acq_cost" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="clicks" class="block text-gray-700">
-                     Clicks:
-                     <input id="clicks" type="text" [(ngModel)]="clicks" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="impressions" class="block text-gray-700">
-                     Impressions:
-                     <input id="impressions" type="text" [(ngModel)]="impressions" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="engagement_score" class="block text-gray-700">
-                     Engagement Score:
-                     <input id="engagement_score" type="text" [(ngModel)]="engagement_score" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                <label for="cust_segment" class="block text-gray-700">
-                    Product Type:
-                    <select id="cust_segment" name = "cust_segment" class="mt-2 p-3 border border-gray-300 rounded-lg w-full text-black">
-<option *ngFor="let option of customerSegmentOptions" [value]="option.value">
-    {{ option.label }}
-</option>
-                    </select>
-                </label>
-            </div>
-             <div>
-                 <label for="cpc" class="block text-gray-700">
-                     Cost Per Click
-                     <input id="cpc" type="text" [(ngModel)]="cpc" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="ctr" class="block text-gray-700">
-                     Click through Rate:
-                     <input id="ctr" type="text" [(ngModel)]="ctr" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="cpi" class="block text-gray-700">
-                     Cost Per Impression
-                     <input id="cpi" type="text" [(ngModel)]="cpi" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-             <div>
-                 <label for="engagement_rate" class="block text-gray-700">
-                     Engagement Rate:
-                     <input id="engagement_rate" type="text" [(ngModel)]="engagement_rate" [ngModelOptions]="{standalone: true}"
-                         class="mt-2 p-3 border border-gray-300 rounded-lg w-full" />
-                 </label>
-             </div>
-         </div>
-         <!-- Submit Button -->
-         <div class="flex justify-center">
-             <button type="submit"
-                 class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition duration-300">
-                 Get Prediction
-             </button>
-         </div>
-     </form>
-     <!-- Display the result -->
-     <div *ngIf="predictionResult" class="mt-8 text-center">
-         <p class="text-xl text-gray-700">Your optimal budget would be:</p>
-         <h3 class="text-3xl font-bold text-orange-500">{{ predictionResult }}</h3>
-     </div>
+                                                            <!-- Ads List -->
+                                                            <div *ngIf="ads.length > 0">
+                                                              <h3 class="text-xl font-semibold text-center mb-3 text-gray-200">Ads in Campaign</h3>
+                                                              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                <div 
+                                                                  class="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
+                                                                  *ngFor="let ad of ads"
+                                                                >
+                                                                  <h4 class="text-lg font-semibold text-white">{{ ad.platform }}</h4>
+                                                                  <p class="text-sm"><strong>CTR:</strong> {{ ad.ctr }}</p>
+                                                                  <p class="text-sm"><strong>CPC:</strong> {{ ad.cpc }}</p>
+                                                                  <p class="text-sm"><strong>CPA:</strong> {{ ad.cpa }}</p>
+                                                                  <p class="text-sm"><strong>Conversions:</strong> {{ ad.conversion_rate }}</p>
+                                                                </div>
+                                                              </div>
+                                                            </div>
                                                           
+                                                            <!-- Budget Input & Allocation -->
+                                                            <div *ngIf="ads.length > 0" class="mt-6">
+                                                              <label for="budget" class="block text-lg font-medium text-gray-300">Enter Total Budget:</label>
+                                                              <input 
+                                                                type="number" 
+                                                                id="budget" 
+                                                                [(ngModel)]="totalBudget" 
+                                                                min="1" 
+                                                                class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                                                              />
+                                                          
+                                                              <button 
+                                                                (click)="allocateBudget()" 
+                                                                class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition"
+                                                              >
+                                                                Allocate Budget
+                                                              </button>
+                                                            </div>
+                                                          
+                                                            <!-- Allocated Budgets -->
+                                                            <div *ngIf="allocatedBudgets.length > 0" class="mt-6">
+                                                              <h3 class="text-xl font-semibold text-center mb-3 text-gray-200">Budget Allocation</h3>
+                                                              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                <div 
+                                                                  class="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
+                                                                  *ngFor="let allocation of allocatedBudgets"
+                                                                >
+                                                                  <p class="text-sm"><strong>Platform:</strong> {{ allocation.platform }}</p>
+                                                                  <p class="text-sm"><strong>Allocated Budget:</strong> ${{ allocation.allocatedBudget | number:'1.2-2' }}</p>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </body>
+                                                        </html>
                                                           
