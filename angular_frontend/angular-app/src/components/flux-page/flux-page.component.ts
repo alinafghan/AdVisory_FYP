@@ -1,73 +1,68 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FluxService } from './flux.service'; 
-import { FormsModule } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FluxService } from './flux.service';
 
 @Component({
   selector: 'app-flux-page',
-  standalone: true,
-  imports: [CommonModule, FormsModule], 
   templateUrl: './flux-page.component.html',
   styleUrls: ['./flux-page.component.css']
 })
 export class FluxPageComponent {
-  generatedImage: string | null = null; 
-  isLoading: boolean = false; 
-  errorMessage: string | null = null; 
+  adForm: FormGroup;
+  generatedImage: string | null = null;
+  isLoading: boolean = false;
+  errorMessage: string | null = null;
 
-  prompt: string = "An advertisement for "; 
-  seed: number = 0;
-  randomizeSeed: boolean = true;
-  width: number = 1024;
-  height: number = 1024;
-  num_inference_steps: number = 4;
-
-  constructor(private fluxService: FluxService) {}
+  constructor(private fb: FormBuilder, private fluxService: FluxService) {
+    // Initialize the form
+    this.adForm = this.fb.group({
+      category: ['', Validators.required],
+      details: this.fb.group({
+        productName: [''],
+        targetAudience: [''],
+        specialOffer: [''],
+        eventName: [''],
+        eventDate: [''],
+        eventLocation: [''],
+        uniqueSellingPoints: [''],
+        salePeriod: [''],
+        mainAttractions: [''],
+        brandMessage: [''],
+        keyVisuals: [''],
+        prompt: ['']
+      })
+    });
+  }
 
   generateAdImage(): void {
+    if (this.adForm.invalid) {
+      this.errorMessage = 'Please fill out the form correctly.';
+      return;
+    }
+
     this.isLoading = true;
     this.errorMessage = null;
     this.generatedImage = null;
 
-    const requestData = {
-      prompt: this.prompt,
-      seed: this.seed,
-      randomize_seed: this.randomizeSeed,
-      width: this.width,
-      height: this.height,
-      num_inference_steps: this.num_inference_steps
-    };
-    // const requestData = {
-    //   prompt: 'a dog', // Test with the same payload as in Postman
-    //   seed: 0,
-    //   randomize_seed: true,
-    //   width: 1024,
-    //   height: 1024,
-    //   num_inference_steps: 4,
-    // };
-  
-    console.log('Request payload:', requestData);
+    // Get the entire form value
+    const formValue = this.adForm.value.details;  // Accessing nested form group 'details'
+    
+    const prompt = `Generate an advertisement for ${this.adForm.value.category}: ` + 
+                   `Sale Period: ${formValue.salePeriod}, ` +
+                   `Main Attractions: ${formValue.mainAttractions}`;
 
-    console.log('Sending API request to generate image...');
+    const requestData = {
+      prompt: prompt,
+      // additional data can be added here as needed
+    };
 
     this.fluxService.generateImage(requestData).subscribe({
       next: (response: any) => {
-        if (response['Generated Image']) {
-          const base64ImageData = response['Generated Image']; //decoding into base64
-          const decodedImage = `data:image/webp;base64,${base64ImageData}`;
-          this.generatedImage = decodedImage;
-          console.log('Generated Image URL:', this.generatedImage);
-          console.log('Decoded Image URL:', decodedImage); //
-
-          // this.generatedImage = `http://localhost:5000${response['Generated Image']}`;
-          // console.log('Generated Image URL:', this.generatedImage);
-        } else {
-          this.errorMessage = 'Unexpected response from server.';
-        }
+        this.generatedImage = response.generatedImage;
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error generating image:', error);
+        console.error('Error:', error);
         this.errorMessage = 'Failed to generate the image. Please try again later.';
         this.isLoading = false;
       }
