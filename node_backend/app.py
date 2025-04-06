@@ -195,7 +195,7 @@ load_dotenv()
 def generate_caption():
     try:
         data = request.get_json()
-
+        print(data.keys())
         client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         if not client.api_key:
             return jsonify({'error': 'API key is not set'}), 500
