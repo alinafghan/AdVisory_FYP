@@ -6,6 +6,8 @@ import { FluxPageComponent } from '../components/flux-page/flux-page.component';
 import {MetricsPageComponent} from '../components/metrics-page/metrics-page.component';
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from '../components/login/login.component';
+import { CaptionGeneratorComponent } from '../components/caption-page/caption-generator.component';
+
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -14,5 +16,7 @@ export const routes: Routes = [
     {path: 'trends', component: TrendsComponent},
     { path: 'flux', component: FluxPageComponent },
     {path: 'metrics', component: MetricsPageComponent},
-    {path: 'login', component : LoginComponent}
+    {path: 'login', component : LoginComponent},
+    { path: 'caption', component: CaptionGeneratorComponent },
+
 ];
