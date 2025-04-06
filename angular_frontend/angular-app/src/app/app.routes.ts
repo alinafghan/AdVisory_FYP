@@ -6,7 +6,7 @@ import { FluxPageComponent } from '../components/flux-page/flux-page.component';
 import {MetricsPageComponent} from '../components/metrics-page/metrics-page.component';
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from '../components/login/login.component';
-import { CaptionGeneratorComponent } from '../components/caption-page/caption-generator.component';
+import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
 
 
 export const routes: Routes = [
@@ -17,6 +17,6 @@ export const routes: Routes = [
     { path: 'flux', component: FluxPageComponent },
     {path: 'metrics', component: MetricsPageComponent},
     {path: 'login', component : LoginComponent},
-    { path: 'caption', component: CaptionGeneratorComponent },
+    { path: 'caption', component: CaptionPageComponent },
 
 ];
