@@ -1,0 +1,13 @@
+<div class="caption-generator">
+    <h2>Generate Captions</h2>
+    <p>Generate SEO friendly and engaging captions and reach your target audience efficiently while maximizing your budget and ROI.</p>
+    
+    <input type="text" placeholder="Describe what you're looking for" [(ngModel)]="textPrompt" />
+    <input type="text" placeholder="Enter image URL" [(ngModel)]="imageUrl" />
+    <input type="file" (change)="convertToBase64($event)" />
+    <button (click)="generateCaption()">Generate</button>
+    
+    <div class="results" *ngIf="caption">
+        <p>{{ caption }}</p>
+    </div>
+</div>
