@@ -1,0 +1,157 @@
+.editor-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Left panel for background & product selection */
+.left-panel {
+    width: 30%;
+    padding: 10px;
+    background-color: #f8f8f8;
+    overflow-y: auto;
+}
+
+/* Right panel where editing happens */
+.right-panel {
+    width: 70%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
+}
+
+/* Selected product image */
+.resizable-draggable {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 200px;
+    height: auto;
+    cursor: grab;
+    border: 2px dashed purple;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Resize handle in bottom-right */
+.resize-handle {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border: 2px solid purple;
+    border-radius: 50%;
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    cursor: nwse-resize;
+}
+
+.resizable-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .resizable-container img {
+    cursor: nwse-resize;
+  }
+  
+  .canvas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ddd;
+    width: 100%;
+    max-width: 800px;
+    height: 600px;
+    margin: auto;
+    background-color: #f9f9f9;
+    position: relative;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.3s;
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .image-wrapper {
+    position: absolute;
+    cursor: grab;
+    user-select: none;
+  }
+  
+  #productimage {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  
+  .resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+    cursor: nwse-resize;
+  }
+  
+  .top-left {
+    top: -5px;
+    left: -5px;
+    cursor: nwse-resize;
+  }
+  
+  .top-right {
+    top: -5px;
+    right: -5px;
+    cursor: nesw-resize;
+  }
+  
+  .bottom-left {
+    bottom: -5px;
+    left: -5px;
+    cursor: nesw-resize;
+  }
+  
+  .bottom-right {
+    bottom: -5px;
+    right: -5px;
+    cursor: nwse-resize;
+  }
+  
+  .rotate-handle {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 15px;
+    height: 15px;
+    background: blue;
+    border-radius: 50%;
+    cursor: grab;
+    transform: translateX(-50%);
+  }
+  

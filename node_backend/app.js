@@ -10,6 +10,7 @@ const userRouter = require("./routes/UserRouter");
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
 const adRouter = require("./routes/adsRouter");
+const image_routes= require("./routes/imageRoute")
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/predict", predictionRouter);
 app.use("/user", userRouter);
 app.use("/predict", predictionRouter);
 app.use("/trends", trendsRoutes); // ✅ Now trendsRoutes is properly imported
+app.use('/api/image', image_routes); // Accessible at /api/image/remove-bg
 
 // Default route (optional)
 app.get("/", (req, res) => {

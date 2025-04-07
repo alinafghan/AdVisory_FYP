@@ -10,6 +10,8 @@ import pandas as pd
 from trends_analyzer import TrendAnalyzer  
 import logging
 from gradio_client import Client
+from rembg_helper import remove_background
+import io
 
 
 # Initialize Flask app
@@ -198,7 +200,33 @@ def flux():
 def health_check():
     return jsonify({"status": "up"}), 200
 
+
+
+################################productad##########################################
+@app.route('/remove-bg', methods=['POST'])
+def remove_bg():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image uploaded'}), 400
+
+    image = request.files['image']
+    image_bytes = image.read()
+
+    try:
+        output_image_bytes = remove_background(image_bytes)
+
+        return send_file(
+            io.BytesIO(output_image_bytes),
+            mimetype='image/png',
+            as_attachment=False,
+            download_name='processed.png'
+        )
+
+    except Exception as e:
+        return jsonify({'error': 'Failed to process image', 'details': str(e)}), 500
+    
+
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
     
