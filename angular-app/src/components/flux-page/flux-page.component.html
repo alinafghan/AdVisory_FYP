@@ -1,97 +1,256 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="min-h-screen bg-[#002039] p-8">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Parameters Panel -->
+    <div class="bg-[#042954] rounded-lg border-2 border-[#E4E4E7] p-6">
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-white leading-6 tracking-tight">
+          Parameters
+        </h2>
+        <p class="text-sm text-[#E4E4E7] mt-1.5">
+          Customize your advertisement settings
+        </p>
+      </div>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flux Image Generator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+      <!-- Prompt Input -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-white mb-2.5"
+          >Prompt</label
+        >
+        <div class="relative">
+          <input
+            type="text"
+            [(ngModel)]="prompt"
+            placeholder="An advertisement for..."
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <svg
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.28086 12.9167C8.20647 12.6283 8.05615 12.3651 7.84555 12.1545C7.63494 11.9439 7.37176 11.7936 7.08336 11.7192L1.97086 10.4008C1.88364 10.3761 1.80687 10.3236 1.75221 10.2512C1.69754 10.1789 1.66797 10.0907 1.66797 10C1.66797 9.90934 1.69754 9.82115 1.75221 9.74881C1.80687 9.67647 1.88364 9.62394 1.97086 9.59918L7.08336 8.28001C7.37166 8.20569 7.63477 8.05549 7.84537 7.84505C8.05596 7.6346 8.20634 7.37159 8.28086 7.08335L9.5992 1.97085C9.6237 1.88328 9.67618 1.80613 9.74863 1.75118C9.82108 1.69622 9.90951 1.66647 10.0004 1.66647C10.0914 1.66647 10.1798 1.69622 10.2523 1.75118C10.3247 1.80613 10.3772 1.88328 10.4017 1.97085L11.7192 7.08335C11.7936 7.37174 11.9439 7.63493 12.1545 7.84553C12.3651 8.05613 12.6283 8.20645 12.9167 8.28085L18.0292 9.59835C18.1171 9.6226 18.1946 9.67502 18.2499 9.74758C18.3052 9.82013 18.3351 9.90881 18.3351 10C18.3351 10.0912 18.3052 10.1799 18.2499 10.2524C18.1946 10.325 18.1171 10.3774 18.0292 10.4017L12.9167 11.7192C12.6283 11.7936 12.3651 11.9439 12.1545 12.1545C11.9439 12.3651 11.7936 12.6283 11.7192 12.9167L10.4009 18.0292C10.3764 18.1167 10.3239 18.1939 10.2514 18.2489C10.179 18.3038 10.0905 18.3336 9.99961 18.3336C9.90868 18.3336 9.82025 18.3038 9.7478 18.2489C9.67535 18.1939 9.62287 18.1167 9.59836 18.0292L8.28086 12.9167Z"
+              stroke="#EEEEF1"
+              stroke-width="1.66667"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
 
-<body class="font-sans bg-gray-100 p-8">
-  <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <!-- Dimensions Section -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-white mb-5"
+          >Dimensions</label
+        >
+        <div class="relative mb-6">
+          <button
+            (click)="toggleDimensionsDropdown()"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[rgba(0,0,0,0.05)] bg-white text-black flex items-center justify-between"
+          >
+            <span>{{ selectedDimension }}</span>
+            <svg
+              class="w-4 h-4"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 6L8 10L12 6"
+                stroke="black"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                opacity="0.5"
+              />
+            </svg>
+          </button>
+          <div
+            *ngIf="showDimensionsDropdown"
+            class="absolute w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+          >
+            <div class="py-1">
+              <button
+                *ngFor="let dimension of dimensions"
+                (click)="selectDimension(dimension)"
+                class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                {{ dimension }}
+              </button>
+            </div>
+          </div>
+        </div>
 
-    <!-- Title and Description -->
-    <div class="text-center mb-8">
-      <p class="text-3xl font-bold text-gray-800">Generate Advertisement</p>
-      <p class="text-lg text-gray-600 mt-2">Customize the parameters and generate your creative advertisement</p>
+        <!-- Width and Height Inputs -->
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Width</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="width"
+              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Height</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="height"
+              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Parameters -->
+      <button
+        (click)="toggleAdvancedParams()"
+        class="w-full h-10 px-4.5 text-white font-medium text-sm flex items-center justify-between mb-6"
+      >
+        <span>Advanced Parameters</span>
+        <svg
+          [class.transform]="showAdvancedParams"
+          [class.rotate-180]="showAdvancedParams"
+          class="w-4 h-4 transition-transform duration-200"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 6L8 10L12 6"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <!-- Advanced Parameters Content -->
+      <div *ngIf="showAdvancedParams" class="mb-6">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Seed</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="seed"
+              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="flex items-center">
+            <label
+              class="flex items-center text-sm font-medium text-white cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                [(ngModel)]="randomizeSeed"
+                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span class="ml-2">Randomize Seed</span>
+            </label>
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-white mb-2.5"
+            >Inference Steps</label
+          >
+          <input
+            type="number"
+            [(ngModel)]="num_inference_steps"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <button
+        (click)="generateAdImage()"
+        [disabled]="isLoading"
+        class="w-full h-14 rounded-md bg-[#A027FC] text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-[#8920d6] transition-colors duration-200"
+      >
+        <span>Generate Image</span>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3.33325 8H12.6666"
+            stroke="#FAFAFA"
+            stroke-width="1.33333"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M8 3.33331L12.6667 7.99998L8 12.6666"
+            stroke="#FAFAFA"
+            stroke-width="1.33333"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
     </div>
 
-    <!-- Content Wrapper -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Input Form -->
-      <div>
-        <div class="mb-4">
-          <label for="prompt" class="block text-sm font-medium text-gray-700">Prompt:</label>
-          <input type="text" id="prompt" name="prompt" [(ngModel)]="prompt" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4">
-          <label for="seed" class="block text-sm font-medium text-gray-700">Seed:</label>
-          <input type="number" id="seed" name="seed" [(ngModel)]="seed" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4 flex items-center">
-          <label for="randomizeSeed" class="block text-sm font-medium text-gray-700 mr-2">Randomize Seed:</label>
-          <input type="checkbox" id="randomizeSeed" name="randomizeSeed" [(ngModel)]="randomizeSeed" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">Recommended Dimensions:</label>
-          <p class="text-sm text-gray-500">Vertical: 1080 x 1920</p>
-          <p class="text-sm text-gray-500">YouTube Video Thumbnail: 1280 x 720</p>
-          <p class="text-sm text-gray-500">3:4 Post: 1080 x 1440</p>
-        </div>
-
-        <div class="mb-4">
-          <label for="width" class="block text-sm font-medium text-gray-700">Width:</label>
-          <input type="number" id="width" name="width" [(ngModel)]="width" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4">
-          <label for="height" class="block text-sm font-medium text-gray-700">Height:</label>
-          <input type="number" id="height" name="height" [(ngModel)]="height" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4">
-          <label for="num_inference_steps" class="block text-sm font-medium text-gray-700">Num Inference Steps:</label>
-          <input type="number" id="num_inference_steps" name="num_inference_steps" [(ngModel)]="num_inference_steps" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <!-- Generate Button -->
+    <!-- Preview Panel -->
+    <div class="bg-[#042954] rounded-lg border-2 border-[#E4E4E7] p-6 flex flex-col h-full">
+      <div *ngIf="isLoading" class="flex-grow flex items-center justify-center">
         <div class="text-center">
-          <button
-            (click)="generateAdImage()"
-            class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 w-full"
-            [disabled]="isLoading">
-            Generate Image
-          </button>
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white-500 mx-auto mb-4"></div>
+          <p class="text-white font-semibold">
+            Generating your ad image... Please wait.
+          </p>
         </div>
+      </div>
 
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="mt-4 text-center">
-          <p class="text-blue-500 font-semibold">Generating your ad image... Please wait.</p>
-        </div>
-
-        <!-- Error Message -->
-        <div *ngIf="errorMessage && !isLoading" class="mt-4 text-center">
+      <!-- Error Message -->
+      <div *ngIf="errorMessage && !isLoading" class="flex-grow flex items-center justify-center">
+        <div class="text-center">
           <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
         </div>
       </div>
 
-      <!-- Display Generated Image -->
-      <div class="flex justify-center items-center bg-gray-50 rounded-lg shadow-md p-4">
-        <div *ngIf="generatedImage && !isLoading; else placeholder">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Your Generated Advertisement:</h3>
-          <img [src]="generatedImage" alt="Generated Ad" class="rounded-lg shadow-md max-w-full">
+      <!-- Generated Image Display -->
+      <div
+        *ngIf="generatedImage && !isLoading"
+        class="flex-grow flex flex-col"
+      >
+        <h3 class="text-lg font-semibold text-white mb-4 text-center">
+          <!-- Your Generated Advertisement: -->
+        </h3>
+        <div class="flex-grow flex items-center justify-center">
+          <div class="image-container">
+            <img
+              [src]="generatedImage"
+              alt="Generated Ad"
+              class="rounded-lg shadow-md max-w-full max-h-full object-contain"
+            />
+          </div>
         </div>
-        <ng-template #placeholder>
-          <p class="text-gray-400 text-center">Your generated image will appear here.</p>
-        </ng-template>
       </div>
-    </div>
-
+      
+      <!-- Empty state when no image is generated yet -->
+      <div *ngIf="!generatedImage && !isLoading && !errorMessage" class="flex-grow flex items-center justify-center">
+        <div class="text-center text-gray-400">
+          <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <p class="font-medium text-gray-200">Your generated image will appear here</p>
+          <p class="text-sm mt-2 text-gray-300">Configure parameters and click "Generate Image"</p>
+        </div>
+      </div>
+    </div>    
   </div>
-</body>
-
-</html>
+</div>
