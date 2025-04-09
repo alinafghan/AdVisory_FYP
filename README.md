@@ -19,7 +19,7 @@ node app.js
 
 Then, in a third terminal, run:
 ```bash
-cd angular_frontend/angular-app
+cd angular-app
 ng serve
 ```
 
