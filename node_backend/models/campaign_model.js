@@ -5,8 +5,20 @@ const campaignSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  campaignName: {
+    type: String,
+    required: true,
+  },
   duration: {
     //in months? or string from here til here
+    type: String,
+    required: true,
+  },
+  platform: {
+    type: String,
+    required: true,
+  },
+  industry: {
     type: String,
     required: true,
   },
