@@ -1,5 +1,5 @@
 // flux-page.component.ts
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FluxService } from "./flux.service";
 import { FormsModule } from "@angular/forms";
@@ -12,7 +12,7 @@ import { FormsModule } from "@angular/forms";
   templateUrl: "./flux-page.component.html",
   styleUrls: ["./flux-page.component.css"],
 })
-export class FluxPageComponent {
+export class FluxPageComponent implements OnInit{
   // Image Generation Parameters
   prompt: string = "An advertisement for ";
   width: number = 1024;
@@ -20,6 +20,9 @@ export class FluxPageComponent {
   seed: number = 0;
   randomizeSeed: boolean = true;
   num_inference_steps: number = 4;
+
+  campaigns: any[] = [];
+  selectedCampaign!: string;
 
   // UI State
   isLoading: boolean = false;
@@ -38,6 +41,13 @@ export class FluxPageComponent {
   selectedDimension: string = "Vertical (1080 × 1920)";
 
   constructor(private fluxService: FluxService) {}
+
+  ngOnInit() {
+    this.fluxService.getAllCampaigns().subscribe(data => {
+      this.campaigns = data;
+    });
+  }
+ 
 
   toggleAdvancedParams(): void {
     this.showAdvancedParams = !this.showAdvancedParams;
@@ -103,5 +113,31 @@ export class FluxPageComponent {
         this.isLoading = false;
       },
     });
+  }
+  submitImageToCampaign(imageData: string) {
+    if (!imageData) {
+      console.error('No image data to submit');
+      return;
+    }
+    if (!this.selectedCampaign) {
+      alert('Please select a campaign first.');
+      return;
+    }
+    const postData = {
+      campaignId: this.selectedCampaign,
+      prompt: this.prompt,
+      width: this.width,
+      height: this.height,
+      imageData: imageData
+    };
+
+    this.fluxService.addImageToCampaign(postData).subscribe(
+      (response: any) => console.log('Upload successful', response),
+      (error: any) => console.error('Error uploading image', error)
+    );
+  }
+  fetchAds() {
+    // Implementation of fetching ads based on the selected campaign
+    console.log("Fetching ads for campaign:", this.selectedCampaign);
   }
 }

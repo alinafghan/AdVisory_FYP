@@ -4,26 +4,19 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-
 import { AppComponent } from '../../app/app.component';
-import { HeaderComponent } from '../header.component';
 import { FluxPageComponent } from './flux-page.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HeaderComponent
+    // other components
+    FluxPageComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    RouterModule.forRoot([
-      { path: '', component: FluxPageComponent },
-      { path: 'flux', component: FluxPageComponent },
-      // Add more routes as needed
-    ]),
-    HeaderComponent, 
-    FluxPageComponent 
+    HttpClientModule,  // Include HttpClientModule here
+    FormsModule        // Include FormsModule for ngModel
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -240,6 +240,9 @@
           </div>
         </div>
       </div>
+      <!-- Place this button near your image preview area -->
+<button *ngIf="generatedImage" (click)="submitImageToCampaign(generatedImage!)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add to Campaign</button>
+      
       
       <!-- Empty state when no image is generated yet -->
       <div *ngIf="!generatedImage && !isLoading && !errorMessage" class="flex-grow flex items-center justify-center">
@@ -251,6 +254,21 @@
           <p class="text-sm mt-2 text-gray-300">Configure parameters and click "Generate Image"</p>
         </div>
       </div>
+      <!-- Place inside your existing div structure where appropriate -->
+<div class="mb-4">
+  <label for="campaign" class="block text-lg font-medium text-gray-300">Select Campaign:</label>
+  <select 
+    id="campaign" 
+    [(ngModel)]="selectedCampaign" 
+    (change)="fetchAds()"
+    class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+  >
+    <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
+      {{ campaign.campaignId }}
+    </option>
+  </select>
+</div>
+
     </div>    
   </div>
 </div>
