@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homepage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: {
+                light: "#1e3a5f",
+                DEFAULT: "#0a192f",
+                dark: "#051124",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwind">
+      body {
+        @apply bg-[#0a192f] text-white;
+      }
+      .bg-navy {
+        background-color: #0a192f;
+      }
+      .bg-navy-light {
+        background-color: #1e3a5f;
+      }
+      .bg-dark-gray {
+        background-color: #0f0f14;
+      }
+      .hover\:bg-opacity-80:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body class="font-sans bg-gray-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav
+      class="border-b border-gray-800 px-6 py-4 flex justify-between items-center"
+      style="background-color: #0f0f14"
+    >
+      <div class="flex items-center">
+        <span class="text-xl font-bold">
+          <span class="text-white">Ad</span
+          ><span class="text-purple-400">Visory</span>
+        </span>
+      </div>
+      <div class="flex items-center space-x-8">
+        <a href="#" class="text-white hover:text-gray-300">Home</a>
+        <div class="relative group">
+          <button class="flex items-center text-white hover:text-gray-300">
+            Services
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="ml-1 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+        <a href="#" class="text-white hover:text-gray-300">Login</a>
+        <a href="#" class="text-white hover:text-gray-300">Sign Up</a>
+      </div>
+    </nav>
+
+    <div class="flex">
+      <app-sidebar></app-sidebar>
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col ml-20 mr-20">
+        <!-- Title and Caption -->
+        <div class="mt-16 text-center">
+          <h1 class="text-4xl font-bold mb-4">Campaign Manager Tools</h1>
+          <p class="text-gray-300 max-w-2xl mx-auto">
+            Manage everything to do with your social media advertising
+            campaigns, all in one place.
+          </p>
+        </div>
+
+        <!-- Create New Button -->
+        <div class="flex justify-center mt-12">
+          <a href="/campaign">
+            <button
+              class="border border-gray-600 rounded-full px-8 py-3 hover:bg-navy-light transition duration-300"
+              style="background-color: #0f0f14"
+            >
+              Create New Campaign
+            </button>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-20">
+          <div
+            [routerLink]="['/selected_campaign', campaign.campaignId]"
+            *ngFor="let campaign of campaigns"
+            class="bg-dark-gray rounded-lg p-8 flex flex-col items-center justify-center hover:bg-opacity-80 cursor-pointer transition duration-300"
+          >
+            <h2 class="text-2xl font-bold mb-8">
+              {{ campaign.campaignId || "Unnamed Campaign" }}
+            </h2>
+            <lucide-icon
+              [img]="ArrowRight"
+              class="my-icon size-20"
+            ></lucide-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
