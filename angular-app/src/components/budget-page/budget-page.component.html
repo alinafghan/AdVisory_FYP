@@ -1,81 +1,247 @@
-                                                           <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Allocation</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AdVisory - Budget Allocation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-6">
 
-                                                           <div class="max-w-3xl mx-auto p-6 bg-gray-900 shadow-lg rounded-lg">
-                                                            <h2 class="text-2xl font-bold text-center mb-4 text-white">Budget Allocation</h2>
-                                                          
-                                                            <!-- Campaign Selection -->
-                                                            <div class="mb-4">
-                                                              <label for="campaign" class="block text-lg font-medium text-gray-300">Select Campaign:</label>
-                                                              <select 
-                                                                id="campaign" 
-                                                                [(ngModel)]="selectedCampaign" 
-                                                                (change)="fetchAds()" 
-                                                                class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                              >
-                                                                <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
-                                                                  {{ campaign.campaignId }}
-                                                                </option>
-                                                              </select>
-                                                            </div>
-                                                          
-                                                            <!-- Ads List -->
-                                                            <div *ngIf="ads.length > 0">
-                                                              <h3 class="text-xl font-semibold text-center mb-3 text-gray-200">Ads in Campaign</h3>
-                                                              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                                <div 
-                                                                  class="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
-                                                                  *ngFor="let ad of ads"
-                                                                >
-                                                                  <h4 class="text-lg font-semibold text-white">{{ ad.platform }}</h4>
-                                                                  <p class="text-sm"><strong>CTR:</strong> {{ ad.ctr }}</p>
-                                                                  <p class="text-sm"><strong>CPC:</strong> {{ ad.cpc }}</p>
-                                                                  <p class="text-sm"><strong>CPA:</strong> {{ ad.cpa }}</p>
-                                                                  <p class="text-sm"><strong>Conversions:</strong> {{ ad.conversion_rate }}</p>
-                                                                </div>
-                                                              </div>
-                                                            </div>
-                                                          
-                                                            <!-- Budget Input & Allocation -->
-                                                            <div *ngIf="ads.length > 0" class="mt-6">
-                                                              <label for="budget" class="block text-lg font-medium text-gray-300">Enter Total Budget:</label>
-                                                              <input 
-                                                                type="number" 
-                                                                id="budget" 
-                                                                [(ngModel)]="totalBudget" 
-                                                                min="1" 
-                                                                class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-                                                              />
-                                                          
-                                                              <button 
-                                                                (click)="allocateBudget()" 
-                                                                class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition"
-                                                              >
-                                                                Allocate Budget
-                                                              </button>
-                                                            </div>
-                                                          
-                                                            <!-- Allocated Budgets -->
-                                                            <div *ngIf="allocatedBudgets.length > 0" class="mt-6">
-                                                              <h3 class="text-xl font-semibold text-center mb-3 text-gray-200">Budget Allocation</h3>
-                                                              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                                <div 
-                                                                  class="p-4 border border-gray-700 rounded-lg shadow-md bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
-                                                                  *ngFor="let allocation of allocatedBudgets"
-                                                                >
-                                                                  <p class="text-sm"><strong>Platform:</strong> {{ allocation.platform }}</p>
-                                                                  <p class="text-sm"><strong>Allocated Budget:</strong> ${{ allocation.allocatedBudget | number:'1.2-2' }}</p>
-                                                                </div>
-                                                              </div>
-                                                            </div>
-                                                          </div>
-                                                        </body>
-                                                        </html>
-                                                          
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: {
+                light: "#1e3a5f",
+                DEFAULT: "#0a192f",
+                dark: "#051124",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwind">
+      body {
+        @apply bg-[#0a192f] text-white;
+      }
+      .bg-navy {
+        background-color: #0a192f;
+      }
+      .bg-navy-light {
+        background-color: #1e3a5f;
+      }
+      .bg-dark-gray {
+        background-color: #0f0f14;
+      }
+      .hover\:bg-opacity-80:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Navigation Bar -->
+    <nav
+      class="border-b border-gray-800 px-6 py-4 flex justify-between items-center"
+      style="background-color: #0f0f14"
+    >
+      <div class="flex items-center">
+        <span class="text-xl font-bold">
+          <span class="text-white">Ad</span
+          ><span class="text-purple-400">Visory</span>
+        </span>
+      </div>
+      <div class="flex items-center space-x-8">
+        <a href="#" class="text-white hover:text-gray-300">Home</a>
+        <div class="relative group">
+          <button class="flex items-center text-white hover:text-gray-300">
+            Services
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="ml-1 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+        <a href="#" class="text-white hover:text-gray-300">Login</a>
+        <a href="#" class="text-white hover:text-gray-300">Sign Up</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex">
+      <!-- Sidebar -->
+      <div class="w-64 bg-dark-gray min-h-[calc(100vh-64px)] p-4">
+        <div class="mb-6">
+          <a href="#" class="flex items-center text-white hover:text-gray-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-6 mr-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            <span class="text-[15.5px]">AdVisory</span>
+          </a>
+        </div>
+        <div>
+          <a href="#" class="flex items-center text-white hover:text-gray-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-6 mr-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="text-[15.5px]">Explore more</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="flex-1 p-6" style="background-color: #011021">
+        <div class="max-w-4xl mx-auto">
+          <h1 class="text-4xl font-bold pt-10 text-center mb-2">
+            Generate SmartBudget
+          </h1>
+          <p class="text-center text-gray-400 mb-12">
+            Create the optimal budget for your campaigns and maximize your
+            return on investment
+          </p>
+
+          <!-- Campaign Selection -->
+          <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Select Campaign</h2>
+            <div class="relative">
+              <select
+                id="campaign"
+                [(ngModel)]="selectedCampaign"
+                (change)="fetchAds()"
+                class="w-full p-3 border border-gray-700 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style="background-color: #3c4652"
+              >
+                <option value="" disabled selected>Select a campaign</option>
+                <option
+                  *ngFor="let campaign of campaigns"
+                  [ngValue]="campaign.campaignId"
+                >
+                  {{ campaign.campaignId }}
+                </option>
+              </select>
+              <div
+                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
+              >
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ads List -->
+          <div *ngIf="ads.length > 0" class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Ads in Campaign</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div
+                *ngFor="let ad of ads"
+                class="p-4 border border-gray-700 rounded-lg transition hover:opacity-80"
+                style="background-color: #3c4652"
+              >
+                <h4 class="text-lg font-semibold">{{ ad.platform }}</h4>
+                <p class="text-sm text-gray-300">
+                  <strong>CTR:</strong> {{ ad.ctr }}%
+                </p>
+                <p class="text-sm text-gray-300">
+                  <strong>CPC:</strong> ${{ ad.cpc }}
+                </p>
+                <p class="text-sm text-gray-300">
+                  <strong>CPA:</strong> ${{ ad.cpa }}
+                </p>
+                <p class="text-sm text-gray-300">
+                  <strong>Conversions:</strong> {{ ad.conversion_rate }}%
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Budget Input & Allocation -->
+          <div *ngIf="ads.length > 0" class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Enter Total Budget</h3>
+            <div class="flex flex-col md:flex-row gap-4">
+              <input
+                type="number"
+                id="budget"
+                [(ngModel)]="totalBudget"
+                min="1"
+                placeholder="Enter budget amount"
+                class="flex-1 p-3 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                style="background-color: #3c4652"
+              />
+              <button
+                (click)="allocateBudget()"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
+              >
+                Allocate Budget
+              </button>
+            </div>
+          </div>
+
+          <!-- Allocated Budgets -->
+          <div *ngIf="allocatedBudgets.length > 0">
+            <h3 class="text-xl font-semibold mb-2">Budget Allocation</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20">
+              <div
+                *ngFor="let allocation of allocatedBudgets"
+                class="p-4 border border-gray-700 rounded-lg transition hover:opacity-80"
+                style="background-color: #3c4652"
+              >
+                <p class="text-sm text-gray-300">
+                  <strong>Platform:</strong> {{ allocation.platform }}
+                </p>
+                <p class="text-sm text-gray-300">
+                  <strong>Allocated Budget:</strong> ${{
+                    allocation.allocatedBudget | number : "1.2-2"
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
