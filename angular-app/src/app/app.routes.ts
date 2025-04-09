@@ -8,6 +8,8 @@ import { ManageCampaignComponent } from '../components/manage-campaign/manage-ca
 import { LoginComponent } from '../components/login/login.component';
 import { CampaignComponent } from '../components/campaign/campaign.component';
 import { SelectedCampaignComponent } from '../components/selected-campaign/selected-campaign.component';
+import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
+
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -21,4 +23,6 @@ export const routes: Routes = [
     {path: 'selected_campaign/:campaignId', component : SelectedCampaignComponent},
     {path: 'campaign', component : CampaignComponent},
     // {path: '**', redirectTo: '/home'}
+    { path: 'caption', component: CaptionPageComponent },
+
 ];
