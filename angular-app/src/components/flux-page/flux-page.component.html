@@ -11,17 +11,179 @@
         </p>
       </div>
 
-      <!-- Prompt Input -->
+      <!-- Ad Type Selector -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-white mb-2.5"
-          >Prompt</label
-        >
+        <label class="block text-sm font-medium text-white mb-2.5">Ad Type</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button 
+            [class.bg-[#A027FC]]="selectedAdType === 'Product'"
+            [class.bg-[#042954]]="selectedAdType !== 'Product'"
+            [class.border-white]="selectedAdType === 'Product'"
+            class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
+            (click)="selectAdType('Product')">
+            Product
+          </button>
+          <button 
+            [class.bg-[#A027FC]]="selectedAdType === 'Sale'"
+            [class.bg-[#042954]]="selectedAdType !== 'Sale'"
+            [class.border-white]="selectedAdType === 'Sale'"
+            class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
+            (click)="selectAdType('Sale')">
+            Sale
+          </button>
+          <button 
+            [class.bg-[#A027FC]]="selectedAdType === 'Event'"
+            [class.bg-[#042954]]="selectedAdType !== 'Event'"
+            [class.border-white]="selectedAdType === 'Event'"
+            class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
+            (click)="selectAdType('Event')">
+            Event
+          </button>
+        </div>
+      </div>
+
+      <!-- Product Ad Fields -->
+      <div *ngIf="selectedAdType === 'Product'" class="mb-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Product Type</label>
+          <input
+            type="text"
+            [(ngModel)]="productType"
+            placeholder="e.g., Smartphone, Cosmetics, Clothing"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Product Name</label>
+          <input
+            type="text"
+            [(ngModel)]="productName"
+            placeholder="e.g., iPhone 14 Pro, Moisturizing Cream"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Product Appearance</label>
+          <input
+            type="text"
+            [(ngModel)]="productAppearance"
+            placeholder="e.g., Sleek aluminum, Elegant glass bottle"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <!-- Sale Ad Fields -->
+      <div *ngIf="selectedAdType === 'Sale'" class="mb-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Sale Type</label>
+          <input
+            type="text"
+            [(ngModel)]="saleType"
+            placeholder="e.g., Black Friday, Summer Clearance"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Discount Amount</label>
+          <input
+            type="text"
+            [(ngModel)]="discountAmount"
+            placeholder="e.g., 50% off, Buy One Get One Free"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Limited Time Offer</label>
+          <input
+            type="text"
+            [(ngModel)]="limitedTimeOffer"
+            placeholder="e.g., This weekend only, Ends Monday"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <!-- Event Ad Fields -->
+      <div *ngIf="selectedAdType === 'Event'" class="mb-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Event Name</label>
+          <input
+            type="text"
+            [(ngModel)]="eventName"
+            placeholder="e.g., Annual Conference, Product Launch"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Event Date</label>
+          <input
+            type="text"
+            [(ngModel)]="eventDate"
+            placeholder="e.g., July 15, 2025, Next Saturday"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Event Location</label>
+          <input
+            type="text"
+            [(ngModel)]="eventLocation"
+            placeholder="e.g., Downtown Convention Center, Online"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <!-- Common Fields (Always Visible) -->
+      <div class="mb-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Details</label>
+          <input
+            type="text"
+            [(ngModel)]="details"
+            placeholder="Additional details about the advertisement"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Lighting</label>
+          <input
+            type="text"
+            [(ngModel)]="lighting"
+            placeholder="e.g., Soft, Bright, Dramatic"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Colors</label>
+          <input
+            type="text"
+            [(ngModel)]="colors"
+            placeholder="e.g., Vibrant, Pastel, Blue and White"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-white mb-2">Style</label>
+          <input
+            type="text"
+            [(ngModel)]="style"
+            placeholder="e.g., Minimalist, Retro, Corporate"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <!-- Prompt Input (Read-only, to show the constructed prompt) -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-white mb-2.5">Generated Prompt</label>
         <div class="relative">
           <input
             type="text"
-            [(ngModel)]="prompt"
-            placeholder="An advertisement for..."
-            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [value]="constructedPrompt"
+            readonly
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-gray-100 text-black focus:outline-none"
           />
           <svg
             class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
@@ -42,11 +204,56 @@
         </div>
       </div>
 
+      <!-- Add this section just after the Generated Prompt section and before the Dimensions section -->
+<!-- Enhanced Prompt Display and Editor -->
+<div class="mb-6" *ngIf="isPromptEnhanced || enhancedPrompt">
+  <div class="flex justify-between items-center mb-2.5">
+    <label class="block text-sm font-medium text-white">Enhanced Prompt</label>
+    <button 
+      (click)="resetPrompt()" 
+      class="text-xs text-white bg-gray-600 hover:bg-gray-700 px-2 py-1 rounded"
+    >
+      Reset
+    </button>
+  </div>
+  <textarea
+    [(ngModel)]="enhancedPrompt"
+    placeholder="Your enhanced prompt will appear here"
+    class="w-full px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+    rows="4"
+  ></textarea>
+</div>
+
+<div class="flex flex-col gap-4 mb-6">
+  <button
+    (click)="enhancePrompt()"
+    [disabled]="isLoading"
+    class="w-full h-14 rounded-md bg-[#6B21A8] text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-[#5B1B98] transition-colors duration-200"
+  >
+    <span>Enhance Prompt</span>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8.28086 12.9167C8.20647 12.6283 8.05615 12.3651 7.84555 12.1545C7.63494 11.9439 7.37176 11.7936 7.08336 11.7192L1.97086 10.4008C1.88364 10.3761 1.80687 10.3236 1.75221 10.2512C1.69754 10.1789 1.66797 10.0907 1.66797 10C1.66797 9.90934 1.69754 9.82115 1.75221 9.74881C1.80687 9.67647 1.88364 9.62394 1.97086 9.59918L7.08336 8.28001C7.37166 8.20569 7.63477 8.05549 7.84537 7.84505C8.05596 7.6346 8.20634 7.37159 8.28086 7.08335L9.5992 1.97085C9.6237 1.88328 9.67618 1.80613 9.74863 1.75118C9.82108 1.69622 9.90951 1.66647 10.0004 1.66647C10.0914 1.66647 10.1798 1.69622 10.2523 1.75118C10.3247 1.80613 10.3772 1.88328 10.4017 1.97085L11.7192 7.08335C11.7936 7.37174 11.9439 7.63493 12.1545 7.84553C12.3651 8.05613 12.6283 8.20645 12.9167 8.28085L18.0292 9.59835C18.1171 9.6226 18.1946 9.67502 18.2499 9.74758C18.3052 9.82013 18.3351 9.90881 18.3351 10C18.3351 10.0912 18.3052 10.1799 18.2499 10.2524C18.1946 10.325 18.1171 10.3774 18.0292 10.4017L12.9167 11.7192C12.6283 11.7936 12.3651 11.9439 12.1545 12.1545C11.9439 12.3651 11.7936 12.6283 11.7192 12.9167L10.4009 18.0292C10.3764 18.1167 10.3239 18.1939 10.2514 18.2489C10.179 18.3038 10.0905 18.3336 9.99961 18.3336C9.90868 18.3336 9.82025 18.3038 9.7478 18.2489C9.67535 18.1939 9.62287 18.1167 9.59836 18.0292L8.28086 12.9167Z"
+        stroke="#FAFAFA"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </button>
+
+ 
+"</div>
+
       <!-- Dimensions Section -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-white mb-5"
-          >Dimensions</label
-        >
+        <label class="block text-sm font-medium text-white mb-5">Dimensions</label>
         <div class="relative mb-6">
           <button
             (click)="toggleDimensionsDropdown()"
@@ -88,9 +295,7 @@
         <!-- Width and Height Inputs -->
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5"
-              >Width</label
-            >
+            <label class="block text-sm font-medium text-white mb-2.5">Width</label>
             <input
               type="number"
               [(ngModel)]="width"
@@ -98,9 +303,7 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5"
-              >Height</label
-            >
+            <label class="block text-sm font-medium text-white mb-2.5">Height</label>
             <input
               type="number"
               [(ngModel)]="height"
@@ -138,9 +341,7 @@
       <div *ngIf="showAdvancedParams" class="mb-6">
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5"
-              >Seed</label
-            >
+            <label class="block text-sm font-medium text-white mb-2.5">Seed</label>
             <input
               type="number"
               [(ngModel)]="seed"
@@ -161,9 +362,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <label class="block text-sm font-medium text-white mb-2.5"
-            >Inference Steps</label
-          >
+          <label class="block text-sm font-medium text-white mb-2.5">Inference Steps</label>
           <input
             type="number"
             [(ngModel)]="num_inference_steps"
@@ -240,8 +439,7 @@
           </div>
         </div>
       </div>
-<button *ngIf="generatedImage" (click)="submitImageToCampaign(generatedImage!)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add to Campaign</button>
-      
+      <button *ngIf="generatedImage" (click)="submitImageToCampaign(generatedImage!)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add to Campaign</button>
       
       <!-- Empty state when no image is generated yet -->
       <div *ngIf="!generatedImage && !isLoading && !errorMessage" class="flex-grow flex items-center justify-center">
@@ -253,21 +451,20 @@
           <p class="text-sm mt-2 text-gray-300">Configure parameters and click "Generate Image"</p>
         </div>
       </div>
-      <!-- Place inside your existing div structure where appropriate -->
-<div class="mb-4">
-  <label for="campaign" class="block text-lg font-medium text-gray-300">Select Campaign:</label>
-  <select 
-    id="campaign" 
-    [(ngModel)]="selectedCampaign" 
-    (change)="fetchAds()"
-    class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-  >
-    <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
-      {{ campaign.campaignId }}
-    </option>
-  </select>
-</div>
-
+      <!-- Campaign Selection -->
+      <div class="mb-4">
+        <label for="campaign" class="block text-lg font-medium text-gray-300">Select Campaign:</label>
+        <select 
+          id="campaign" 
+          [(ngModel)]="selectedCampaign" 
+          (change)="fetchAds()"
+          class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
+            {{ campaign.campaignId }}
+          </option>
+        </select>
+      </div>
     </div>    
   </div>
 </div>

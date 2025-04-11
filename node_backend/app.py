@@ -3,6 +3,7 @@ import base64
 import os
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS 
+from transformers import pipeline  # ✅ This imports the pipeline function
 import xgboost as xgb
 import numpy as np
 from flask_cors import CORS
@@ -12,6 +13,9 @@ import logging
 from gradio_client import Client
 from dotenv import load_dotenv
 import openai
+import torch
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
 
 
 
@@ -222,8 +226,6 @@ def generate_caption():
             content_list.append({"type": "input_text", "text": data['text_prompt']})
             content_list.append({"type": "input_text", "text": "Write a caption for a social media post about this. Make it engaging, include relevant hashtags and emojis if it fits the vibe of the subject."})
 
-
-
         else:
             return jsonify({'error': 'No valid input provided'}), 400
 
@@ -246,6 +248,37 @@ def generate_caption():
 openai_api_key = os.getenv("OPENAI_API_KEY")
 if openai_api_key is None:
     raise ValueError("No API Key found. Please set the OPENAI_API_KEY in the .env file.")
+
+######################### ENHANCE ################################
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model_checkpoint = "gokaygokay/Flux-Prompt-Enhance"
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint).to(device)
+
+enhancer = pipeline('text2text-generation',
+                    model=model,
+                    tokenizer=tokenizer,
+                    repetition_penalty=1.2,
+                    device=device)
+
+@app.route('/enhance', methods=['POST'])
+def enhance_prompt():
+    try:
+        data = request.get_json()
+        if 'prompt' not in data:
+            return jsonify({'error': 'Invalid input. Expected JSON with "prompt" key.'}), 400
+        
+        prefix = "enhance prompt: "
+        input_prompt = prefix + data['prompt']
+        
+        results = enhancer(input_prompt, max_length=256)
+        enhanced_prompt = results[0]['generated_text']
+        
+        return jsonify({'enhanced_prompt': enhanced_prompt})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/health', methods=['GET'])
 def health_check():
