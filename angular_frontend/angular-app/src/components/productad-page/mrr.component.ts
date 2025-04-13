@@ -151,12 +151,47 @@ export class MrrComponent implements OnInit, OnDestroy {
     this.repositionElement(this.initialTop, this.initialLeft);
   }
 
+  // Add getTransformState method to retrieve current transformation properties
+  getTransformState() {
+    // Get the center position of the element
+    const rect = this.boxWrapper.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Get current rotation in degrees
+    const rotation = this.getCurrentRotation(this.boxWrapper);
+    
+    // Calculate scale by comparing current dimensions with initial ones
+    // If initial dimensions aren't stored, we'll use 1 as default scale
+    const baseWidth = this.minWidth;
+    const baseHeight = this.minHeight;
+    const currentWidth = this.box.offsetWidth;
+    const currentHeight = this.box.offsetHeight;
+    
+    // Calculate scale as the average of width and height scale factors
+    const widthScale = currentWidth / baseWidth;
+    const heightScale = currentHeight / baseHeight;
+    const scale = (widthScale + heightScale) / 2;
+    
+    return {
+      x: centerX,
+      y: centerY,
+      rotation: rotation,
+      scale: scale,
+      // Also provide individual dimensional data which might be useful
+      width: currentWidth,
+      height: currentHeight,
+      top: this.boxWrapper.offsetTop,
+      left: this.boxWrapper.offsetLeft
+    };
+  }
+
   private repositionElement(x: number, y: number): void {
     this.boxWrapper.style.left = x + 'px';
     this.boxWrapper.style.top = y + 'px';
   }
 
-  private resize(width: number, height: number): void {
+  public resize(width: number, height: number): void {
     this.box.style.width = width + 'px';
     this.box.style.height = height + 'px';
   }
@@ -165,7 +200,7 @@ export class MrrComponent implements OnInit, OnDestroy {
     this.boxWrapper.style.transform = `rotate(${deg}deg)`;
   }
 
-  private getCurrentRotation(el: HTMLElement): number {
+  public getCurrentRotation(el: HTMLElement): number {
     const st = window.getComputedStyle(el, null);
     const tm = 
       st.getPropertyValue('-webkit-transform') ||
@@ -428,6 +463,7 @@ export class MrrComponent implements OnInit, OnDestroy {
   private getElById(elId: string): HTMLElement | null {
     return this.boxWrapper.querySelector(`#${elId}`);
   }
+  
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -1,5 +1,10 @@
 {
   "dependencies": {
+    "fabric": "^6.6.2",
+    "html2canvas": "^1.4.1",
     "multer": "^1.4.5-lts.2"
+  },
+  "devDependencies": {
+    "@types/fabric": "^5.3.10"
   }
 }

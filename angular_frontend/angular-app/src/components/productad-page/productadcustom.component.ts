@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MrrComponent } from './mrr.component';
+import { HttpClient } from '@angular/common/http'; 
 
 @Component({
   selector: 'app-productadcustom-page',
@@ -9,20 +10,275 @@ import { MrrComponent } from './mrr.component';
   imports: [CommonModule, FormsModule, MrrComponent],
   templateUrl: './productadcustom.component.html',
   styleUrls: ['./productadcustom.css']
- 
 })
 export class ProductAdCustomComponent implements OnInit, AfterViewInit {
+  @ViewChild(MrrComponent) mrrComponent!: MrrComponent;
+  
   productImage: string | null = null;
   selectedBackground: string = '';
   backgrounds: string[] = ['assets/1.png', 'assets/2.png', 'assets/3.png'];
+  customMode = false;
+  customPrompt = '';
+  customExclude = '';
+  
+  // Display dimensions (what's shown on the screen)
+  displayWidth: number = 460;
+  displayHeight: number = 460;
+  
+  // Actual output dimensions (used for download)
+  outputWidth: number = 1080;
+  outputHeight: number = 1080;
+  
+  // Aspect Ratio Settings
+  aspectRatio: string = '1:1'; // Default to Post
+  customWidth: number = 1080;
+  customHeight: number = 1080;
+  // Component properties
+selectedDimension: string = 'square';
+customDimension: boolean = false;
+customGenerateWidth: number | null = null;
+customGenerateHeight: number | null = null;
+
+
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.productImage = sessionStorage.getItem('uploadedImage'); // Retrieve from session storage
   }
 
-  ngAfterViewInit() {}
-
+  ngAfterViewInit() {
+    if (this.productImage) {
+      const img = new Image();
+      img.onload = () => {
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
+        
+        // Set the initial width and height to maintain aspect ratio
+        const initialHeight = 200; // For example
+        const initialWidth = initialHeight * aspectRatio;
+        
+        // Adjust MRR component size
+        if (this.mrrComponent) {
+          this.mrrComponent.resize(initialWidth, initialHeight);
+        }
+      };
+      img.src = this.productImage;
+    }
+  }
+  
   selectBackground(bg: string) {
     this.selectedBackground = bg;
+  }
+
+  toggleCustomMode() {
+    this.customMode = !this.customMode;
+  }
+  
+  // Aspect Ratio Change Handler
+  onAspectRatioChange() {
+    switch (this.aspectRatio) {
+      case '1:1':
+        this.outputWidth = 1080;
+        this.outputHeight = 1080;
+        this.displayWidth = 390;
+        this.displayHeight = 390;
+        break;
+      case '9:16':
+        this.outputWidth = 1080;
+        this.outputHeight = 1920;
+        // Scale the display height proportionally while keeping display width fixed at 460
+        this.displayWidth = 290;
+        this.displayHeight = 290 * (16/9);
+        break;
+      case 'Custom':
+        this.applyCustomDimensions();
+        break;
+    }
+  }
+
+  // Apply Custom Dimensions
+  applyCustomDimensions() {
+    this.outputWidth = this.customWidth;
+    this.outputHeight = this.customHeight;
+    
+    // Set display dimensions proportionally based on a maximum width of 460px
+    const aspectRatio = this.customWidth / this.customHeight;
+    if (aspectRatio >= 1) {
+      // Wider than tall, constrain width to 460
+      this.displayWidth = 460;
+      this.displayHeight = 460 / aspectRatio;
+    } else {
+      // Taller than wide, constrain height to 460
+      this.displayHeight = 460;
+      this.displayWidth = 460 * aspectRatio;
+    }
+  }
+
+  downloadAd() {
+    if (!this.selectedBackground || !this.productImage) {
+      alert('Please select both a background image and a product image');
+      return;
+    }
+  
+    // Create a temporary canvas for the composition
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      alert('Unable to create canvas context');
+      return;
+    }
+
+    // First, get the background image
+    const bgImg = new Image();
+    bgImg.crossOrigin = 'anonymous';
+    bgImg.onload = () => {
+      // Set canvas size based on the output dimensions for the selected aspect ratio
+      canvas.width = this.outputWidth;
+      canvas.height = this.outputHeight;
+      
+      // Draw background on canvas, scaling it to match canvas dimensions
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+      
+      if (!this.mrrComponent) {
+        alert('Error: Could not access product image component');
+        return;
+      }
+      
+      // Get the background image element
+      const backgroundImgElement = document.querySelector('.relative.mt-4.border.p-4 img') as HTMLImageElement;
+      if (!backgroundImgElement) {
+        alert('Error: Could not find background image element');
+        return;
+      }
+      
+      // Get the displayed background dimensions
+      const bgDisplayedWidth = backgroundImgElement.clientWidth;
+      const bgDisplayedHeight = backgroundImgElement.clientHeight;
+      
+      // Calculate scale factors between displayed and output dimensions
+      const scaleX = this.outputWidth / bgDisplayedWidth;
+      const scaleY = this.outputHeight / bgDisplayedHeight;
+      
+      // Load product image
+      const productImg = new Image();
+      productImg.crossOrigin = 'anonymous';
+      productImg.onload = () => {
+        // Get the MRR wrapper element
+        const boxWrapper = this.mrrComponent.boxWrapper;
+        const boxElement = this.mrrComponent.box;
+        
+        // Get the position of the background image in the document
+        const bgRect = backgroundImgElement.getBoundingClientRect();
+        const boxRect = boxWrapper.getBoundingClientRect();
+        
+        // Calculate position relative to the background image
+        const relativeLeft = boxRect.left - bgRect.left;
+        const relativeTop = boxRect.top - bgRect.top;
+        
+        // Scale to the output image dimensions
+        const scaledLeft = relativeLeft * scaleX;
+        const scaledTop = relativeTop * scaleY;
+        
+        // Get width and height of the box
+        const scaledWidth = boxElement.offsetWidth * scaleX;
+        const scaledHeight = boxElement.offsetHeight * scaleY;
+        
+        // Get rotation from MRR component
+        const rotation = this.mrrComponent.getCurrentRotation(boxWrapper);
+        
+        // Calculate center point for rotation
+        const centerX = scaledLeft + (scaledWidth / 2);
+        const centerY = scaledTop + (scaledHeight / 2);
+        
+        // Save current state
+        ctx.save();
+        
+        // Apply transformations
+        ctx.translate(centerX, centerY);
+        ctx.rotate(rotation * Math.PI / 180);
+        
+        // Draw the product image centered at the rotation point
+        ctx.drawImage(
+          productImg,
+          -scaledWidth / 2,
+          -scaledHeight / 2,
+          scaledWidth,
+          scaledHeight
+        );
+        
+        // Restore canvas state
+        ctx.restore();
+        
+        // Convert to data URL and trigger download
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = 'custom-ad.png';
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+      
+      // Set the product image source to start loading
+      productImg.src = this.productImage || '';
+    };
+    
+    // Set background image source to start loading
+    bgImg.src = this.selectedBackground;
+  }
+  // Method to handle dimension selection change
+onDimensionChange() {
+  this.customDimension = this.selectedDimension === 'custom';
+}
+  
+  // Method to call the backend API to generate custom background
+  
+  generateCustomBackground() {
+    let width: number;
+    let height: number;
+  
+    // Determine dimensions based on selection
+    if (this.selectedDimension === 'square') {
+      width = 1080;
+      height = 1080;
+    } else if (this.selectedDimension === 'vertical') {
+      width = 720;
+      height = 1280;
+    } else if (this.selectedDimension === 'custom') {
+      if (this.customWidth && this.customHeight) {
+        width = this.customWidth;
+        height = this.customHeight;
+      } else {
+        console.error('Custom dimensions are not set!');
+        return;
+      }
+    } else {
+      // Fallback to default dimensions
+      width = 512;
+      height = 512;
+    }
+  
+    // Data to send in the API request
+    const requestData = {
+      prompt: this.customPrompt,
+      negative_prompt: this.customExclude,
+      width: width,
+      height: height
+    };
+  
+    // Send POST request to the backend API
+    this.http.post<any>('http://localhost:5000/generate', requestData).subscribe(
+      response => {
+        if (response.images && response.images.length > 0) {
+          // Set the first generated image as the background
+          this.selectedBackground = `data:image/png;base64,${response.images[0]}`;
+        }
+      },
+      error => {
+        console.error('Error generating image:', error);
+      }
+    );
+  
+    // Close custom mode after sending the request
+    this.customMode = false;
   }
 }

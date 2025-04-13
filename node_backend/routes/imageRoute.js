@@ -39,4 +39,37 @@ router.post('/remove-bg', upload.single('image'), async (req, res) => {
     }
 });
 
+//custombackground generation
+// Route for image generation
+router.post('/generate', async (req, res) => {
+    try {
+        // Get the data (prompt, negative_prompt, width, height) from the request body
+        const { prompt, negative_prompt, width, height } = req.body;
+
+        // Prepare the payload to send to the Flask API
+        const payload = {
+            prompt: prompt || '',
+            negative_prompt: negative_prompt || '',
+            width: width || 512,  // Default width
+            height: height || 512,  // Default height
+        };
+
+        // Call the Flask API for image generation
+        const response = await axios.post(`${FLASK_API_URL}/generate`, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // If the Flask response contains base64-encoded image(s)
+        if (response.data.images) {
+            // Send the base64-encoded image(s) back to the frontend
+            return res.json({ images: response.data.images });
+        } else {
+            return res.status(500).json({ error: 'No images returned from Flask API' });
+        }
+    } catch (error) {
+        handlePythonApiError(error, res);
+    }
+});
 module.exports = router;

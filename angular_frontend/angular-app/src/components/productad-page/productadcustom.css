@@ -15,3 +15,6 @@
     background-color: #3b82f6;
     color: white;
   }
+  .relative.mt-4.border.p-4.rounded-lg {
+    background-color: transparent !important;
+}

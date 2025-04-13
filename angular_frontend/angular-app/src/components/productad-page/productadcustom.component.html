@@ -1,52 +1,130 @@
 <div class="flex">
   <!-- Left Panel: Background Selection -->
   <div class="w-1/3 bg-gray-100 p-4">
-    <div class="tabs">
+    <!-- Tabs -->
+    <div class="tabs mb-4">
       <button class="tab active">Generate Visuals</button>
       <button class="tab">Generate Captions</button>
     </div>
-    <div class="grid grid-cols-3 gap-2 mt-4">
-      <div *ngFor="let bg of backgrounds" (click)="selectBackground(bg)" class="cursor-pointer border p-2 rounded-lg">
-        <img *ngIf="bg !== 'assets/1.png'" [src]="bg" class="w-full h-auto rounded-lg" />
-        <img *ngIf="bg !== 'assets/3.png'" [src]="bg" class="w-full h-auto rounded-lg" />
-        <div *ngIf="bg === 'assets/2.png'" class="w-full h-20 bg-gray-200 flex items-center justify-center text-gray-500">
+
+    <!-- Background Grid -->
+    <div *ngIf="!customMode" class="grid grid-cols-3 gap-2">
+      <div
+        *ngFor="let bg of backgrounds; let i = index"
+        (click)="i === 0 ? toggleCustomMode() : selectBackground(bg)"
+        class="cursor-pointer border p-2 rounded-lg hover:border-blue-500 transition-all"
+      >
+        <div *ngIf="i === 0" class="w-full h-20 bg-gray-200 flex items-center justify-center text-gray-500">
           Custom
         </div>
+        <img *ngIf="i !== 0" [src]="bg" class="w-full h-auto rounded-lg" />
+      </div>
+    </div>
+
+    <!-- Custom Mode Panel -->
+    <div *ngIf="customMode" class="mt-4 space-y-4">
+      <label class="block text-sm font-semibold text-gray-700">Describe your photo</label>
+      <textarea
+        class="w-full p-2 border rounded resize-none"
+        rows="3"
+        [(ngModel)]="customPrompt"
+        placeholder="Your product is... e.g. in the middle of a desert"
+      ></textarea>
+
+      <label class="block text-sm font-semibold text-gray-700">List what you don’t want</label>
+      <textarea
+        class="w-full p-2 border rounded resize-none"
+        rows="2"
+        [(ngModel)]="customExclude"
+        placeholder="e.g. ugly, cluttered background..."
+      ></textarea>
+      <!-- Dimension Selector -->
+<label class="block text-sm font-semibold text-gray-700 mt-4">Choose Dimensions</label>
+<select class="w-full p-2 border rounded" [(ngModel)]="selectedDimension" (change)="onDimensionChange()">
+  <option value="square">Square (1080x1080)</option>
+  <option value="vertical">Vertical (720x1280)</option>
+  <option value="custom">Custom</option>
+</select>
+
+<!-- Custom Dimension Inputs -->
+<div *ngIf="customDimension" class="mt-4 space-y-2">
+  <label class="block text-sm font-semibold text-gray-700">Custom Width</label>
+  <input type="number" class="w-full p-2 border rounded" [(ngModel)]="customWidth" placeholder="Enter width in pixels" />
+
+  <label class="block text-sm font-semibold text-gray-700">Custom Height</label>
+  <input type="number" class="w-full p-2 border rounded" [(ngModel)]="customHeight" placeholder="Enter height in pixels" />
+</div>
+
+      <div class="flex justify-between">
+        <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded" (click)="toggleCustomMode()">Back</button>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="generateCustomBackground()">Generate</button>
       </div>
     </div>
   </div>
 
-  <!-- Right Panel: Preview -->
   <div class="w-2/3 p-4">
-    <div class="flex justify-between">
-      <label>Preview as:</label>
-      <select class="border p-2 rounded">
-        <option>Facebook Image</option>
-        <option>Instagram Image</option>
-        <option>Instagram Story</option>
-        <option>Facebook Reel</option>
-      </select>
+    <!-- Preview Options -->
+    <div class="w-2/3 p-4">
+      <!-- Preview Options -->
+      <div class="flex justify-between items-center mb-4">
+        <label>Preview as:</label>
+        <select class="border p-2 rounded" [(ngModel)]="aspectRatio" (change)="onAspectRatioChange()">
+          <option value="1:1">Post</option>
+          <option value="9:16">Vertical</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+    
+      <!-- Custom Dimensions -->
+      <div *ngIf="aspectRatio === 'Custom'" class="flex space-x-4 items-center mb-4">
+        <label for="width">Width:</label>
+        <input id="width" type="number" [(ngModel)]="customWidth" class="border p-2 w-20 rounded" />
+        <label for="height">Height:</label>
+        <input id="height" type="number" [(ngModel)]="customHeight" class="border p-2 w-20 rounded" />
+        <button class="bg-blue-500 text-white px-4 py-2 rounded" (click)="applyCustomDimensions()">Apply</button>
+      </div>
+    
+    
+      <!-- Preview Area -->
+      <div class="relative mt-4 border p-4 rounded-lg bg-white flex justify-center">
+        <div
+          [ngStyle]="{
+            width: displayWidth + 'px',
+            height: displayHeight + 'px',
+            overflow: 'hidden',
+            position: 'relative'
+          }"
+        >
+          <img
+            *ngIf="selectedBackground"
+            [src]="selectedBackground"
+            [ngStyle]="{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+            }"
+          />
+    
+          <app-mrr
+            id="product-ad"
+            [minWidth]="253.73"
+            [minHeight]="133.33"
+            [initialTop]="300"
+            [initialLeft]="300"
+            [disabled]="false"
+            class="absolute top-0 left-0 w-full h-full"
+          >
+            <img
+              *ngIf="productImage"
+              [src]="productImage"
+              alt="Product Image"
+              style="width: 100%; height: 100%; object-fit: contain; pointer-events: none"
+            />
+          </app-mrr>
+        </div>
+      </div>
+    
+      <div class="mt-4">
+        <button class="bg-green-500 text-white px-4 py-2 rounded" (click)="downloadAd()">Make Ad</button>
+      </div>
     </div>
-    <div class="relative mt-4 border p-4 rounded-lg bg-white">
-      <img *ngIf="selectedBackground" [src]="selectedBackground" class="w-full h-auto rounded-lg" />
-      
-       <!-- The MrrComponent for the uploaded product image -->
-  <app-mrr
-  id="product-ad"
-  [minWidth]="253.73"
-  [minHeight]="133.33"
-  [initialTop]="300"
-  [initialLeft]="300"
-  [disabled]="false"
->
-  <img
-    *ngIf="productImage"
-    [src]="productImage"
-    alt="Product Image"
-    style="width: 100%; height: 100%; object-fit: contain; pointer-events:none"
-  />
-</app-mrr>
-    </div>
-  </div>
-</div>
-
