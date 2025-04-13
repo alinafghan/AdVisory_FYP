@@ -39,6 +39,16 @@ customDimension: boolean = false;
 customGenerateWidth: number | null = null;
 customGenerateHeight: number | null = null;
 
+//for "make it your own option"
+promptMode = false;
+selectedPrompt = '';
+selectedPromptBackground = '';
+imagePrompts: { [key: string]: string } = {
+  'assets/2.png': 'Blue studio lighting',
+  'assets/3.png': "A podium base, painted in a soft pink hue, is the focal point of this minimal scene. The podium occupies approximately 15% of the image height. Its base is adorned with a small, round plate, adding a touch of elegance to the design. Positioned on a pristine white surface, the podium casts a soft shadow on the floor beneath it. The backdrop features a cream-colored wall that contrasts with the podium and the floor. The lighting, seemingly artificial, highlights the podium's base and plate, adding depth and dimension without dominating the scene."
+};
+
+
 
   constructor(private http: HttpClient) {}
 
@@ -230,11 +240,31 @@ onDimensionChange() {
   this.customDimension = this.selectedDimension === 'custom';
 }
   
+// make it your own option
+makeItYourOwn(bg: string, event: MouseEvent) {
+  event.stopPropagation(); // Prevent background selection
+  this.promptMode = true;
+  this.selectedPromptBackground = bg;
+  this.selectedPrompt = this.imagePrompts[bg] || '';
+}
+
+
   // Method to call the backend API to generate custom background
   
   generateCustomBackground() {
     let width: number;
     let height: number;
+    let prompt = '';
+  let negativePrompt = '';
+  
+  if (this.promptMode) {
+    // In edit mode, we're using an existing prompt
+    prompt = this.selectedPrompt || this.imagePrompts[this.selectedBackground] || '';
+  } else if (this.customMode) {
+    // In custom prompt mode, use the user-entered prompt
+    prompt = this.customPrompt;
+    negativePrompt = this.customExclude;
+  }
   
     // Determine dimensions based on selection
     if (this.selectedDimension === 'square') {
@@ -257,14 +287,17 @@ onDimensionChange() {
       height = 512;
     }
   
-    // Data to send in the API request
-    const requestData = {
-      prompt: this.customPrompt,
-      negative_prompt: this.customExclude,
-      width: width,
-      height: height
-    };
-  
+    // Log or send data to the backend
+  console.log('Prompt:', prompt);
+  console.log('Negative Prompt:', negativePrompt);
+  console.log('Dimensions:', this.outputWidth, 'x', this.outputHeight);
+
+  const requestData = {
+    prompt: prompt,
+    negative_prompt: negativePrompt,
+    width: width,
+    height: height
+  };
     // Send POST request to the backend API
     this.http.post<any>('http://localhost:5000/generate', requestData).subscribe(
       response => {
