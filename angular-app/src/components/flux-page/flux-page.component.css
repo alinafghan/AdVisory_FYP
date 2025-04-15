@@ -1,0 +1,48 @@
+/* flux-page.component.css */
+:host {
+  display: block;
+}
+
+body {
+  background-color: #002039;
+  margin: 0;
+  padding: 0;
+}
+
+/* Set fixed height for parameter and preview sections */
+.max-h-600 {
+  max-height: 600px;
+}
+
+/* Ensure image container maintains aspect ratio while respecting max height */
+.image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 460px;
+  width: 100%;
+}
+
+.image-container img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Dark mode scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #081724;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0E3157;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8;
+}

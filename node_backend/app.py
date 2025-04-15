@@ -10,12 +10,18 @@ import pandas as pd
 from trends_analyzer import TrendAnalyzer  
 import logging
 from gradio_client import Client
+<<<<<<< HEAD
 from rembg_helper import remove_background
 from diffusers import DiffusionPipeline
 from PIL import Image
 import io
 import torch
 import replicate
+=======
+from dotenv import load_dotenv
+import openai
+
+>>>>>>> main
 
 
 # Initialize Flask app
@@ -36,6 +42,9 @@ FEATURE_NAMES = [
     "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
     "Cost_Per_Engagement"
 ]
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -129,32 +138,32 @@ def get_predictions(keyword):
         logger.error(f"Error in get_predictions: {str(e)}")
         return jsonify({'error': str(e)}), 500
     
-@app.route('/search', methods=['POST'])
-def search_trends():
-    try:
-        data = request.get_json()
-        query = data.get('query', '').strip().lower()
+# @app.route('/search', methods=['POST'])
+# def search_trends():
+#     try:
+#         data = request.get_json()
+#         query = data.get('query', '').strip().lower()
 
-        if not query:
-            return jsonify({'error': 'Search query is required'}), 400
+#         if not query:
+#             return jsonify({'error': 'Search query is required'}), 400
 
-        # Fetch all trends (or use cached data)
-        all_trends = fetch_all_trends()  # Replace with your logic to fetch all trends
+#         # Fetch all trends (or use cached data)
+#         all_trends = fetch_all_trends()  # Replace with your logic to fetch all trends
 
-        # Filter trends based on the search query
-        filtered_trends = {
-            keyword: insight
-            for keyword, insight in all_trends.items()
-            if query in keyword.lower()
-        }
+#         # Filter trends based on the search query
+#         filtered_trends = {
+#             keyword: insight
+#             for keyword, insight in all_trends.items()
+#             if query in keyword.lower()
+#         }
 
-        return jsonify({
-            'insights': filtered_trends,
-            'recommendations': []  # Add logic to filter recommendations if needed
-        })
+#         return jsonify({
+#             'insights': filtered_trends,
+#             'recommendations': []  # Add logic to filter recommendations if needed
+#         })
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
 
 ################################trends end###############################################
 
@@ -180,25 +189,67 @@ def flux():
         api_name="/infer")
     print(result)
 
-    image_path = result[0]  # Get the image file path
+    image_path = result[0]  
     if os.path.exists(image_path):
-        # Return a URL to serve the image
         with open(image_path, "rb") as f:
             encoded_image = base64.b64encode(f.read()).decode("utf-8")
         return jsonify({'Generated Image': encoded_image})
     else:
         return jsonify({'error': 'Image generation failed.'}), 500
 
-################################flux end ###############################################
+##################### caption ##############################
 
+load_dotenv()
+@app.route('/generate-caption', methods=['POST'])
+def generate_caption():
+    try:
+        data = request.get_json()
+        print(data.keys())
+        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        if not client.api_key:
+            return jsonify({'error': 'API key is not set'}), 500
 
-# @app.route('/serve-image', methods=['GET'])
-# def serve_image():
-#     image_path = request.args.get('path')
-#     if image_path and os.path.exists(image_path):
-#         return send_file(image_path, mimetype='image/webp')
-#     else:
-#         return jsonify({'error': 'File not found.'}), 404
+        content_list = []  # Prepare a list to hold the content
+
+        if 'image_url' in data:
+            image_input = {
+                "type": "input_image",
+                "image_url": data['image_url']
+            }
+            content_list.append({"type": "input_text", "text": "Write a caption for a social media post about this image. Make it engaging, include relevant hastags and emojis if it fits the vibe of the image and subject matter"})
+            content_list.append(image_input)
+        elif 'image_base64' in data:
+            image_input = {
+                "type": "input_image",
+                "image_url": f"data:image/jpeg;base64,{data['image_base64']}"
+            }
+            content_list.append({"type": "input_text", "text": "Write a caption for a social media post about this image. Make it engaging, include relevant hastags and emojis if it fits the vibe of the image and subject matter"})
+            content_list.append(image_input)
+        elif 'text_prompt' in data:
+            # If it's just a text prompt, prepare a different request
+            content_list.append({"type": "input_text", "text": data['text_prompt']})
+        else:
+            return jsonify({'error': 'No valid input provided'}), 400
+
+        request_input = [{
+            "role": "user",
+            "content": content_list
+        }]
+
+        response = client.responses.create(
+            model="gpt-4o", 
+            input=request_input
+        )
+
+        caption = response.output_text
+
+        return jsonify({'caption': caption})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+openai_api_key = os.getenv("OPENAI_API_KEY")
+if openai_api_key is None:
+    raise ValueError("No API Key found. Please set the OPENAI_API_KEY in the .env file.")
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -308,5 +359,9 @@ def remove_bg():
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     app.run(debug=True, host='0.0.0.0', port=5000)
     
+=======
+    app.run(debug=True, host='0.0.0.0', port=5000)
+>>>>>>> main

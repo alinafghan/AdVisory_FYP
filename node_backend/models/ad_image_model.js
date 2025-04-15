@@ -1,35 +1,34 @@
 const mongoose = require("mongoose");
 
-const campaignSchema = new mongoose.Schema({
+const adImageSchema = new mongoose.Schema({
   campaignId: {
     type: String,
     required: true,
   },
-  campaignName: {
+  prompt: {
     type: String,
     required: true,
   },
-  duration: {
-    //in months? or string from here til here
+  width: {
+    type: Number,
+    required: true,
+  },
+  height: {
+    type: Number,
+    required: true,
+  },
+  imageUrl: {
     type: String,
     required: true,
   },
-  platform: {
+  // If you're storing base64 image data directly
+  imageData: {
     type: String,
-    required: true,
-  },
-  industry: {
-    type: String,
-    required: true,
-  },
-  businessId: {
-    type: String,
-    required: true,
   },
   createdAt: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
-module.exports = mongoose.model("Campaign", campaignSchema);
+module.exports = mongoose.model("AdImage", adImageSchema);
