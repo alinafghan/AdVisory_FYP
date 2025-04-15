@@ -10,18 +10,15 @@ import pandas as pd
 from trends_analyzer import TrendAnalyzer  
 import logging
 from gradio_client import Client
-<<<<<<< HEAD
+from dotenv import load_dotenv
+import openai
 from rembg_helper import remove_background
 from diffusers import DiffusionPipeline
 from PIL import Image
 import io
 import torch
 import replicate
-=======
-from dotenv import load_dotenv
-import openai
 
->>>>>>> main
 
 
 # Initialize Flask app
@@ -198,7 +195,6 @@ def flux():
         return jsonify({'error': 'Image generation failed.'}), 500
 
 ##################### caption ##############################
-
 load_dotenv()
 @app.route('/generate-caption', methods=['POST'])
 def generate_caption():
@@ -257,9 +253,10 @@ def health_check():
 
 
 
-################################productad##########################################
 
-replicate_client = replicate.Client(api_token="r8_WFc5r8DNnTH5WZ5EYmRgNiOPimq5Ebr05AAYV")
+################################productad##########################################
+api_token = os.getenv("API_TOKEN")
+replicate_client = replicate.Client(api_token)
 REPLICATE_MODEL_URL = "bytedance/sdxl-lightning-4step:6f7a773af6fc3e8de9d5a3c00be77c17308914bf67772726aff83496ba1e3bbe"
 REPLICATE_MODEL = "daanelson/real-esrgan-a100:f94d7ed4a1f7e1ffed0d51e4089e4911609d5eeee5e874ef323d2c7562624bed"
 @app.route('/generate', methods=['POST'])
@@ -359,9 +356,4 @@ def remove_bg():
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     app.run(debug=True, host='0.0.0.0', port=5000)
-    
-=======
-    app.run(debug=True, host='0.0.0.0', port=5000)
->>>>>>> main

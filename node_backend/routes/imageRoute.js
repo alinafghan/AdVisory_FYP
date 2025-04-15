@@ -4,6 +4,11 @@ const router = express.Router();
 const axios = require('axios');
 const multer = require('multer');
 const FormData = require('form-data');
+const {
+    getAdImagesForCampaign,
+    getAdImageById,
+    deleteAdImage
+  } = require("../controllers/ad_image_controller");
 
 const FLASK_API_URL = 'http://localhost:5000'; // Your Flask server URL
 
@@ -72,4 +77,14 @@ router.post('/generate', async (req, res) => {
         handlePythonApiError(error, res);
     }
 });
+// Get all ad images for a campaign
+router.get("/campaign/:campaignId", getAdImagesForCampaign);
+
+// Get a specific ad image
+router.get("/:imageId", getAdImageById);
+
+//delete an ad
+
+router.delete("/:imageId", deleteAdImage);
+
 module.exports = router;

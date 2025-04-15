@@ -10,11 +10,8 @@ const userRouter = require("./routes/UserRouter");
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
 const adRouter = require("./routes/adsRouter");
-<<<<<<< HEAD
-const image_routes= require("./routes/imageRoute")
-=======
 const adImageRouter = require("./routes/adImageRouter"); // Add the new ad image router
->>>>>>> main
+const image_routes= require("./routes/imageRoute") //product ad
 
 const app = express();
 
@@ -40,13 +37,9 @@ app.use("/auth", authRouter);
 app.use("/predict", predictionRouter);
 app.use("/user", userRouter);
 app.use("/predict", predictionRouter);
-<<<<<<< HEAD
-app.use("/trends", trendsRoutes); // ✅ Now trendsRoutes is properly imported
-app.use('/api/image', image_routes); // Accessible at /api/image/remove-bg
-=======
 app.use("/trends", trendsRoutes);
 app.use("/adImages", adImageRouter); // Add the new route for ad images
->>>>>>> main
+app.use('/api/image', image_routes); // Product-ad
 
 // Default route (optional)
 app.get("/", (req, res) => {
@@ -56,3 +49,7 @@ app.get("/", (req, res) => {
 app.listen(3000, () => {
   console.log("Server started on port 3000");
 });
+
+require('dotenv').config();
+
+const apiToken = process.env.API_TOKEN;
