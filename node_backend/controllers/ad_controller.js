@@ -1,4 +1,4 @@
-const Ad = require("../models/ad_model");
+const Ad = require("../models/ad_image_model");
 const Campaign = require("../models/campaign_model");
 const axios = require("axios");
 
@@ -12,6 +12,7 @@ const platformWeights = {
 const seasonalMultiplier = 1.2; // Example static value, can be dynamic
 
 const getPrice = async (req, res) => {
+  //budgetmethod
   try {
     const { totalBudget, campaignId } = req.body;
 
