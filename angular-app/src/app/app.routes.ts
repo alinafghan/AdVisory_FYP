@@ -7,8 +7,6 @@ import {MetricsPageComponent} from '../components/metrics-page/metrics-page.comp
 import { RouterModule } from '@angular/router';
 import { LoginComponent } from '../components/login/login.component';
 import { SignupPageComponent } from '../components/signup-page/signup-page.component';
-import { BusinessInfoComponent } from '../components/business-page/business-info.component';  
-import { UploadLogoComponent } from '../components/upload-logo/upload-logo.component';  
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -19,6 +17,4 @@ export const routes: Routes = [
     {path: 'metrics', component: MetricsPageComponent},
     {path: 'login', component : LoginComponent},
     {path: 'signup', component: SignupPageComponent},
-    {path: 'businessinfo', component: BusinessInfoComponent},
-    {path: 'uploadlogo', component: UploadLogoComponent}
 ];
