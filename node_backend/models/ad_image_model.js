@@ -9,6 +9,9 @@ const adImageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  caption: {
+    type: String,
+  },
   width: {
     type: Number,
     required: true,
@@ -28,7 +31,7 @@ const adImageSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 module.exports = mongoose.model("AdImage", adImageSchema);
