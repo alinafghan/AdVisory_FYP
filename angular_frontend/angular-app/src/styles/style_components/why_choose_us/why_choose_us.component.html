@@ -1,0 +1,28 @@
+<!-- src/app/components/why-choose-us/why-choose-us.component.html -->
+<div class="px-16 mt-20 flex gap-8 items-center">
+    <!-- Left Side - Neuralink Ad Image -->
+    <div class="w-1/3">
+      <div class="relative rounded-3xl overflow-hidden">
+        <img src="assets/165c2e3e-12d3-4190-a571-d746ad36499f_131231509.jpeg 1.png" alt="Neuralink Ad" class="w-full h-auto rounded-2xl shadow-lg">
+      </div>
+    </div>
+  
+    <!-- Right Side - Why Choose Us -->
+    <div class="w-2/3">
+      <h3 class="font-medium text-lg text-purple-500">
+        Why Choose Us?
+      </h3>
+      <h2 class="font-bold text-3xl text-white mt-2">
+        Plan Your Campaign With Us
+      </h2>
+  
+      <div class="mt-8 space-y-6">
+        <app-feature-item 
+          *ngFor="let feature of features"
+          [title]="feature.title"
+          [description]="feature.description"
+          [iconPath]="feature.iconPath">
+        </app-feature-item>
+      </div>
+    </div>
+  </div>

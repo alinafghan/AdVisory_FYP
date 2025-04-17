@@ -1,0 +1,153 @@
+<div class="bg-gradient-to-r from-[#010B17] to-[#011021] min-h-screen">
+  <!-- Navigation Bar -->
+  <div class="flex justify-between items-center px-6 py-4">
+    <div class="flex items-center">
+      <img src="assets/advisory-logo.png" alt="Logo" width="130" height="50" />
+    </div>  
+
+    <div class="flex items-center space-x-6">
+      <a href="/" class="font-medium text-white underline">
+        Home
+      </a>
+
+      <a href="/login" class="font-medium text-white px-2 py-1 relative hover:shadow-[0_10px_25px_-5px_rgba(124,58,237,0.3)] 
+                transition-all duration-300 
+                hover:translate-y-[-4px] 
+                active:translate-y-[2px] active:shadow-inner 
+                active:shadow-purple-900/30
+                border border-transparent hover:border-purple-600/20 rounded-md">
+        Login
+      </a>
+      
+      <a href="/signup" class="font-medium text-white px-2 py-1
+                relative hover:shadow-[0_10px_25px_-5px_rgba(124,58,237,0.3)] 
+                transition-all duration-300 
+                hover:translate-y-[-4px] 
+                active:translate-y-[2px] active:shadow-inner 
+                active:shadow-purple-900/30
+                border border-transparent hover:border-purple-600/20 rounded-md">
+        Sign Up
+      </a>
+    </div>
+  </div>
+
+  <!-- Line underneath navbar -->
+  <div class="h-px bg-gray-700 w-full"></div>
+
+  <!-- Signup Section -->
+  <div class="flex flex-col px-16 mt-16 mb-8">
+    <div class="max-w-lg mx-auto bg-[#0A1C30] p-8 rounded-3xl shadow-lg">
+      <h2 class="text-3xl font-bold text-white text-center mb-6">Create Your Account</h2>
+      
+      <form (ngSubmit)="onSubmit()" #signupForm="ngForm">
+        <div class="mb-4">
+          <label for="username" class="block text-white font-medium">Username</label>
+          <input type="text" id="username" [(ngModel)]="username" name="username" required
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+      
+        <div class="mb-4">
+          <label for="email" class="block text-white font-medium">Email</label>
+          <input type="email" id="email" [(ngModel)]="email" name="email" required
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+      
+        <div class="mb-4">
+          <label for="firstName" class="block text-white font-medium">First Name</label>
+          <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" required
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+      
+        <div class="mb-4">
+          <label for="businessName" class="block text-white font-medium">Business Name</label>
+          <input type="text" id="businessName" [(ngModel)]="businessName" name="businessName" required
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+      
+        <div class="mb-4">
+          <label for="businessType" class="block text-white font-medium">Business Type</label>
+          <input type="text" id="businessType" [(ngModel)]="businessType" name="businessType" required
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+      
+        <div class="mb-4">
+          <label for="password" class="block text-white font-medium">Password</label>
+          <input type="password" id="password" [(ngModel)]="password" name="password" required
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+      
+        <div class="mb-4">
+          <label for="businessLogo" class="block text-white font-medium">Business Logo</label>
+          <input type="file" id="businessLogo" (change)="onFileSelected($event)"
+                 class="w-full mt-2 p-2 bg-[#111827] text-white border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+        </div>
+              
+        <div class="flex justify-center">
+          <button type="submit" [disabled]="!signupForm.valid" class="bg-[#A027FC] hover:bg-[#8c23e1] text-white font-bold py-2 px-6 rounded-full 
+                                 transition-all duration-300 hover:translate-y-[-4px] active:translate-y-[2px] active:shadow-inner">
+            Sign Up
+          </button>
+        </div>
+      </form>      
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-16 pt-8 pb-6 px-16 bg-[#0A1C30]">
+    <div class="flex justify-between">
+      <div class="w-1/3">
+        <div class="flex items-center mb-4">
+          <img src="assets/advisory-logo.png" alt="AdVisory Logo" class="h-12 w-auto object-contain" />
+        </div>          
+        <p class="font-light text-sm text-white">
+          We empower businesses with AI-driven ad creation, smart budgeting, and trend analytics—making advertising effortless and effective for maximum reach and ROI.
+        </p>
+      </div>
+
+      <div class="w-1/4">
+        <h4 class="font-medium text-lg text-white mb-3">
+          Services
+        </h4>
+        <div class="space-y-2">
+          <div class="font-medium text-sm text-white">About Us</div>
+          <div class="font-medium text-sm text-white">Services</div>
+          <div class="font-medium text-sm text-white">Contact Us</div>
+        </div>
+      </div>
+
+      <div class="w-1/4">
+        <h4 class="font-medium text-lg text-white mb-3">
+          Contact
+        </h4>
+        <div class="space-y-3">
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="font-medium text-sm text-white">Karachi, Pakistan</span>
+          </div>
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span class="font-medium text-sm text-white">advisory&#64;gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="font-light text-sm text-white">
+        AdVisory©2024 all rights reserved
+      </p>
+    </div>
+  </div>
+</div>
