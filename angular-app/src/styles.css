@@ -3,7 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* Add General Sans font using @font-face */
 @font-face {
   font-family: 'General Sans';
