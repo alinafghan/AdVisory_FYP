@@ -3,6 +3,7 @@ import base64
 import os
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS 
+from transformers import pipeline  # ✅ This imports the pipeline function
 import xgboost as xgb
 import numpy as np
 from flask_cors import CORS
@@ -12,6 +13,9 @@ import logging
 from gradio_client import Client
 from dotenv import load_dotenv
 import openai
+import torch
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
 
 
 
@@ -37,97 +41,97 @@ FEATURE_NAMES = [
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    try:
-        # Get the input data from the request
-        data = request.get_json()
-        if 'input' not in data:
-            return jsonify({'error': 'Invalid input format. Expected JSON with "input" key.'}), 400
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     try:
+#         # Get the input data from the request
+#         data = request.get_json()
+#         if 'input' not in data:
+#             return jsonify({'error': 'Invalid input format. Expected JSON with "input" key.'}), 400
         
-        # Convert input to numpy array and reshape
-        input_data = np.array(data['input'], dtype=np.float32).reshape(1, -1)
+#         # Convert input to numpy array and reshape
+#         input_data = np.array(data['input'], dtype=np.float32).reshape(1, -1)
         
-        # Convert input data to DMatrix with feature names
-        dmatrix = xgb.DMatrix(input_data, feature_names=FEATURE_NAMES)
+#         # Convert input data to DMatrix with feature names
+#         dmatrix = xgb.DMatrix(input_data, feature_names=FEATURE_NAMES)
 
-        # Make prediction
-        prediction = model.predict(dmatrix)
+#         # Make prediction
+#         prediction = model.predict(dmatrix)
 
-        #we did in log scale so return
-        prediction_og = np.exp(prediction)
+#         #we did in log scale so return
+#         prediction_og = np.exp(prediction)
         
-        # Return the prediction
-        return jsonify({'prediction': prediction_og.tolist()})
+#         # Return the prediction
+#         return jsonify({'prediction': prediction_og.tolist()})
     
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 400
     
-#########################budget end #########################################################################
+# #########################budget end #########################################################################
 
-# Initialize the TrendAnalyzer
-analyzer = TrendAnalyzer()
+# # Initialize the TrendAnalyzer
+# analyzer = TrendAnalyzer()
 
-@app.route('/analyze', methods=['POST'])
-def analyze_trends():
-    try:
-        data = request.get_json()
-        keywords = data.get('keywords', [])
+# @app.route('/analyze', methods=['POST'])
+# def analyze_trends():
+#     try:
+#         data = request.get_json()
+#         keywords = data.get('keywords', [])
         
-        if not keywords:
-            return jsonify({'error': 'No keywords provided'}), 400
+#         if not keywords:
+#             return jsonify({'error': 'No keywords provided'}), 400
             
-        # Process pipeline
-        processed_data = analyzer.fetch_trend_data(keywords)
-        if not processed_data:
-            return jsonify({'error': 'Failed to fetch trend data'}), 500
+#         # Process pipeline
+#         processed_data = analyzer.fetch_trend_data(keywords)
+#         if not processed_data:
+#             return jsonify({'error': 'Failed to fetch trend data'}), 500
             
-        models, forecasts = analyzer.train_prediction_models(processed_data)
-        if not forecasts:
-            return jsonify({'error': 'Failed to generate forecasts'}), 500
+#         models, forecasts = analyzer.train_prediction_models(processed_data)
+#         if not forecasts:
+#             return jsonify({'error': 'Failed to generate forecasts'}), 500
             
-        insights = analyzer.get_trend_insights(forecasts)
-        if not insights:
-            return jsonify({'error': 'Failed to generate insights'}), 500
+#         insights = analyzer.get_trend_insights(forecasts)
+#         if not insights:
+#             return jsonify({'error': 'Failed to generate insights'}), 500
             
-        recommendations = analyzer.generate_ad_recommendations(insights)
-        if not recommendations:
-            return jsonify({'error': 'Failed to generate recommendations'}), 500
+#         recommendations = analyzer.generate_ad_recommendations(insights)
+#         if not recommendations:
+#             return jsonify({'error': 'Failed to generate recommendations'}), 500
             
-        return jsonify({
-            'insights': insights,
-            'recommendations': recommendations
-        })
+#         return jsonify({
+#             'insights': insights,
+#             'recommendations': recommendations
+#         })
         
-    except Exception as e:
-        logger.error(f"Error in analyze_trends: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+#     except Exception as e:
+#         logger.error(f"Error in analyze_trends: {str(e)}")
+#         return jsonify({'error': str(e)}), 500
 
-@app.route('/predictions/<keyword>', methods=['GET'])
-def get_predictions(keyword):
-    try:
-        # Fetch trend data for single keyword
-        processed_data = analyzer.fetch_trend_data([keyword])
-        if not processed_data or keyword not in processed_data:
-            return jsonify({'error': f'No data available for {keyword}'}), 404
+# @app.route('/predictions/<keyword>', methods=['GET'])
+# def get_predictions(keyword):
+#     try:
+#         # Fetch trend data for single keyword
+#         processed_data = analyzer.fetch_trend_data([keyword])
+#         if not processed_data or keyword not in processed_data:
+#             return jsonify({'error': f'No data available for {keyword}'}), 404
             
-        # Generate predictions
-        models, forecasts = analyzer.train_prediction_models({keyword: processed_data[keyword]})
-        if not forecasts or keyword not in forecasts:
-            return jsonify({'error': 'Failed to generate predictions'}), 500
+#         # Generate predictions
+#         models, forecasts = analyzer.train_prediction_models({keyword: processed_data[keyword]})
+#         if not forecasts or keyword not in forecasts:
+#             return jsonify({'error': 'Failed to generate predictions'}), 500
             
-        # Extract prediction data
-        forecast_data = forecasts[keyword][['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(30)
-        prediction_data = forecast_data.to_dict(orient='records')
+#         # Extract prediction data
+#         forecast_data = forecasts[keyword][['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(30)
+#         prediction_data = forecast_data.to_dict(orient='records')
         
-        return jsonify({
-            'keyword': keyword,
-            'predictions': prediction_data
-        })
+#         return jsonify({
+#             'keyword': keyword,
+#             'predictions': prediction_data
+#         })
         
-    except Exception as e:
-        logger.error(f"Error in get_predictions: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+#     except Exception as e:
+#         logger.error(f"Error in get_predictions: {str(e)}")
+#         return jsonify({'error': str(e)}), 500
     
 # @app.route('/search', methods=['POST'])
 # def search_trends():
@@ -216,9 +220,12 @@ def generate_caption():
             }
             content_list.append({"type": "input_text", "text": "Write a caption for a social media post about this image. Make it engaging, include relevant hastags and emojis if it fits the vibe of the image and subject matter"})
             content_list.append(image_input)
+
+
         elif 'text_prompt' in data:
-            # If it's just a text prompt, prepare a different request
             content_list.append({"type": "input_text", "text": data['text_prompt']})
+            content_list.append({"type": "input_text", "text": "Write a caption for a social media post about this. Make it engaging, include relevant hashtags and emojis if it fits the vibe of the subject."})
+
         else:
             return jsonify({'error': 'No valid input provided'}), 400
 
@@ -241,6 +248,37 @@ def generate_caption():
 openai_api_key = os.getenv("OPENAI_API_KEY")
 if openai_api_key is None:
     raise ValueError("No API Key found. Please set the OPENAI_API_KEY in the .env file.")
+
+######################### ENHANCE ################################
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model_checkpoint = "gokaygokay/Flux-Prompt-Enhance"
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint).to(device)
+
+enhancer = pipeline('text2text-generation',
+                    model=model,
+                    tokenizer=tokenizer,
+                    repetition_penalty=1.2,
+                    device=device)
+
+@app.route('/enhance', methods=['POST'])
+def enhance_prompt():
+    try:
+        data = request.get_json()
+        if 'prompt' not in data:
+            return jsonify({'error': 'Invalid input. Expected JSON with "prompt" key.'}), 400
+        
+        prefix = "enhance prompt: "
+        input_prompt = prefix + data['prompt']
+        
+        results = enhancer(input_prompt, max_length=256)
+        enhanced_prompt = results[0]['generated_text']
+        
+        return jsonify({'enhanced_prompt': enhanced_prompt})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/health', methods=['GET'])
 def health_check():

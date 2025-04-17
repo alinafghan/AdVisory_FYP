@@ -25,4 +25,11 @@ export class FluxService {
     console.log('Sending request to Flux API:', requestData);
     return this.http.post<any>(this.apiUrl, requestData, { headers });  }
 
+  enhancePrompt(requestData: any): Observable<any> {
+    const headers = new HttpHeaders({
+        'Content-Type': 'application/json'
+      });
+    console.log('Sending request to EnhanceFlux API:', requestData);
+    return this.http.post('http://localhost:5000/enhance', requestData, { headers });  }
+
   }
