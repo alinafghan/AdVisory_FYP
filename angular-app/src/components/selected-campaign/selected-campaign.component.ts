@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
-import { PlusIcon } from 'lucide-angular';
+import { PlusIcon, PenLine } from 'lucide-angular';
 
 @Component({
   selector: 'app-selected-campaign',
@@ -13,6 +13,7 @@ import { PlusIcon } from 'lucide-angular';
 })
 export class SelectedCampaignComponent implements OnInit {
   readonly plusIcon = PlusIcon;
+  readonly penLine = PenLine;
   campaignId!: string;
   campaign: any;
   ads: any[] = [];
