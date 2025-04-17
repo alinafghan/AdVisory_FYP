@@ -12,11 +12,35 @@ import { FormsModule } from "@angular/forms";
   templateUrl: "./flux-page.component.html",
   styleUrls: ["./flux-page.component.css"],
 })
-export class FluxPageComponent implements OnInit{
+export class FluxPageComponent implements OnInit {
+  // Ad Type Selection
+  selectedAdType: string | null = null;
+  
+  // Product Ad Fields
+  productType: string = '';
+  productName: string = '';
+  productAppearance: string = '';
+  
+  // Sale Ad Fields
+  saleType: string = '';
+  discountAmount: string = '';
+  limitedTimeOffer: string = '';
+  
+  // Event Ad Fields
+  eventName: string = '';
+  eventDate: string = '';
+  eventLocation: string = '';
+  
+  // Common Fields
+  details: string = '';
+  lighting: string = '';
+  colors: string = '';
+  style: string = '';
+
   // Image Generation Parameters
-  prompt: string = "An advertisement for ";
-  width: number = 1024;
-  height: number = 1024;
+  prompt: string = "";
+  width: number = 1080;
+  height: number = 1920;
   seed: number = 0;
   randomizeSeed: boolean = true;
   num_inference_steps: number = 4;
@@ -26,6 +50,7 @@ export class FluxPageComponent implements OnInit{
 
   // UI State
   isLoading: boolean = false;
+  isEnhancingPrompt: boolean = false;
   errorMessage: string | null = null;
   generatedImage: string | null = null;
   showAdvancedParams: boolean = false;
@@ -40,6 +65,10 @@ export class FluxPageComponent implements OnInit{
   ];
   selectedDimension: string = "Vertical (1080 × 1920)";
 
+  // Enhanced Prompt
+  enhancedPrompt: string = "";
+  isPromptEnhanced: boolean = false;
+
   constructor(private fluxService: FluxService) {}
 
   ngOnInit() {
@@ -47,7 +76,44 @@ export class FluxPageComponent implements OnInit{
       this.campaigns = data;
     });
   }
- 
+  
+  // Select ad type and reset other types' fields
+  selectAdType(type: string): void {
+    if (this.selectedAdType === type) {
+      // If clicking the same button, deselect it
+      this.selectedAdType = null;
+    } else {
+      this.selectedAdType = type;
+    }
+  }
+  
+  // Construct the prompt dynamically based on filled fields
+  get constructedPrompt(): string {
+    let promptParts: string[] = ["a social media advertisement for"];
+    
+    // Add ad type specific content
+    if (this.selectedAdType === 'Product') {
+      if (this.productType) promptParts.push(this.productType);
+      if (this.productName) promptParts.push(this.productName);
+      if (this.productAppearance) promptParts.push(`with ${this.productAppearance}`);
+    } else if (this.selectedAdType === 'Sale') {
+      if (this.saleType) promptParts.push(this.saleType);
+      if (this.discountAmount) promptParts.push(`featuring ${this.discountAmount}`);
+      if (this.limitedTimeOffer) promptParts.push(this.limitedTimeOffer);
+    } else if (this.selectedAdType === 'Event') {
+      if (this.eventName) promptParts.push(this.eventName);
+      if (this.eventDate) promptParts.push(`on ${this.eventDate}`);
+      if (this.eventLocation) promptParts.push(`at ${this.eventLocation}`);
+    }
+    
+    // Add common fields
+    if (this.details) promptParts.push(this.details);
+    if (this.lighting) promptParts.push(`with ${this.lighting} lighting`);
+    if (this.colors) promptParts.push(`in ${this.colors} colors`);
+    if (this.style) promptParts.push(`in ${this.style} style`);
+    
+    return promptParts.join(' ');
+  }
 
   toggleAdvancedParams(): void {
     this.showAdvancedParams = !this.showAdvancedParams;
@@ -84,8 +150,11 @@ export class FluxPageComponent implements OnInit{
     this.errorMessage = null;
     this.generatedImage = null;
 
+    // Use the enhanced prompt if available, otherwise use the constructed prompt
+    const promptToUse = this.isPromptEnhanced ? this.enhancedPrompt : this.constructedPrompt;
+    
     const requestData = {
-      prompt: this.prompt,
+      prompt: promptToUse,
       seed: this.seed,
       randomize_seed: this.randomizeSeed,
       width: this.width,
@@ -114,6 +183,7 @@ export class FluxPageComponent implements OnInit{
       },
     });
   }
+
   submitImageToCampaign(imageData: string) {
     if (!imageData) {
       console.error('No image data to submit');
@@ -123,9 +193,13 @@ export class FluxPageComponent implements OnInit{
       alert('Please select a campaign first.');
       return;
     }
+    
+    // Use the enhanced prompt if available, otherwise use the constructed prompt
+    const promptToUse = this.isPromptEnhanced ? this.enhancedPrompt : this.constructedPrompt;
+    
     const postData = {
       campaignId: this.selectedCampaign,
-      prompt: this.prompt,
+      prompt: promptToUse,
       width: this.width,
       height: this.height,
       imageData: imageData
@@ -136,8 +210,75 @@ export class FluxPageComponent implements OnInit{
       (error: any) => console.error('Error uploading image', error)
     );
   }
+
   fetchAds() {
     // Implementation of fetching ads based on the selected campaign
     console.log("Fetching ads for campaign:", this.selectedCampaign);
+  }
+
+  // enhancePrompt(): void {
+  //   this.isLoading = true;
+  //   this.errorMessage = null;
+
+  //   const requestData = {
+  //     prompt: this.constructedPrompt
+  //   };
+
+  //   console.log("Enhancing prompt:", requestData);
+
+  //   this.fluxService.enhancePrompt(requestData).subscribe({
+  //     next: (response: any) => {
+  //       if (response["enhanced_prompt"]) {
+  //         this.enhancedPrompt = response["enhanced_prompt"];
+  //         this.isPromptEnhanced = true;
+  //         console.log("Enhanced prompt:", this.enhancedPrompt);
+  //       } else {
+  //         this.errorMessage = "Unexpected response from server.";
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     error: (error) => {
+  //       console.error("Error enhancing prompt:", error);
+  //       this.errorMessage =
+  //         "Failed to enhance prompt. Please try again later.";
+  //       this.isLoading = false;
+  //     },
+  //   });
+  // }
+
+
+  enhancePrompt(): void {
+    this.isEnhancingPrompt = true; // Use the new flag instead of isLoading
+    this.errorMessage = ''; // Clear any previous error messages
+    
+    const requestData = {
+      prompt: this.constructedPrompt
+    };
+    
+    console.log("Enhancing prompt:", requestData);
+    
+    this.fluxService.enhancePrompt(requestData).subscribe({
+      next: (response: any) => {
+        if (response["enhanced_prompt"]) {
+          this.enhancedPrompt = response["enhanced_prompt"];
+          this.isPromptEnhanced = true;
+          console.log("Enhanced prompt:", this.enhancedPrompt);
+        } else {
+          this.errorMessage = "Unexpected response from server.";
+        }
+        this.isEnhancingPrompt = false; // Reset our new flag when complete
+      },
+      error: (error) => {
+        console.error("Error enhancing prompt:", error);
+        this.errorMessage = "Failed to enhance prompt. Please try again later.";
+        this.isEnhancingPrompt = false; // Reset our new flag on error too
+      },
+    });
+  }
+  
+  // Clear enhanced prompt and use constructed prompt again
+  resetPrompt(): void {
+    this.enhancedPrompt = "";
+    this.isPromptEnhanced = false;
   }
 }
