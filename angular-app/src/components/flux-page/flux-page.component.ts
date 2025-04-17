@@ -50,6 +50,7 @@ export class FluxPageComponent implements OnInit {
 
   // UI State
   isLoading: boolean = false;
+  isEnhancingPrompt: boolean = false;
   errorMessage: string | null = null;
   generatedImage: string | null = null;
   showAdvancedParams: boolean = false;
@@ -215,16 +216,47 @@ export class FluxPageComponent implements OnInit {
     console.log("Fetching ads for campaign:", this.selectedCampaign);
   }
 
-  enhancePrompt(): void {
-    this.isLoading = true;
-    this.errorMessage = null;
+  // enhancePrompt(): void {
+  //   this.isLoading = true;
+  //   this.errorMessage = null;
 
+  //   const requestData = {
+  //     prompt: this.constructedPrompt
+  //   };
+
+  //   console.log("Enhancing prompt:", requestData);
+
+  //   this.fluxService.enhancePrompt(requestData).subscribe({
+  //     next: (response: any) => {
+  //       if (response["enhanced_prompt"]) {
+  //         this.enhancedPrompt = response["enhanced_prompt"];
+  //         this.isPromptEnhanced = true;
+  //         console.log("Enhanced prompt:", this.enhancedPrompt);
+  //       } else {
+  //         this.errorMessage = "Unexpected response from server.";
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     error: (error) => {
+  //       console.error("Error enhancing prompt:", error);
+  //       this.errorMessage =
+  //         "Failed to enhance prompt. Please try again later.";
+  //       this.isLoading = false;
+  //     },
+  //   });
+  // }
+
+
+  enhancePrompt(): void {
+    this.isEnhancingPrompt = true; // Use the new flag instead of isLoading
+    this.errorMessage = ''; // Clear any previous error messages
+    
     const requestData = {
       prompt: this.constructedPrompt
     };
-
+    
     console.log("Enhancing prompt:", requestData);
-
+    
     this.fluxService.enhancePrompt(requestData).subscribe({
       next: (response: any) => {
         if (response["enhanced_prompt"]) {
@@ -234,13 +266,12 @@ export class FluxPageComponent implements OnInit {
         } else {
           this.errorMessage = "Unexpected response from server.";
         }
-        this.isLoading = false;
+        this.isEnhancingPrompt = false; // Reset our new flag when complete
       },
       error: (error) => {
         console.error("Error enhancing prompt:", error);
-        this.errorMessage =
-          "Failed to enhance prompt. Please try again later.";
-        this.isLoading = false;
+        this.errorMessage = "Failed to enhance prompt. Please try again later.";
+        this.isEnhancingPrompt = false; // Reset our new flag on error too
       },
     });
   }

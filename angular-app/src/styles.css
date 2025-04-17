@@ -1,5 +1,59 @@
 /* You can add global styles to this file, and also import other style files */
 /* src/styles.scss or src/styles.css */
+/* Tailwind Base Styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Add General Sans font using @font-face */
+@font-face {
+  font-family: 'General Sans';
+  src: url('/assets/fonts/GeneralSans-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* Helps with font loading */
+}
+
+@font-face {
+  font-family: 'General Sans';
+  src: url('/assets/fonts/GeneralSans-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'General Sans';
+  src: url('/assets/fonts/GeneralSans-Italic.otf') format('opentype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Set Dark Mode as Default */
+:root {
+  --text: #e0edf0;
+  --background: #04090b;
+  --primary: #a8cfd6;
+  --secondary: #363b72;
+  --accent: #8171bc;
+  --font-family: 'General Sans', sans-serif;
+}
+
+/* Light Mode Palette - For toggling */
+body.dark-mode {
+  --text: #0c0d0c;
+  --background: #eaece9;
+  --primary: #3b4739;
+  --secondary: #a2b9a5;
+  --accent: #7ca573;
+}
+
+/* Body styles */
+body {
+  font-family: var(--font-family);
+  color: var(--text);
+  background-color: var(--background);
+  transition: color 0.3s, background-color 0.3s;
+}
