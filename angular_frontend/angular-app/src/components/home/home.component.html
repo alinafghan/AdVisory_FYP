@@ -1,85 +1,261 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<div class="bg-gray-800 text-white flex justify-between items-center p-4">
-    <h1 class="text-2xl">Dashboard</h1>
-    <a href="http://localhost:4200" class="text-white text-lg">Home</a>
-</div>
+<div class="bg-background">
+    <!-- Navigation Bar -->
+    <app-navbar></app-navbar>
+    
+    <!-- All Content Inside the Background -->
+    <div class="p-8 mx-4 my-8 rounded-lg h-[calc(100vh-6rem)] flex flex-col items-center justify-center relative overflow-hidden -mt-20">
+        <!-- Centered Text -->
+        <h1 class="text-white text-4xl font-bold text-center mb-6 z-10 leading-tight">
+            One Solution. Zero Hassle. <br> Ad Campaigns Done Right.
+        </h1>
+        
+        <!-- Description Text -->
+        <p class="text-white text-center mb-8 z-10">
+            AdVisory is an AI-powered platform that creates and optimizes <br> social media ads with intelligent content generation and real-time performance tracking.
+        </p>
+        
+        <!-- Get Started Button -->
+        <a href="/login" class="bg-accent text-white py-3 px-8 rounded-lg hover:bg-secondary transition-all z-10 mt-4">
+            Get Started
+        </a>        
+    </div>
 
-<body class="font-sans bg-gray-100 flex flex-row">
+    <!-- SVG Positioned to Overlap -->
+    <div class="svg-wrapper">
+        <img src="assets/svg/download_animated.svg" alt="Animated SVG" class="svg-animated" />
+    </div>
 
-        <div id = "sidebar" class="bg-orange-500 w-64 p-6 h-screen flex flex-col">
-            <h2 class="text-white text-3xl mb-6">View More</h2>
-            <a href="http://localhost:4200/budget" class="text-white text-xl mb-4 hover:underline">Go to Budget Page</a>
-            <a href="/login">
-            <button class="bg-white text-orange-500 px-4 py-2 rounded-lg mt-auto hover:bg-gray-200">Logout</button></a>
-        </div>
+    <!-- Accent Color Container Below the Button -->
+    <div class="container-wrapper">
+        <div class="accent-container">
+            <!-- Container Content with Left and Right Sides -->
+            <div class="container-content">
+                <!-- Left Side - Bold Text -->
+                <div class="left-content">
+                    <h2 class="text-white text-2xl font-bold">What can AdVisory do for you?</h2>
+                </div>
+                
+                <div class="right-content">
+                    <div class="text-white">
+                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <lucide-icon [img]="ArrowRight" class="my-icon" style="margin-right: 10px;"></lucide-icon>
+                        <span>Generate High-Impact Ads Instantly</span>
+                      </div>
+                      
+                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <lucide-icon [img]="NoAxesColumn" class="my-icon" style="margin-right: 10px;"></lucide-icon>
+                        <span>Optimize Campaigns in Real Time</span>
+                      </div>
+                  
+                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <lucide-icon [img]="User" class="my-icon" style="margin-right: 10px;"></lucide-icon>
+                        <span>Discover Your Ideal Audience</span>
+                      </div>
+                  
+                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <lucide-icon [img]="DollarSign" class="my-icon" style="margin-right: 10px;"></lucide-icon>
+                        <span>Maximize ROI with Smart Budgeting</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                 
 
-    <div id = "main body" class="flex-1 flex flex-col ml-20 mr-20">
-
-        <!-- Title and Caption -->
-        <div class="mt-8">
-            <h1 class="text-4xl text-gray-900">Welcome to AdVisory</h1>
-            <p class="text-xl text-gray-600 mt-4">Generate ads, plan your campaigns, allocate budget and much more.</p>
-        </div>
-
-        <!-- Cards -->
-        <div class="mt-8 grid grid-cols-3 gap-8">
-            <!-- Card 1 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
-                <h3 class="text-2xl text-gray-800 mb-4">Generate Ads</h3>
-                <p class="text-gray-600 mb-4">Generate Ads according to your marketing needs.</p>
-                <a href="/flux">
-                    <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
-                        Generate Ads
-                    </button>
-                  </a>
             </div>
-
-            <!-- Card 2 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
-                <h3 class="text-2xl text-gray-800 mb-4">Allocate Budget</h3>
-                <p class="text-gray-600 mb-4">Optimize upcoming budget allocation events and tasks.</p>
-
-
-                <a href="/budget">
-                    <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
-                      Allocate Budget
-                    </button>
-                  </a>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
-                <h3 class="text-2xl text-gray-800 mb-4">Analytics</h3>
-                <p class="text-gray-600 mb-4">Access detailed reports and analytics on your budget usage.</p>
-              <a href="/metrics">  <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">View Reports</button></a>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
-                <h3 class="text-2xl text-gray-800 mb-4">Trends</h3>
-                <p class="text-gray-600 mb-4">Find current trends now.</p>
-              <a href="/trends">  <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">View Trends</button></a>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all">
-                <h3 class="text-2xl text-gray-800 mb-4">Audiences</h3>
-                <p class="text-gray-600 mb-4">See what works with selected audiences.</p>
-              <a href="/trends">  <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">View Trends</button></a>
-            </div>
-
-
-
         </div>
     </div>
 
+    <!-- Animated Text Below the Accent Container -->
+    <div class="text-container" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300">
+        <p style="font-size: 32px; text-align: center;">Just one step away from joining the AdVisory Journey</p>
+    </div>
+   
+<!-- Horizontal Scrollable Carousel with AOS Fade -->
+<div class="carousel-container">
+    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+        <div class="card-content">
+            <h3>Card 1</h3>
+            <p>Some text on card 1</p>
+        </div>
+    </div>
 
-</body>
-</html>
+    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600">
+        <div class="card-content">
+            <h3>Card 2</h3>
+            <p>Some text on card 2</p>
+        </div>
+    </div>
+
+    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="900">
+        <div class="card-content">
+            <h3>Card 3</h3>
+            <p>Some text on card 3</p>
+        </div>
+    </div>
+
+    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200">
+        <div class="card-content">
+            <h3>Card 4</h3>
+            <p>Some text on card 4</p>
+        </div>
+    </div>
+    
+    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200">
+        <div class="card-content">
+            <h3>Card 4</h3>
+            <p>Some text on card 4</p>
+        </div>
+    </div>
+
+    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200">
+        <div class="card-content">
+            <h3>Card 4</h3>
+            <p>Some text on card 4</p>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>
+</div>
+
+<style>
+    /* Position the SVG wrapper */
+    .svg-wrapper {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: -200px; /* Adjust this value to control how much of the SVG is above the container */
+    }
+
+    /* Container wrapper for centering */
+    .container-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-top: -350px; /* This controls how much of the SVG is covered (70%) */
+    }
+
+    /* Adjust size of the SVG */
+    .svg-animated {
+        height: 700px;
+        opacity: 0.8;
+        transition: opacity 1s ease;
+        width: auto;
+    }
+
+    /* Full opacity once scrolled into view */
+    .svg-animated.visible {
+        opacity: 1;
+    }
+
+    /* Accent Color Container */
+    .accent-container {
+        position: relative;
+        background-color: var(--accent);
+        border-radius: 30px 30px 30px 30px;
+        width: 100%;
+        max-width: 1350px;
+        height: 400px;
+        z-index: 5;
+        padding: 40px 0 40px 40px; /* Removed right padding completely */
+    }
+
+    /* Container Content Flex Layout */
+    .container-content {
+        display: flex;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    /* Left Content Styling */
+    .left-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding-right: 20px;
+    }
+
+    /* Right Content Styling */
+    .right-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; /* Align content to the right */
+        padding-right: 40px; /* Add padding on the right to push content to the far right */
+    }
+
+    /* List Styling */
+    .list {
+        text-align: right; /* Right-align the text within list items */
+        width: auto; /* Let the list width be determined by content */
+        margin-left: auto; /* Push list to the right */
+    }
+    
+    .list li {
+        margin-bottom: 12px;
+        font-size: 18px;
+        position: relative;
+        padding-left: 30px;
+        list-style-position: inside; /* Position bullets inside */
+    }
+
+    .list li:before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: white;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .bg-background {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Animated Text Styles */
+    .text-container {
+        text-align: center;
+        margin-top: 80px; /* Increased space above the text */
+        margin-bottom: 80px; /* Added more space below the text */
+    }
+
+    .animated-text {
+        font-size: 30px; /* Increased font size */
+        color: var(--text);
+        opacity: 0;
+        transform: translateY(50px); /* Increased the initial translateY value to make the movement more noticeable */
+        animation: fadeInUp 2s ease-out forwards; /* Increased animation duration */
+    }
+
+    /* Keyframes for Animation */
+    @keyframes fadeInUp {
+        0% {
+            opacity: 0;
+            transform: translateY(50px); /* More noticeable movement */
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    // Select the SVG element
+    const svg = document.querySelector('.svg-animated');
+
+    // Create an Intersection Observer
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Add the 'visible' class when the SVG comes into view
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.5 }); // Trigger when 50% of the SVG is visible
+
+    // Observe the SVG
+    observer.observe(svg);
+</script>

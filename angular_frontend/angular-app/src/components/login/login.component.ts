@@ -3,10 +3,11 @@ import { User } from '../../interfaces/user';
 import { AuthService } from '../../services/auth.service'; // Import the auth service
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';  
+import { NavbarComponent } from '../../styles/style_components/navbar/navbar.component';
 
 @Component({
   selector: 'login',
-  imports: [FormsModule],
+  imports: [FormsModule, NavbarComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
