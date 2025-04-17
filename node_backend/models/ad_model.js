@@ -5,6 +5,7 @@ const adSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   industry: {
     type: String, //maybe a fixed enum?
     required: true,
