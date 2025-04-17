@@ -1,4 +1,4 @@
-const Ad = require("../models/ad_model");
+const Ad = require("../models/ad_image_model");
 const Campaign = require("../models/campaign_model");
 const axios = require("axios");
 
@@ -12,6 +12,7 @@ const platformWeights = {
 const seasonalMultiplier = 1.2; // Example static value, can be dynamic
 
 const getPrice = async (req, res) => {
+  //budgetmethod
   try {
     const { totalBudget, campaignId } = req.body;
 
@@ -101,7 +102,14 @@ const add = async (req, res) => {
 
 const postCampaign = async (req, res) => {
   try {
-    const { campaignId, duration, businessId } = req.body;
+    const {
+      campaignId,
+      campaignName,
+      industry,
+      platform,
+      duration,
+      businessId,
+    } = req.body;
 
     if (!campaignId || !businessId) {
       return res
@@ -111,6 +119,9 @@ const postCampaign = async (req, res) => {
 
     const newCampaign = new Campaign({
       campaignId,
+      campaignName,
+      industry,
+      platform,
       duration,
       businessId,
     });
@@ -123,6 +134,27 @@ const postCampaign = async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "itnernal server error" });
+  }
+};
+
+const getCampaign = async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+
+    if (!campaignId) {
+      return res.status(400).json({ error: "Campaign ID is required" });
+    }
+
+    const campaign = await Campaign.findOne({ campaignId });
+
+    if (!campaign) {
+      return res.status(404).json({ error: "Campaign not found" });
+    }
+
+    res.status(200).json({ campaign });
+  } catch (error) {
+    console.error("Error fetching campaign:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -169,4 +201,5 @@ module.exports = {
   getAdsfromCampaign,
   postCampaign,
   getAllCampaigns,
+  getCampaign,
 };

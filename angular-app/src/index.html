@@ -10,12 +10,12 @@
 </head>
 <body>
 <script>
-  window.fbAsyncInit = function() {
+  window.fbAsyncInit = function() { //fb sdk initialization
     FB.init({
-      appId      : '541525585715121', 
+      appId      : '541525585715121',  //login app code
       cookie     : true,                     
       xfbml      : true,                    
-      version    : 'v18.0'  // Use the latest version
+      version    : 'v18.0' 
     });
   };
 
@@ -26,6 +26,7 @@
     js.src = "https://connect.facebook.net/en_US/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
+
 </script>
   <app-root></app-root>
 </body>
