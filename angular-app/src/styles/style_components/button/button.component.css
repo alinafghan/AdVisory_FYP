@@ -1,0 +1,71 @@
+/* Common button styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 50px; /* Default padding */
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* Hover effect */
+  .btn:hover {
+    background-color: var(--primary);  /* Set the background color to primary */
+    color: white;  /* Change text color to white */
+    border-color: var(--primary);  /* Keep border color as primary */
+  }
+  
+  /* Primary button */
+  .btn-primary {
+    background-color: var(--accent);
+    color: white;
+    border: 2px solid var(--accent);
+  }
+  
+  /* Secondary button */
+  .btn-secondary {
+    background-color: var(--secondary);
+    color: white;
+    border: 2px solid var(--secondary);
+  }
+  
+  /* Accent button */
+  .btn-accent {
+    background-color: var(--accent);
+    color: white;
+    border: 2px solid var(--accent);
+  }
+  
+  /* Outlined button */
+  .btn-outlined {
+    background-color: transparent;  /* Transparent background */
+    color: var(--primary);  /* Primary text color */
+    border: 2px solid var(--primary);  /* Primary border color */
+    padding: 12px 50px;  /* Consistent padding */
+    border-radius: 30px;  /* Rounded corners */
+    text-align: center;  /* Center text */
+  }
+  
+  /* Disabled button */
+  .btn-disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #ccc;
+  }
+  
+  /* Hover styles for outlined button */
+  .btn-outlined:hover {
+    background-color: var(--primary);  /* Change background to primary color */
+    color: white;  /* Change text color to white */
+    border-color: var(--primary);  /* Keep the border color primary */
+  }  
+  
+  /* Example usage: 
+   <app-button type="primary" label="Get Started" [link]="'/login'"></app-button>
+*/
