@@ -20,4 +20,9 @@ export class AuthService {
   fblogin(){
       window.location.href = this.fbLoginUrl; // Redirects user to backend for login
     }
+
+    signup(formData: FormData): Observable<any> {
+      return this.http.post('http://localhost:3000/auth/signup', formData);
+    }
+      
 }

@@ -6,6 +6,7 @@ import { FluxPageComponent } from '../components/flux-page/flux-page.component';
 import {MetricsPageComponent} from '../components/metrics-page/metrics-page.component';
 import { ManageCampaignComponent } from '../components/manage-campaign/manage-campaign.component';
 import { LoginComponent } from '../components/login/login.component';
+import { SignupPageComponent } from '../components/signup-page/signup-page.component';
 import { CampaignComponent } from '../components/campaign/campaign.component';
 import { SelectedCampaignComponent } from '../components/selected-campaign/selected-campaign.component';
 import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
@@ -19,6 +20,7 @@ export const routes: Routes = [
     { path: 'flux', component: FluxPageComponent },
     {path: 'metrics', component: MetricsPageComponent},
     {path: 'login', component : LoginComponent},
+    {path: 'signup', component: SignupPageComponent},
     {path:'manage_campaign', component : ManageCampaignComponent},
     {path: 'selected_campaign/:campaignId', component : SelectedCampaignComponent},
     {path: 'campaign', component : CampaignComponent},
