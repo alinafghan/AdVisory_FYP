@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from '../components/home/home.component';
+import { HomeComponent } from '../pages/home/home.component';
 import { BudgetPageComponent } from '../components/budget-page/budget-page.component';
 import { TrendsComponent } from '../components/trends-page/trends-page.component';
 import { FluxPageComponent } from '../components/flux-page/flux-page.component';
@@ -9,6 +9,7 @@ import { LoginComponent } from '../components/login/login.component';
 import { CampaignComponent } from '../components/campaign/campaign.component';
 import { SelectedCampaignComponent } from '../components/selected-campaign/selected-campaign.component';
 import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
+import { PipelineComponent } from '../components/pipeline/pipeline.component';
 
 
 export const routes: Routes = [
@@ -24,5 +25,6 @@ export const routes: Routes = [
     {path: 'campaign', component : CampaignComponent},
     // {path: '**', redirectTo: '/home'}
     { path: 'caption', component: CaptionPageComponent },
+    {path:'pipeline', component: PipelineComponent},
 
 ];
