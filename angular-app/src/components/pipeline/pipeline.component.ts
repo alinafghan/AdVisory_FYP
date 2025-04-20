@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { NavbarComponent } from '../navbar/navbar.component';
 import { CampaignComponent } from '../campaign/campaign.component';
 import { FluxPageComponent } from '../flux-page/flux-page.component';
 import {CaptionPageComponent} from '../caption-page/caption-page.component';
@@ -12,7 +10,7 @@ import { BudgetComponent } from '../budget/budget.component';
 @Component({
   selector: 'app-pipeline',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, NavbarComponent, CampaignComponent, TrendsComponent, BudgetComponent, FluxPageComponent, CaptionPageComponent],
+  imports: [CommonModule, CampaignComponent, TrendsComponent, BudgetComponent, FluxPageComponent, CaptionPageComponent],
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
