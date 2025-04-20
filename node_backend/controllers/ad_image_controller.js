@@ -134,6 +134,7 @@ const getAdImagesForCampaign = async (req, res) => {
       height: img.height,
       imageUrl: img.imageUrl,
       createdAt: img.createdAt,
+      // Exclude imageData for performance reasons, if necessary
     }));
 
     res.status(200).json(formattedAdImages);

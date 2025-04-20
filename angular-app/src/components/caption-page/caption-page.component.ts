@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router'; // To get imageId from URL
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdDataService } from '../../services/ad-data.service';
 
 @Component({
   selector: 'app-caption-page',
@@ -18,12 +19,20 @@ export class CaptionPageComponent implements OnInit {
   caption?: string;
   ad?: any;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private adDataService : AdDataService) {}
 
   ngOnInit(): void {
     const imageId = this.route.snapshot.queryParamMap.get('ad');
     if (imageId) {
       this.fetchAdImage(imageId);
+    }
+    else{
+      const adImageId = this.adDataService.getAdImageId();
+      if (adImageId) {
+        this.fetchAdImage(adImageId);
+      } else {
+        console.error('No ad image ID found in the URL or service.');
+      }
     }
   }
 

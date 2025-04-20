@@ -1,83 +1,4 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flux Image Generator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="font-sans bg-gray-100 p-8">
-  <div class="container mx-auto bg-white p-6 rounded-lg shadow-lg">
-
-    <!-- Title and Description -->
-    <div class="text-center mb-8">
-      <p class="text-3xl font-bold text-gray-800">Generate Advertisement</p>
-      <p class="text-lg text-gray-600 mt-2">Customize the parameters and generate your creative advertisement</p>
-    </div>
-
-    <!-- Content Wrapper -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Input Form -->
-      <div>
-        <div class="mb-4">
-          <label for="prompt" class="block text-sm font-medium text-gray-700">Prompt:</label>
-          <input type="text" id="prompt" name="prompt" [(ngModel)]="prompt" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4">
-          <label for="seed" class="block text-sm font-medium text-gray-700">Seed:</label>
-          <input type="number" id="seed" name="seed" [(ngModel)]="seed" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4 flex items-center">
-          <label for="randomizeSeed" class="block text-sm font-medium text-gray-700 mr-2">Randomize Seed:</label>
-          <input type="checkbox" id="randomizeSeed" name="randomizeSeed" [(ngModel)]="randomizeSeed" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">Recommended Dimensions:</label>
-          <p class="text-sm text-gray-500">Vertical: 1080 x 1920</p>
-          <p class="text-sm text-gray-500">YouTube Video Thumbnail: 1280 x 720</p>
-          <p class="text-sm text-gray-500">3:4 Post: 1080 x 1440</p>
-        </div>
-
-        <div class="mb-4">
-          <label for="width" class="block text-sm font-medium text-gray-700">Width:</label>
-          <input type="number" id="width" name="width" [(ngModel)]="width" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4">
-          <label for="height" class="block text-sm font-medium text-gray-700">Height:</label>
-          <input type="number" id="height" name="height" [(ngModel)]="height" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <div class="mb-4">
-          <label for="num_inference_steps" class="block text-sm font-medium text-gray-700">Num Inference Steps:</label>
-          <input type="number" id="num_inference_steps" name="num_inference_steps" [(ngModel)]="num_inference_steps" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        </div>
-
-        <!-- Generate Button -->
-        <div class="text-center">
-          <button
-            (click)="generateAdImage()"
-            class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 w-full"
-            [disabled]="isLoading">
-            Generate Image
-          </button>
-        </div>
-
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="mt-4 text-center">
-          <p class="text-blue-500 font-semibold">Generating your ad image... Please wait.</p>
-        </div>
-
-        <!-- Error Message -->
-        <div *ngIf="errorMessage && !isLoading" class="mt-4 text-center">
-=======
-<div class="min-h-screen bg-[#002039] p-8">
+<div class="bg-background p-8 flex flex-col items-center justify-center">
   <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Parameters Panel -->
     <div class="bg-[#042954] rounded-lg border-2 border-[#E4E4E7] p-6">
@@ -92,30 +13,35 @@
 
       <!-- Ad Type Selector -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-white mb-2.5">Ad Type</label>
+        <label class="block text-sm font-medium text-white mb-2.5"
+          >Ad Type</label
+        >
         <div class="grid grid-cols-3 gap-2">
-          <button 
+          <button
             [class.bg-[#A027FC]]="selectedAdType === 'Product'"
             [class.bg-[#042954]]="selectedAdType !== 'Product'"
             [class.border-white]="selectedAdType === 'Product'"
             class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
-            (click)="selectAdType('Product')">
+            (click)="selectAdType('Product')"
+          >
             Product
           </button>
-          <button 
+          <button
             [class.bg-[#A027FC]]="selectedAdType === 'Sale'"
             [class.bg-[#042954]]="selectedAdType !== 'Sale'"
             [class.border-white]="selectedAdType === 'Sale'"
             class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
-            (click)="selectAdType('Sale')">
+            (click)="selectAdType('Sale')"
+          >
             Sale
           </button>
-          <button 
+          <button
             [class.bg-[#A027FC]]="selectedAdType === 'Event'"
             [class.bg-[#042954]]="selectedAdType !== 'Event'"
             [class.border-white]="selectedAdType === 'Event'"
             class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
-            (click)="selectAdType('Event')">
+            (click)="selectAdType('Event')"
+          >
             Event
           </button>
         </div>
@@ -124,7 +50,9 @@
       <!-- Product Ad Fields -->
       <div *ngIf="selectedAdType === 'Product'" class="mb-6">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Product Type</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Product Type</label
+          >
           <input
             type="text"
             [(ngModel)]="productType"
@@ -133,7 +61,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Product Name</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Product Name</label
+          >
           <input
             type="text"
             [(ngModel)]="productName"
@@ -142,7 +72,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Product Appearance</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Product Appearance</label
+          >
           <input
             type="text"
             [(ngModel)]="productAppearance"
@@ -155,7 +87,9 @@
       <!-- Sale Ad Fields -->
       <div *ngIf="selectedAdType === 'Sale'" class="mb-6">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Sale Type</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Sale Type</label
+          >
           <input
             type="text"
             [(ngModel)]="saleType"
@@ -164,7 +98,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Discount Amount</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Discount Amount</label
+          >
           <input
             type="text"
             [(ngModel)]="discountAmount"
@@ -173,7 +109,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Limited Time Offer</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Limited Time Offer</label
+          >
           <input
             type="text"
             [(ngModel)]="limitedTimeOffer"
@@ -186,7 +124,9 @@
       <!-- Event Ad Fields -->
       <div *ngIf="selectedAdType === 'Event'" class="mb-6">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Event Name</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Event Name</label
+          >
           <input
             type="text"
             [(ngModel)]="eventName"
@@ -195,7 +135,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Event Date</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Event Date</label
+          >
           <input
             type="text"
             [(ngModel)]="eventDate"
@@ -204,7 +146,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Event Location</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Event Location</label
+          >
           <input
             type="text"
             [(ngModel)]="eventLocation"
@@ -217,7 +161,9 @@
       <!-- Common Fields (Always Visible) -->
       <div class="mb-6">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Details</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Details</label
+          >
           <input
             type="text"
             [(ngModel)]="details"
@@ -226,7 +172,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Lighting</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Lighting</label
+          >
           <input
             type="text"
             [(ngModel)]="lighting"
@@ -235,7 +183,9 @@
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2">Colors</label>
+          <label class="block text-sm font-medium text-white mb-2"
+            >Colors</label
+          >
           <input
             type="text"
             [(ngModel)]="colors"
@@ -256,7 +206,9 @@
 
       <!-- Prompt Input (Read-only, to show the constructed prompt) -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-white mb-2.5">Generated Prompt</label>
+        <label class="block text-sm font-medium text-white mb-2.5"
+          >Generated Prompt</label
+        >
         <div class="relative">
           <input
             type="text"
@@ -285,12 +237,13 @@
 
       <!-- Add this section just after the Generated Prompt section and before the Dimensions section -->
 
-
       <div class="mb-6" *ngIf="isPromptEnhanced || enhancedPrompt">
         <div class="flex justify-between items-center mb-2.5">
-          <label class="block text-sm font-medium text-white">Enhanced Prompt</label>
-          <button 
-            (click)="resetPrompt()" 
+          <label class="block text-sm font-medium text-white"
+            >Enhanced Prompt</label
+          >
+          <button
+            (click)="resetPrompt()"
             class="text-xs text-white bg-gray-600 hover:bg-gray-700 px-2 py-1 rounded"
           >
             Reset
@@ -303,7 +256,7 @@
           rows="4"
         ></textarea>
       </div>
-    
+
       <div class="flex flex-col gap-4 mb-6">
         <button
           (click)="enhancePrompt()"
@@ -328,13 +281,18 @@
               stroke-linejoin="round"
             />
           </svg>
-          <div *ngIf="isEnhancingPrompt" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          <div
+            *ngIf="isEnhancingPrompt"
+            class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"
+          ></div>
         </button>
       </div>
 
       <!-- Dimensions Section -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-white mb-5">Dimensions</label>
+        <label class="block text-sm font-medium text-white mb-5"
+          >Dimensions</label
+        >
         <div class="relative mb-6">
           <button
             (click)="toggleDimensionsDropdown()"
@@ -376,7 +334,9 @@
         <!-- Width and Height Inputs -->
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5">Width</label>
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Width</label
+            >
             <input
               type="number"
               [(ngModel)]="width"
@@ -384,7 +344,9 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5">Height</label>
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Height</label
+            >
             <input
               type="number"
               [(ngModel)]="height"
@@ -422,7 +384,9 @@
       <div *ngIf="showAdvancedParams" class="mb-6">
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5">Seed</label>
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Seed</label
+            >
             <input
               type="number"
               [(ngModel)]="seed"
@@ -443,7 +407,9 @@
           </div>
         </div>
         <div class="mt-4">
-          <label class="block text-sm font-medium text-white mb-2.5">Inference Steps</label>
+          <label class="block text-sm font-medium text-white mb-2.5"
+            >Inference Steps</label
+          >
           <input
             type="number"
             [(ngModel)]="num_inference_steps"
@@ -505,29 +471,10 @@
         class="flex-grow flex items-center justify-center"
       >
         <div class="text-center">
->>>>>>> origin/main
           <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
         </div>
       </div>
 
-<<<<<<< HEAD
-      <!-- Display Generated Image -->
-      <div class="flex justify-center items-center bg-gray-50 rounded-lg shadow-md p-4">
-        <div *ngIf="generatedImage && !isLoading; else placeholder">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Your Generated Advertisement:</h3>
-          <img [src]="generatedImage" alt="Generated Ad" class="rounded-lg shadow-md max-w-full">
-        </div>
-        <ng-template #placeholder>
-          <p class="text-gray-400 text-center">Your generated image will appear here.</p>
-        </ng-template>
-      </div>
-    </div>
-
-  </div>
-</body>
-
-</html>
-=======
       <!-- Generated Image Display -->
       <div *ngIf="generatedImage && !isLoading" class="flex-grow flex flex-col">
         <h3 class="text-lg font-semibold text-white mb-4 text-center">
@@ -543,8 +490,14 @@
           </div>
         </div>
       </div>
-      <button *ngIf="generatedImage" (click)="submitImageToCampaign(generatedImage!)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add to Campaign</button>
-      
+      <button
+        *ngIf="generatedImage"
+        (click)="submitImageToCampaign(generatedImage!)"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Add to Campaign
+      </button>
+
       <!-- Empty state when no image is generated yet -->
       <div
         *ngIf="!generatedImage && !isLoading && !errorMessage"
@@ -574,19 +527,23 @@
       </div>
       <!-- Campaign Selection -->
       <div class="mb-4">
-        <label for="campaign" class="block text-lg font-medium text-gray-300">Select Campaign:</label>
-        <select 
-          id="campaign" 
-          [(ngModel)]="selectedCampaign" 
+        <label for="campaign" class="block text-lg font-medium text-gray-300"
+          >Select Campaign:</label
+        >
+        <select
+          id="campaign"
+          [(ngModel)]="selectedCampaign"
           (change)="fetchAds()"
           class="w-full mt-2 p-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
-            {{ campaign.campaignId }}
+          <option
+            *ngFor="let campaign of campaigns"
+            [ngValue]="campaign.campaignId"
+          >
+            {{ campaign.campaignName }}
           </option>
         </select>
       </div>
-    </div>    
+    </div>
   </div>
 </div>
->>>>>>> origin/main

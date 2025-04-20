@@ -1,0 +1,61 @@
+<body>
+  <!-- <nav-bar></nav-bar> -->
+  <div class="flex mx-auto bg-background relative min-h-screen">
+    <!-- <app-sidebar></app-sidebar> -->
+
+    <div class="mx-auto mt-10 items-center flex flex-col w-full">
+      <div
+        class="progress-bar w-[512px] h-4 bg-[#2c2b2e] rounded-full overflow-hidden mb-5"
+      >
+        <div
+          class="h-full bg-white transition-all duration-300"
+          [style.width.%]="((currentStep + 1) / steps.length) * 100"
+        ></div>
+      </div>
+
+      <!-- Step Content -->
+      <ng-container [ngSwitch]="currentStep">
+        <div *ngSwitchCase="0"><app-campaign></app-campaign></div>
+        <div *ngSwitchCase="1"><app-flux-page></app-flux-page></div>
+        <div *ngSwitchCase="2"><app-caption-page></app-caption-page></div>
+        <div *ngSwitchCase="3"><app-budget></app-budget></div>
+        <div *ngSwitchCase="4"><app-trends></app-trends></div>
+      </ng-container>
+
+      <!-- Buttons -->
+      <div
+        class="absolute top-1/2 left-0 transform -translate-y-1/2 flex justify-between w-full px-10"
+      >
+        <button
+          class="px-4 py-2 bg-gray-300 rounded text-background"
+          (click)="prevStep()"
+          [disabled]="currentStep === 0"
+        >
+          Back
+        </button>
+        <!-- <button
+          class="px-4 py-2 bg-blue-600 text-white rounded"
+          (click)="nextStep()"
+          [disabled]="currentStep === steps.length - 1"
+        >
+          Next
+        </button> -->
+        <button
+          class="px-4 py-2 bg-blue-600 text-white rounded"
+          *ngIf="currentStep < steps.length - 1"
+          (click)="nextStep()"
+        >
+          Next
+        </button>
+
+        <button
+          class="px-4 py-2 bg-green-600 text-white rounded"
+          *ngIf="currentStep === steps.length - 1"
+          (click)="finish()"
+        >
+          Finish
+        </button>
+      </div>
+    </div>
+  </div>
+</body>

@@ -28,6 +28,12 @@ const adImageSchema = new mongoose.Schema({
   imageData: {
     type: String,
   },
+  impressions: {
+    type: Number,
+  },
+  clicks: {
+    type: Number,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
