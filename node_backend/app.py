@@ -17,32 +17,10 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
-
-
 # Initialize Flask app
 app = Flask(__name__)
 
 CORS(app)  
-
-#budget start###############################################################################
-# model = xgb.Booster()
-# model.load_model('xgboost_model.json')  
-
-# # Feature names extracted from the model
-# FEATURE_NAMES = [
-#     "Target_Audience", "Campaign_Goal", "Duration", "Channel_Used", 
-#     "Conversion_Rate", "Acquisition_Cost","ROI", "Location", "Language", 
-#     "Clicks", "Impressions", "Engagement_Score", "Customer_Segment", "Conversions",
-#     "Cost_Per_Click", 
-#     "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
-#     "Cost_Per_Engagement"
-# ]
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
-    
-# #########################budget end #########################################################################
 
 # # Initialize the TrendAnalyzer
 # analyzer = TrendAnalyzer()
