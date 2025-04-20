@@ -5,6 +5,7 @@ import { FluxPageComponent } from '../flux-page/flux-page.component';
 import {CaptionPageComponent} from '../caption-page/caption-page.component';
 import { TrendsComponent } from '../trends-page/trends-page.component';
 import { BudgetComponent } from '../budget/budget.component';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -23,6 +24,11 @@ nextStep() {
 
 prevStep() {
   if (this.currentStep > 0) this.currentStep--;
+}
+constructor(private router: Router) {}
+
+finish() {
+  this.router.navigate(['/home']);
 }
 
 }

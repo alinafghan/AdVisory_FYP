@@ -1,0 +1,15 @@
+<!-- button.component.html -->
+<a 
+  [href]="link"
+  class="btn" 
+  [ngClass]="{
+    'btn-primary': type === 'primary',
+    'btn-secondary': type === 'secondary',
+    'btn-accent': type === 'accent',
+    'btn-outlined': type === 'outlined',
+    'btn-disabled': disabled
+  }"
+  [attr.disabled]="disabled ? true : null"
+>
+  {{ label }}
+</a>
