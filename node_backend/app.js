@@ -5,11 +5,11 @@ const cors = require("cors"); //middleware for working w angular frontend
 const connectDB = require("./config/db.config");
 
 //ROUTERS
-const predictionRouter = require("./routes/BudgetModelRoute"); // Import the prediction route
 const userRouter = require("./routes/UserRouter");
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
 const adRouter = require("./routes/adsRouter");
+const budgetRouter = require("./routes/budgetRouter");
 const adImageRouter = require("./routes/adImageRouter"); // Add the new ad image router
 
 const app = express();
@@ -34,10 +34,9 @@ console.log("Its working");
 //ROUTES
 // /predict is the prediction router
 app.use("/ads", adRouter);
+app.use("/budget", budgetRouter);
 app.use("/auth", authRouter);
-app.use("/predict", predictionRouter);
 app.use("/user", userRouter);
-app.use("/predict", predictionRouter);
 app.use("/trends", trendsRoutes);
 app.use("/adImages", adImageRouter); // Add the new route for ad images
 

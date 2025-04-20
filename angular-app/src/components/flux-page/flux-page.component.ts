@@ -1,36 +1,9 @@
-<<<<<<< HEAD
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FluxService } from './flux.service'; 
-import { FormsModule } from '@angular/forms';
-
-@Component({
-  selector: 'app-flux-page',
-  standalone: true,
-  imports: [CommonModule, FormsModule], 
-  templateUrl: './flux-page.component.html',
-  styleUrls: ['./flux-page.component.css']
-})
-export class FluxPageComponent {
-  generatedImage: string | null = null; 
-  isLoading: boolean = false; 
-  errorMessage: string | null = null; 
-
-  prompt: string = "An advertisement for "; 
-  seed: number = 0;
-  randomizeSeed: boolean = true;
-  width: number = 1024;
-  height: number = 1024;
-  num_inference_steps: number = 4;
-
-  constructor(private fluxService: FluxService) {}
-
-=======
 // flux-page.component.ts
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FluxService } from "./flux.service";
 import { FormsModule } from "@angular/forms";
+import { AdDataService } from "../../services/ad-data.service";
 // import { HeaderComponent } from "../header.component";
 
 @Component({
@@ -97,8 +70,7 @@ export class FluxPageComponent implements OnInit {
   enhancedPrompt: string = "";
   isPromptEnhanced: boolean = false;
 
-  constructor(private fluxService: FluxService) {}
-
+  constructor(private fluxService: FluxService, private adDataService: AdDataService) {}  //ad data service is for the pipeline, to pass ad data to caption step
   ngOnInit() {
     this.fluxService.getAllCampaigns().subscribe(data => {
       this.campaigns = data;
@@ -173,56 +145,20 @@ export class FluxPageComponent implements OnInit {
     }
   }
 
->>>>>>> origin/main
   generateAdImage(): void {
     this.isLoading = true;
     this.errorMessage = null;
     this.generatedImage = null;
 
-<<<<<<< HEAD
-    const requestData = {
-      prompt: this.prompt,
-=======
     // Use the enhanced prompt if available, otherwise use the constructed prompt
     const promptToUse = this.isPromptEnhanced ? this.enhancedPrompt : this.constructedPrompt;
     
     const requestData = {
       prompt: promptToUse,
->>>>>>> origin/main
       seed: this.seed,
       randomize_seed: this.randomizeSeed,
       width: this.width,
       height: this.height,
-<<<<<<< HEAD
-      num_inference_steps: this.num_inference_steps
-    };
-    // const requestData = {
-    //   prompt: 'a dog', // Test with the same payload as in Postman
-    //   seed: 0,
-    //   randomize_seed: true,
-    //   width: 1024,
-    //   height: 1024,
-    //   num_inference_steps: 4,
-    // };
-  
-    console.log('Request payload:', requestData);
-
-    console.log('Sending API request to generate image...');
-
-    this.fluxService.generateImage(requestData).subscribe({
-      next: (response: any) => {
-        if (response['Generated Image']) {
-          const base64ImageData = response['Generated Image']; //decoding into base64
-          const decodedImage = `data:image/webp;base64,${base64ImageData}`;
-          this.generatedImage = decodedImage;
-          console.log('Generated Image URL:', this.generatedImage);
-          console.log('Decoded Image URL:', decodedImage); //
-
-          // this.generatedImage = `http://localhost:5000${response['Generated Image']}`;
-          // console.log('Generated Image URL:', this.generatedImage);
-        } else {
-          this.errorMessage = 'Unexpected response from server.';
-=======
       num_inference_steps: this.num_inference_steps,
     };
 
@@ -236,20 +172,10 @@ export class FluxPageComponent implements OnInit {
           console.log("Generated Image URL:", this.generatedImage);
         } else {
           this.errorMessage = "Unexpected response from server.";
->>>>>>> origin/main
         }
         this.isLoading = false;
       },
       error: (error) => {
-<<<<<<< HEAD
-        console.error('Error generating image:', error);
-        this.errorMessage = 'Failed to generate the image. Please try again later.';
-        this.isLoading = false;
-      }
-    });
-  }
-}
-=======
         console.error("Error generating image:", error);
         this.errorMessage =
           "Failed to generate the image. Please try again later.";
@@ -257,6 +183,7 @@ export class FluxPageComponent implements OnInit {
       },
     });
   }
+  
 
   submitImageToCampaign(imageData: string) {
     if (!imageData) {
@@ -279,10 +206,23 @@ export class FluxPageComponent implements OnInit {
       imageData: imageData
     };
 
-    this.fluxService.addImageToCampaign(postData).subscribe(
-      (response: any) => console.log('Upload successful', response),
-      (error: any) => console.error('Error uploading image', error)
-    );
+    this.fluxService.addImageToCampaign(postData).subscribe({
+      next: (response: any) => {
+        console.log('Upload successful', response);
+  
+        const adImageId = response?.adImage?.id;
+  
+        if (adImageId) {
+          this.adDataService.setAdImageId(adImageId);
+          console.log('Stored adImageId in service:', adImageId);
+        } else {
+          console.warn('No adImageId received in response.');
+        }
+      },
+      error: (err) => {
+        console.error('Error uploading image:', err);
+      }
+    });
   }
 
   fetchAds() {
@@ -356,4 +296,3 @@ export class FluxPageComponent implements OnInit {
     this.isPromptEnhanced = false;
   }
 }
->>>>>>> origin/main
