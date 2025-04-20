@@ -25,47 +25,22 @@ app = Flask(__name__)
 CORS(app)  
 
 #budget start###############################################################################
-model = xgb.Booster()
-model.load_model('xgboost_model.json')  
+# model = xgb.Booster()
+# model.load_model('xgboost_model.json')  
 
-# Feature names extracted from the model
-FEATURE_NAMES = [
-    "Target_Audience", "Campaign_Goal", "Duration", "Channel_Used", 
-    "Conversion_Rate", "Acquisition_Cost","ROI", "Location", "Language", 
-    "Clicks", "Impressions", "Engagement_Score", "Customer_Segment", "Conversions",
-    "Cost_Per_Click", 
-    "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
-    "Cost_Per_Engagement"
-]
+# # Feature names extracted from the model
+# FEATURE_NAMES = [
+#     "Target_Audience", "Campaign_Goal", "Duration", "Channel_Used", 
+#     "Conversion_Rate", "Acquisition_Cost","ROI", "Location", "Language", 
+#     "Clicks", "Impressions", "Engagement_Score", "Customer_Segment", "Conversions",
+#     "Cost_Per_Click", 
+#     "Click_Through_Rate", "Cost_Per_Impression", "Engagement_Rate", 
+#     "Cost_Per_Engagement"
+# ]
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     try:
-#         # Get the input data from the request
-#         data = request.get_json()
-#         if 'input' not in data:
-#             return jsonify({'error': 'Invalid input format. Expected JSON with "input" key.'}), 400
-        
-#         # Convert input to numpy array and reshape
-#         input_data = np.array(data['input'], dtype=np.float32).reshape(1, -1)
-        
-#         # Convert input data to DMatrix with feature names
-#         dmatrix = xgb.DMatrix(input_data, feature_names=FEATURE_NAMES)
-
-#         # Make prediction
-#         prediction = model.predict(dmatrix)
-
-#         #we did in log scale so return
-#         prediction_og = np.exp(prediction)
-        
-#         # Return the prediction
-#         return jsonify({'prediction': prediction_og.tolist()})
-    
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 400
     
 # #########################budget end #########################################################################
 

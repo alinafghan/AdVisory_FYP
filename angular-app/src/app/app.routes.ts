@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from '../pages/home/home.component';
-import { BudgetPageComponent } from '../components/budget-page/budget-page.component';
+import { BudgetPageComponent } from '../pages/budget-page/budget-page.component';
 import { TrendsComponent } from '../components/trends-page/trends-page.component';
 import { FluxPageComponent } from '../components/flux-page/flux-page.component';
 import {MetricsPageComponent} from '../components/metrics-page/metrics-page.component';
