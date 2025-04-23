@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FluxService } from "./flux.service";
 import { FormsModule } from "@angular/forms";
+import { AdDataService } from "../../services/ad-data.service";
 // import { HeaderComponent } from "../header.component";
 
 @Component({
@@ -69,8 +70,7 @@ export class FluxPageComponent implements OnInit {
   enhancedPrompt: string = "";
   isPromptEnhanced: boolean = false;
 
-  constructor(private fluxService: FluxService) {}
-
+  constructor(private fluxService: FluxService, private adDataService: AdDataService) {}  //ad data service is for the pipeline, to pass ad data to caption step
   ngOnInit() {
     this.fluxService.getAllCampaigns().subscribe(data => {
       this.campaigns = data;
@@ -183,6 +183,7 @@ export class FluxPageComponent implements OnInit {
       },
     });
   }
+  
 
   submitImageToCampaign(imageData: string) {
     if (!imageData) {
@@ -205,10 +206,23 @@ export class FluxPageComponent implements OnInit {
       imageData: imageData
     };
 
-    this.fluxService.addImageToCampaign(postData).subscribe(
-      (response: any) => console.log('Upload successful', response),
-      (error: any) => console.error('Error uploading image', error)
-    );
+    this.fluxService.addImageToCampaign(postData).subscribe({
+      next: (response: any) => {
+        console.log('Upload successful', response);
+  
+        const adImageId = response?.adImage?.id;
+  
+        if (adImageId) {
+          this.adDataService.setAdImageId(adImageId);
+          console.log('Stored adImageId in service:', adImageId);
+        } else {
+          console.warn('No adImageId received in response.');
+        }
+      },
+      error: (err) => {
+        console.error('Error uploading image:', err);
+      }
+    });
   }
 
   fetchAds() {
