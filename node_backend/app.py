@@ -202,6 +202,36 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 if openai_api_key is None:
     raise ValueError("No API Key found. Please set the OPENAI_API_KEY in the .env file.")
 
+@app.route('/generate-ad-image', methods=['POST'])
+def generate_ad_image():
+    try:
+        data = request.get_json()
+        
+        # Ensure the prompt is provided
+        if 'prompt' not in data:
+            return jsonify({'error': 'Prompt is required for image generation'}), 400
+        
+        # Call OpenAI to generate an image
+        result = openai.images.generate(
+            model="gpt-image-1",  # Use the appropriate model for image generation
+            prompt=data['prompt']  
+        )
+        
+        image_base64 = result.data[0].b64_json
+        image_bytes = base64.b64decode(image_base64)
+        # Save the image to a file
+        with open("blackhole.png", "wb") as f:
+            f.write(image_bytes)
+        
+        # Return the image in base64 format or the path of the saved image
+        return jsonify({
+            'message': 'Ad image generated successfully',
+            'imageBase64': image_base64  # Return base64 image data if needed
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 ######################### ENHANCE ################################
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
