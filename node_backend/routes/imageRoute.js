@@ -7,7 +7,7 @@ const FormData = require('form-data');
 const {
     getAdImagesForCampaign,
     getAdImageById,
-    deleteAdImage
+    deleteAdImage,addAdImage
   } = require("../controllers/ad_image_controller");
 
 const FLASK_API_URL = 'http://localhost:5000'; // Your Flask server URL
@@ -77,6 +77,8 @@ router.post('/generate', async (req, res) => {
         handlePythonApiError(error, res);
     }
 });
+// post an ad to a campaign
+router.post("/campaign/:campaignId", addAdImage);
 // Get all ad images for a campaign
 router.get("/campaign/:campaignId", getAdImagesForCampaign);
 

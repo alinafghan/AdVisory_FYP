@@ -39,7 +39,7 @@ customDimension: boolean = false;
 customGenerateWidth: number | null = null;
 customGenerateHeight: number | null = null;
 
-//for "make it your own option"
+//make it your own
 promptMode = false;
 selectedPrompt = '';
 selectedPromptBackground = '';
@@ -48,12 +48,15 @@ imagePrompts: { [key: string]: string } = {
   'assets/3.png': "A podium base, painted in a soft pink hue, is the focal point of this minimal scene. The podium occupies approximately 15% of the image height. Its base is adorned with a small, round plate, adding a touch of elegance to the design. Positioned on a pristine white surface, the podium casts a soft shadow on the floor beneath it. The backdrop features a cream-colored wall that contrasts with the podium and the floor. The lighting, seemingly artificial, highlights the podium's base and plate, adding depth and dimension without dominating the scene."
 };
 
-
+//for saving generated image to campaign
+campaigns: any[] = [];
+selectedCampaign: string | null = null;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.productImage = sessionStorage.getItem('uploadedImage'); // Retrieve from session storage
+    this.fetchUserCampaigns();
   }
 
   ngAfterViewInit() {
@@ -248,7 +251,6 @@ makeItYourOwn(bg: string, event: MouseEvent) {
   this.selectedPrompt = this.imagePrompts[bg] || '';
 }
 
-
   // Method to call the backend API to generate custom background
   
   generateCustomBackground() {
@@ -314,4 +316,129 @@ makeItYourOwn(bg: string, event: MouseEvent) {
     // Close custom mode after sending the request
     this.customMode = false;
   }
+
+// fetch campaigns for a user
+fetchUserCampaigns() {
+  //const userId = sessionStorage.getItem('businessId'); // assuming you saved userId during login
+  //if (!userId) return;
+
+  this.http.get<any[]>(`http://localhost:3000/ads/getAllCampaigns`).subscribe(
+    (data) => {
+      console.log('Campaigns fetched:', data);
+      this.campaigns = data;
+    },
+    (err) => console.error('Failed to load campaigns', err)
+  );
+  
+}
+
+// sending the product ad to campaigns
+submitComposedImageToCampaign() {
+  if (!this.selectedBackground || !this.productImage) {
+    alert('Please select both a background image and a product image');
+    return;
+  }
+
+  if (!this.selectedCampaign) {
+    alert('Please select a campaign first.');
+    return;
+  }
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    alert('Unable to create canvas context');
+    return;
+  }
+
+  const bgImg = new Image();
+  bgImg.crossOrigin = 'anonymous';
+  bgImg.onload = () => {
+    canvas.width = this.outputWidth;
+    canvas.height = this.outputHeight;
+
+    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+    if (!this.mrrComponent) {
+      alert('Error: Could not access product image component');
+      return;
+    }
+
+    const backgroundImgElement = document.querySelector('.relative.mt-4.border.p-4 img') as HTMLImageElement;
+    if (!backgroundImgElement) {
+      alert('Error: Could not find background image element');
+      return;
+    }
+
+    const bgDisplayedWidth = backgroundImgElement.clientWidth;
+    const bgDisplayedHeight = backgroundImgElement.clientHeight;
+
+    const scaleX = this.outputWidth / bgDisplayedWidth;
+    const scaleY = this.outputHeight / bgDisplayedHeight;
+
+    const productImg = new Image();
+    productImg.crossOrigin = 'anonymous';
+    productImg.onload = () => {
+      const boxWrapper = this.mrrComponent.boxWrapper;
+      const boxElement = this.mrrComponent.box;
+
+      const bgRect = backgroundImgElement.getBoundingClientRect();
+      const boxRect = boxWrapper.getBoundingClientRect();
+
+      const relativeLeft = boxRect.left - bgRect.left;
+      const relativeTop = boxRect.top - bgRect.top;
+
+      const scaledLeft = relativeLeft * scaleX;
+      const scaledTop = relativeTop * scaleY;
+
+      const scaledWidth = boxElement.offsetWidth * scaleX;
+      const scaledHeight = boxElement.offsetHeight * scaleY;
+
+      const rotation = this.mrrComponent.getCurrentRotation(boxWrapper);
+      const centerX = scaledLeft + (scaledWidth / 2);
+      const centerY = scaledTop + (scaledHeight / 2);
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotation * Math.PI / 180);
+
+      ctx.drawImage(
+        productImg,
+        -scaledWidth / 2,
+        -scaledHeight / 2,
+        scaledWidth,
+        scaledHeight
+      );
+
+      ctx.restore();
+
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Now send this image to backend
+      const postData = {
+        campaignId: this.selectedCampaign,
+        prompt: "customPrompt",
+        width: this.outputWidth,
+        height: this.outputHeight,
+        imageData: dataUrl
+      };
+
+      this.http.post('http://localhost:3000/adImages/add', postData).subscribe(
+        (response: any) => {
+          console.log('Upload successful', response);
+          alert('Image successfully added to campaign!');
+        },
+        (error: any) => {
+          console.error('Error uploading image', error);
+          alert('Failed to add image to campaign');
+        }
+      );
+    };
+
+    productImg.src = this.productImage || '';
+  };
+
+  bgImg.src = this.selectedBackground;
+}
+
 }
