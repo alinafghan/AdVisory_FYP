@@ -31,7 +31,7 @@ export const routes: Routes = [
     // {path: '**', redirectTo: '/home'}
     { path: 'caption', component: CaptionPageComponent },
     {path: 'productad', component : ProductAdComponent},
-    {path: 'productadcustom', component : ProductAdCustomComponent}
+    {path: 'productadcustom', component : ProductAdCustomComponent},
     {path:'pipeline', component: PipelineComponent},
 
 ];

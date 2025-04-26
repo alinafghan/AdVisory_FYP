@@ -16,7 +16,7 @@ export class ProductAdCustomComponent implements OnInit, AfterViewInit {
   
   productImage: string | null = null;
   selectedBackground: string = '';
-  backgrounds: string[] = ['assets/1.png', 'assets/2.png', 'assets/3.png'];
+  backgrounds: string[] = ['assets/images/1.png', 'assets/images/2.png', 'assets/images/3.png'];
   customMode = false;
   customPrompt = '';
   customExclude = '';
@@ -44,8 +44,8 @@ promptMode = false;
 selectedPrompt = '';
 selectedPromptBackground = '';
 imagePrompts: { [key: string]: string } = {
-  'assets/2.png': 'Blue studio lighting',
-  'assets/3.png': "A podium base, painted in a soft pink hue, is the focal point of this minimal scene. The podium occupies approximately 15% of the image height. Its base is adorned with a small, round plate, adding a touch of elegance to the design. Positioned on a pristine white surface, the podium casts a soft shadow on the floor beneath it. The backdrop features a cream-colored wall that contrasts with the podium and the floor. The lighting, seemingly artificial, highlights the podium's base and plate, adding depth and dimension without dominating the scene."
+  'assets/images/2.png': 'Blue studio lighting',
+  'assets/images/3.png': "A podium base, painted in a soft pink hue, is the focal point of this minimal scene. The podium occupies approximately 15% of the image height. Its base is adorned with a small, round plate, adding a touch of elegance to the design. Positioned on a pristine white surface, the podium casts a soft shadow on the floor beneath it. The backdrop features a cream-colored wall that contrasts with the podium and the floor. The lighting, seemingly artificial, highlights the podium's base and plate, adding depth and dimension without dominating the scene."
 };
 
 //for saving generated image to campaign
