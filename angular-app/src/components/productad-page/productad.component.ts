@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router'; // ✅ Import RouterModule
 import { HttpClient } from '@angular/common/http'; // ✅ Import HttpClient
+import { EventEmitter, Output } from '@angular/core';
+
 
 @Component({
   selector: 'app-productad-page',
@@ -18,6 +20,8 @@ export class ProductAdComponent {
   imageProcessed: boolean = false;
   selectedFile: File | null = null;
   isLoading: boolean = false;
+  @Output() continueEvent = new EventEmitter<void>();
+
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -67,6 +71,7 @@ export class ProductAdComponent {
   }
 
   navigateToCustomPage(): void {
-    this.router.navigate(['/productadcustom']);
+    this.continueEvent.emit();
   }
+  
 }

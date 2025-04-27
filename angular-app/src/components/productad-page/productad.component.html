@@ -1,8 +1,14 @@
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
+<div class="flex justify-center items-center">
   <div class="bg-white p-6 rounded-lg shadow-lg border-2 border-dashed border-gray-300 w-full max-w-4xl text-center">
 
     <!-- Image Upload -->
-    <input type="file" (change)="onFileSelected($event)" accept="image/*" class="mb-4">
+    <label class="block cursor-pointer mb-4">
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Choose File
+      </div>
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+    </label>
+    
 
     <!-- Spinner while loading -->
     <div *ngIf="isLoading" class="flex justify-center my-4">

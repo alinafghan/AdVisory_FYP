@@ -1,3 +1,11 @@
+/* General Page Styling */
+body {
+  background-color: #000; /* Black background */
+  color: #fff; /* White text */
+  font-family: 'Inter', sans-serif; /* Professional clean font */
+}
+
+/* Tabs Styling */
 .tabs {
   display: flex;
   margin-bottom: 1rem;
@@ -8,18 +16,126 @@
   flex: 1;
   padding: 0.5rem;
   text-align: center;
-  background-color: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background-color: #2d2d2d; /* Dark grey tabs */
+  border: 1px solid #444; /* Slightly lighter border */
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  color: #fff;
 }
 
 .tab.active {
-  background-color: #3b82f6;
+  background-color: #8b5cf6; /* Purple active tab */
+  color: #fff;
+}
+
+
+/* Background Grid Items */
+.grid .cursor-pointer {
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+}
+
+.grid .cursor-pointer:hover {
+  border-color: #8b5cf6; /* Hover with purple border */
+}
+
+.grid .cursor-pointer .w-full.h-20 {
+  background-color: #3a3a3a;
+  color: #aaa;
+}
+
+/* Modal Overlay */
+.group-hover\\:opacity-100 {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Overlay Buttons */
+button.bg-white.text-black {
+  background-color: #8b5cf6;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Form Labels and Inputs */
+label {
+  color: #ccc;
+  font-weight: 600;
+}
+
+textarea,
+select,
+input[type="number"] {
+  background-color: #2d2d2d;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+/* Buttons */
+button {
+  transition: all 0.3s ease;
+}
+
+.bg-blue-500 {
+  background-color: #8b5cf6; /* Purple button */
   color: white;
 }
 
+.bg-blue-500:hover {
+  background-color: #7c3aed; /* Slightly darker purple on hover */
+}
+
+.bg-gray-300 {
+  background-color: #3a3a3a;
+  color: #ccc;
+}
+
+.bg-gray-300:hover {
+  background-color: #4a4a4a;
+}
+
+
+/* Select dropdown in Right Panel */
+select.border.p-2.rounded {
+  background-color: #2d2d2d;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+/* Preview Panel */
 .relative.mt-4.border.p-4.rounded-lg {
-  background-color: transparent !important;
+  background-color: #2d2d2d !important; /* Dark grey background */
+  border: 1px solid #444;
+}
+
+/* Download Ad Button */
+.bg-green-500 {
+  background-color: #8b5cf6; /* Purple instead of green */
+  color: white;
+}
+
+.bg-green-500:hover {
+  background-color: #7c3aed;
+}
+
+/* Add to Campaign Section */
+.mt-6 label {
+  color: #ccc;
+}
+
+select#campaign {
+  background-color: #2d2d2d;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+button.px-4.py-2.bg-blue-500 {
+  background-color: #8b5cf6;
+  color: #fff;
+}
+
+button.px-4.py-2.bg-blue-500:hover {
+  background-color: #7c3aed;
 }
