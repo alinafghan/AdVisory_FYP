@@ -232,11 +232,7 @@
               stroke-linejoin="round"
             />
           </svg>
-          <div
-            *ngIf="isEnhancingPrompt"
-            class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"
-          ></div>
-        
+        </div>
       </div>
 
       <!-- Add this section just after the Generated Prompt section and before the Dimensions section -->
@@ -294,21 +290,41 @@
 
       <!-- Dimensions Section -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-white mb-5">Dimensions</label>
+        <label class="block text-sm font-medium text-white mb-5"
+          >Dimensions</label
+        >
         <div class="relative mb-6">
-          <button (click)="toggleDimensionsDropdown()"
-            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[rgba(0,0,0,0.05)] bg-white text-black flex items-center justify-between">
+          <button
+            (click)="toggleDimensionsDropdown()"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[rgba(0,0,0,0.05)] bg-white text-black flex items-center justify-between"
+          >
             <span>{{ selectedDimension }}</span>
-            <svg class="w-4 h-4" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 6L8 10L12 6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                opacity="0.5" />
+            <svg
+              class="w-4 h-4"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 6L8 10L12 6"
+                stroke="black"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                opacity="0.5"
+              />
             </svg>
           </button>
-          <div *ngIf="showDimensionsDropdown"
-            class="absolute w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+          <div
+            *ngIf="showDimensionsDropdown"
+            class="absolute w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+          >
             <div class="py-1">
-              <button *ngFor="let dimension of dimensions" (click)="selectDimension(dimension)"
-                class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <button
+                *ngFor="let dimension of dimensions"
+                (click)="selectDimension(dimension)"
+                class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
                 {{ dimension }}
               </button>
             </div>
@@ -318,26 +334,49 @@
         <!-- Width and Height Inputs -->
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5">Width</label>
-            <input type="number" [(ngModel)]="width"
-              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Width</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="width"
+              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5">Height</label>
-            <input type="number" [(ngModel)]="height"
-              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Height</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="height"
+              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
       </div>
 
       <!-- Advanced Parameters -->
-      <button (click)="toggleAdvancedParams()"
-        class="w-full h-10 px-4.5 text-white font-medium text-sm flex items-center justify-between mb-6">
+      <button
+        (click)="toggleAdvancedParams()"
+        class="w-full h-10 px-4.5 text-white font-medium text-sm flex items-center justify-between mb-6"
+      >
         <span>Advanced Parameters</span>
-        <svg [class.transform]="showAdvancedParams" [class.rotate-180]="showAdvancedParams"
-          class="w-4 h-4 transition-transform duration-200" viewBox="0 0 16 16" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 6L8 10L12 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <svg
+          [class.transform]="showAdvancedParams"
+          [class.rotate-180]="showAdvancedParams"
+          class="w-4 h-4 transition-transform duration-200"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 6L8 10L12 6"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       </button>
 
@@ -345,43 +384,81 @@
       <div *ngIf="showAdvancedParams" class="mb-6">
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-white mb-2.5">Seed</label>
-            <input type="number" [(ngModel)]="seed"
-              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="block text-sm font-medium text-white mb-2.5"
+              >Seed</label
+            >
+            <input
+              type="number"
+              [(ngModel)]="seed"
+              class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
           <div class="flex items-center">
-            <label class="flex items-center text-sm font-medium text-white cursor-pointer">
-              <input type="checkbox" [(ngModel)]="randomizeSeed"
-                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+            <label
+              class="flex items-center text-sm font-medium text-white cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                [(ngModel)]="randomizeSeed"
+                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
               <span class="ml-2">Randomize Seed</span>
             </label>
           </div>
         </div>
         <div class="mt-4">
-          <label class="block text-sm font-medium text-white mb-2.5">Inference Steps</label>
-          <input type="number" [(ngModel)]="num_inference_steps"
-            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="block text-sm font-medium text-white mb-2.5"
+            >Inference Steps</label
+          >
+          <input
+            type="number"
+            [(ngModel)]="num_inference_steps"
+            class="w-full h-10 px-3.5 py-2.5 rounded-md border border-[#E4E4E7] bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
       </div>
 
       <!-- Generate Button -->
-      <button (click)="generateAdImage()" [disabled]="isLoading"
-        class="w-full h-14 rounded-md bg-[#A027FC] text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-[#8920d6] transition-colors duration-200">
+      <button
+        (click)="generateAdImage()"
+        [disabled]="isLoading"
+        class="w-full h-14 rounded-md bg-[#A027FC] text-white font-medium text-lg flex items-center justify-center gap-2 hover:bg-[#8920d6] transition-colors duration-200"
+      >
         <span>Generate Image</span>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3.33325 8H12.6666" stroke="#FAFAFA" stroke-width="1.33333" stroke-linecap="round"
-            stroke-linejoin="round" />
-          <path d="M8 3.33331L12.6667 7.99998L8 12.6666" stroke="#FAFAFA" stroke-width="1.33333" stroke-linecap="round"
-            stroke-linejoin="round" />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3.33325 8H12.6666"
+            stroke="#FAFAFA"
+            stroke-width="1.33333"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M8 3.33331L12.6667 7.99998L8 12.6666"
+            stroke="#FAFAFA"
+            stroke-width="1.33333"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       </button>
     </div>
 
     <!-- Preview Panel -->
-    <div class="bg-[#042954] rounded-lg border-2 border-[#E4E4E7] p-6 flex flex-col h-full">
+    <div
+      class="bg-[#042954] rounded-lg border-2 border-[#E4E4E7] p-6 flex flex-col h-full"
+    >
       <div *ngIf="isLoading" class="flex-grow flex items-center justify-center">
         <div class="text-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white-500 mx-auto mb-4"></div>
+          <div
+            class="animate-spin rounded-full h-12 w-12 border-b-2 border-white-500 mx-auto mb-4"
+          ></div>
           <p class="text-white font-semibold">
             Generating your ad image... Please wait.
           </p>
@@ -389,7 +466,10 @@
       </div>
 
       <!-- Error Message -->
-      <div *ngIf="errorMessage && !isLoading" class="flex-grow flex items-center justify-center">
+      <div
+        *ngIf="errorMessage && !isLoading"
+        class="flex-grow flex items-center justify-center"
+      >
         <div class="text-center">
           <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
         </div>
@@ -402,8 +482,11 @@
         </h3>
         <div class="flex-grow flex items-center justify-center">
           <div class="image-container">
-            <img [src]="generatedImage" alt="Generated Ad"
-              class="rounded-lg shadow-md max-w-full max-h-full object-contain" />
+            <img
+              [src]="generatedImage"
+              alt="Generated Ad"
+              class="rounded-lg shadow-md max-w-full max-h-full object-contain"
+            />
           </div>
         </div>
       </div>
@@ -416,12 +499,23 @@
       </button>
 
       <!-- Empty state when no image is generated yet -->
-      <div *ngIf="!generatedImage && !isLoading && !errorMessage" class="flex-grow flex items-center justify-center">
+      <div
+        *ngIf="!generatedImage && !isLoading && !errorMessage"
+        class="flex-grow flex items-center justify-center"
+      >
         <div class="text-center text-gray-400">
-          <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-            </path>
+          <svg
+            class="w-16 h-16 mx-auto mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
           </svg>
           <p class="font-medium text-gray-200">
             Your generated image will appear here

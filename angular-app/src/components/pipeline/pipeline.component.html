@@ -54,40 +54,40 @@
       </ng-container>
       
 
-      <!-- Buttons -->
-      <div
-        class="absolute top-1/2 left-0 transform -translate-y-1/2 flex justify-between w-full px-10"
-      >
-        <button
-          class="px-4 py-2 bg-gray-300 rounded text-background"
-          (click)="prevStep()"
-          [disabled]="currentStep === 0"
-        >
-          Back
-        </button>
-        <!-- <button
-          class="px-4 py-2 bg-blue-600 text-white rounded"
-          (click)="nextStep()"
-          [disabled]="currentStep === steps.length - 1"
-        >
-          Next
-        </button> -->
-        <button
-          class="px-4 py-2 bg-blue-600 text-white rounded"
-          *ngIf="currentStep < steps.length - 1"
-          (click)="nextStep()"
-        >
-          Next
-        </button>
+     <!-- Buttons -->
+     <div
+     class="absolute top-1/2 left-0 transform -translate-y-1/2 flex justify-between w-full px-10"
+   >
+     <button
+       class="px-4 py-2 bg-gray-300 rounded text-background"
+       (click)="prevStep()"
+       [disabled]="currentStep === 0"
+     >
+       Back
+     </button>
+     <!-- <button
+       class="px-4 py-2 bg-blue-600 text-white rounded"
+       (click)="nextStep()"
+       [disabled]="currentStep === steps.length - 1"
+     >
+       Next
+     </button> -->
+     <button
+       class="px-4 py-2 bg-blue-600 text-white rounded"
+       *ngIf="currentStep < steps.length - 1"
+       (click)="nextStep()"
+     >
+       Next
+     </button>
 
-        <button
-          class="px-4 py-2 bg-green-600 text-white rounded"
-          *ngIf="currentStep === steps.length - 1"
-          (click)="finish()"
-        >
-          Finish
-        </button>
-      </div>
-    </div>
-  </div>
+     <button
+       class="px-4 py-2 bg-green-600 text-white rounded"
+       *ngIf="currentStep === steps.length - 1"
+       (click)="finish()"
+     >
+       Finish
+     </button>
+   </div>
+ </div>
+</div>
 </body>

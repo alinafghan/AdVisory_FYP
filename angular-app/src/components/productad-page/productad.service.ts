@@ -15,5 +15,5 @@ export class FluxService {
         'Content-Type': 'application/json' // Ensure the request sends JSON data
       });
     console.log('Sending request to Flux API:', requestData);
-    return this.http.post<any>(this.apiUrl, requestData, { headers });  }
+    return this.http.post<any>(this.apiUrl, requestData, { headers });  } 
 }

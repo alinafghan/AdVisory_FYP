@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MrrComponent } from './mrr.component';
 import { HttpClient } from '@angular/common/http'; 
+import { AdDataService } from "../../services/ad-data.service";
 
 @Component({
   selector: 'app-productadcustom-page',
@@ -20,7 +21,10 @@ export class ProductAdCustomComponent implements OnInit, AfterViewInit {
   customMode = false;
   customPrompt = '';
   customExclude = '';
-  
+  //save prompt for when saving it to adservice
+  latestUsedPrompt: string = 'custom';
+
+
   // Display dimensions (what's shown on the screen)
   displayWidth: number = 460;
   displayHeight: number = 460;
@@ -52,7 +56,7 @@ imagePrompts: { [key: string]: string } = {
 campaigns: any[] = [];
 selectedCampaign: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private adDataService: AdDataService) {} 
 
   ngOnInit() {
     this.productImage = sessionStorage.getItem('uploadedImage'); // Retrieve from session storage
@@ -293,12 +297,15 @@ makeItYourOwn(bg: string, event: MouseEvent) {
   console.log('Prompt:', prompt);
   console.log('Negative Prompt:', negativePrompt);
   console.log('Dimensions:', this.outputWidth, 'x', this.outputHeight);
+  //save prompt 
+  this.latestUsedPrompt = prompt;
 
   const requestData = {
     prompt: prompt,
     negative_prompt: negativePrompt,
     width: width,
-    height: height
+    height: height,
+    
   };
     // Send POST request to the backend API
     this.http.post<any>('http://localhost:5000/generate', requestData).subscribe(
@@ -315,6 +322,8 @@ makeItYourOwn(bg: string, event: MouseEvent) {
   
     // Close custom mode after sending the request
     this.customMode = false;
+    
+
   }
 
 // fetch campaigns for a user
@@ -332,7 +341,6 @@ fetchUserCampaigns() {
   
 }
 
-// sending the product ad to campaigns
 submitComposedImageToCampaign() {
   if (!this.selectedBackground || !this.productImage) {
     alert('Please select both a background image and a product image');
@@ -414,10 +422,10 @@ submitComposedImageToCampaign() {
 
       const dataUrl = canvas.toDataURL('image/png');
 
-      // Now send this image to backend
+      
       const postData = {
         campaignId: this.selectedCampaign,
-        prompt: "customPrompt",
+        prompt: this.latestUsedPrompt,
         width: this.outputWidth,
         height: this.outputHeight,
         imageData: dataUrl
@@ -427,6 +435,16 @@ submitComposedImageToCampaign() {
         (response: any) => {
           console.log('Upload successful', response);
           alert('Image successfully added to campaign!');
+
+          // ✅ Store adImageId in adDataService if present
+          const adImageId = response?.adImage?.id;
+          if (adImageId) {
+            this.adDataService.setAdImageId(adImageId);
+            console.log('Stored adImageId in service:', adImageId);
+          } else {
+            console.warn('No adImageId received in response.');
+          }
+
         },
         (error: any) => {
           console.error('Error uploading image', error);
