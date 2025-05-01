@@ -11,6 +11,37 @@
         </p>
       </div>
 
+        <!-- Model Selection -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-white mb-2.5">Model Selection</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              [class.bg-[#A027FC]]="selectedModel === 'Flux'"
+              [class.bg-[#042954]]="selectedModel !== 'Flux'"
+              [class.border-white]="selectedModel === 'Flux'"
+              class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
+              (click)="selectedModel = 'Flux'"
+            >
+              Flux
+            </button>
+            <button
+              [class.bg-[#A027FC]]="selectedModel === 'GPT Image'"
+              [class.bg-[#042954]]="selectedModel !== 'GPT Image'"
+              [class.border-white]="selectedModel === 'GPT Image'"
+              class="h-10 rounded-md border border-[#E4E4E7] text-white font-medium text-sm flex items-center justify-center transition-colors duration-200"
+              (click)="selectedModel = 'GPT Image'"
+            >
+              GPT Image
+            </button>
+          </div>
+          <p class="text-xs text-[#E4E4E7] mt-1.5">
+            <span *ngIf="selectedModel === 'Flux'">Flux: Stable Diffusion model with customizable parameters</span>
+            <span *ngIf="selectedModel === 'GPT Image'">GPT Image: OpenAI's GPT-Image-1 model for high-quality image generation</span>
+          </p>
+        </div>
+
+
+
       <!-- Ad Type Selector -->
       <div class="mb-6">
         <label class="block text-sm font-medium text-white mb-2.5"
