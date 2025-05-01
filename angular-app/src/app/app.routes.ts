@@ -11,9 +11,11 @@ import { CampaignComponent } from '../components/campaign/campaign.component';
 import { SelectedCampaignComponent } from '../components/selected-campaign/selected-campaign.component';
 import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
 import { PipelineComponent } from '../components/pipeline/pipeline.component';
+import { LandingComponent } from '../components/home/home.component';
 
 
 export const routes: Routes = [
+    {path:'landing', component: LandingComponent},
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: HomeComponent },
     {path: 'budget', component: BudgetPageComponent},

@@ -34,6 +34,10 @@ const adImageSchema = new mongoose.Schema({
   clicks: {
     type: Number,
   },
+  conversions: {
+    type: [Number], // e.g. [5, 10, 3] = 3 weeks of conversions
+    default: [],
+  },
   createdAt: {
     type: Date,
     default: Date.now,
