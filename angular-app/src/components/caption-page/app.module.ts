@@ -1,17 +1,19 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';  // Ensure FormsModule is imported
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http'; // Add HttpClientModule
 import { AppComponent } from '../../app/app.component';
-import { CaptionPageComponent } from './caption-page.component';  // Adjust the path as necessary
+import { CaptionPageComponent } from './caption-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CaptionPageComponent  // Your component should be declared here
+    CaptionPageComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule  // Add FormsModule here
+    FormsModule,
+    HttpClientModule // Add HttpClientModule here
   ],
   providers: [],
   bootstrap: [AppComponent]
