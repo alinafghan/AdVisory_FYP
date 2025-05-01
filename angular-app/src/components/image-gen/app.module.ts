@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from '../../app/app.component';
-import { FluxPageComponent } from './flux-page.component';
+import { FluxPageComponent } from './image-gen.component';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
