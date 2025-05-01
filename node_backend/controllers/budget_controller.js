@@ -1,5 +1,4 @@
 const Ad = require("../models/ad_image_model"); // Adjust the path as necessary
-console.log("Ad model:", Ad); // Add this
 
 const getPrice = async (req, res) => {
   try {
