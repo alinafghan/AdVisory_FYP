@@ -11,9 +11,8 @@ import { LucideAngularModule, FileIcon, ChartBar, ChartNoAxesColumn, User, Arrow
   selector: 'app-home',
   imports: [RouterModule, CommonModule, NavbarComponent, FooterComponent, ButtonComponent, LucideAngularModule], 
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
 })
-export class HomeComponent {
+export class LandingComponent {
   logoPath = 'assets/logos/advisory-logo.png';
   readonly FileIcon = FileIcon;
   readonly ChartBar = ChartBar;

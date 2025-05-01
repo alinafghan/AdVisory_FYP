@@ -17,6 +17,10 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from PIL import Image
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
+import cvxpy as cp
+from scipy.optimize import curve_fit
+
+app = Flask(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -364,6 +368,103 @@ def enhance_prompt():
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "up"}), 200
+
+###########################################budget##########################################
+
+# Stage 1
+def stage1_equal_allocation(n_ads, B):
+    return np.full(n_ads, B / n_ads)
+
+# Stage 2: β = y / log(x), α=0
+def stage2_estimate_beta(x, y):
+    x = np.maximum(x, 1e-6)
+    return y / np.log(x)
+
+# Stage 3: fit α,β with bounds β>=0
+def stage3_estimate_alpha_beta(x, y):
+    x = np.maximum(x, 1e-6)
+    def model(x, alpha, beta):
+        return alpha + beta * np.log(x)
+    popt, _ = curve_fit(
+        model, x, y, p0=[0.0,1.0],
+        bounds=([-np.inf,0.0],[np.inf,np.inf])
+    )
+    return popt[0], popt[1]
+
+# Dual formula
+def compute_dual(alpha, beta, lam, B):
+    return (
+        lam * B
+        + np.sum(alpha)
+        + np.sum(beta * (np.log(beta) - 1))
+        - np.sum(beta) * np.log(lam)
+    )
+
+# CVXPY solve
+def run_optimization(alpha, beta, B):
+    n = len(beta)
+    x = cp.Variable(n, pos=True)
+    obj = cp.Maximize(cp.sum(alpha + cp.multiply(beta, cp.log(x))))
+    cons = [cp.sum(x) <= B]
+    prob = cp.Problem(obj, cons)
+    prob.solve()
+    lam = cons[0].dual_value
+    return {
+        "x_opt": x.value.tolist(),
+        "primal": prob.value,
+        "dual_var": lam,
+        "dual_obj": compute_dual(alpha, beta, lam, B)
+    }
+
+@app.route("/allocate", methods=["POST"])
+def allocate_budget():
+    data = request.get_json()
+    n_ads = int(data["n_ads"])
+    B = float(data["budget"])
+    conv = data["conversions"]      # list of lists
+
+    # decide stage
+    all_zero = all(all(y==0 for y in hist) for hist in conv)
+    lengths = [len(hist) for hist in conv]
+
+    if all_zero:
+        stage = 1
+        x_opt = stage1_equal_allocation(n_ads, B).tolist()
+        return jsonify(stage=stage, x_opt=x_opt)
+
+    # Stage 2: every history length == 1
+    if all(l==1 for l in lengths):
+        stage = 2
+        x1 = stage1_equal_allocation(n_ads, B)
+        beta = np.array([stage2_estimate_beta(x1[i], conv[i][0]) for i in range(n_ads)])
+        alpha = np.zeros(n_ads)
+        res = run_optimization(alpha, beta, B)
+        return jsonify(stage=stage, **res)
+
+    # Stage 3:
+    stage = 3
+    # build history arrays
+    alpha = np.zeros(n_ads)
+    beta  = np.zeros(n_ads)
+    x1 = stage1_equal_allocation(n_ads, B)
+    # Need a baseline spend; let's re-run stage 2 to get x2
+    beta2 = np.array([stage2_estimate_beta(x1[i], conv[i][0]) for i in range(n_ads)])
+    alpha2 = np.zeros(n_ads)
+    res2 = run_optimization(alpha2, beta2, B)
+    x2 = np.array(res2["x_opt"])
+
+    for i in range(n_ads):
+        xi = np.array([x1[i], x2[i]])
+        yi = np.array(conv[i])  # must be length >=2
+        yi_full = conv[i]
+        if len(yi_full) < 2:
+           yi = np.array([yi_full[0], yi_full[0]])
+        else:
+            yi = np.array(yi_full[:2])
+        alpha[i], beta[i] = stage3_estimate_alpha_beta(xi, yi)
+
+    res3 = run_optimization(alpha, beta, B)
+    return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
