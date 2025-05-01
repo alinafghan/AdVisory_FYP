@@ -53,12 +53,16 @@ export class FluxPageComponent implements OnInit {
   showDimensionsDropdown: boolean = false;
 
   dimensions: string[] = [
-    "Vertical (1080 × 1920)",
-    "YouTube Thumbnail (1280 × 720)",
-    "3:4 Post (1080 × 1440)",
-    "Custom",
+    // "Vertical (1080 × 1920)",
+    // "YouTube Thumbnail (1280 × 720)",
+    // "3:4 Post (1080 × 1440)",
+    // "Custom",
+
+    "Square 1024x1024", 
+    "Landscape 1536x1024", 
+    "Portrait 1024x1536" 
   ];
-  selectedDimension: string = "Vertical (1080 × 1920)";
+  selectedDimension: string = "Square 1024x1024";
 
   enhancedPrompt: string = "";
   isPromptEnhanced: boolean = false;
@@ -76,7 +80,7 @@ export class FluxPageComponent implements OnInit {
   }
 
   get constructedPrompt(): string {
-    let promptParts: string[] = ["a social media advertisement for"];
+    let promptParts: string[] = ["A social media ad for"];
 
     if (this.selectedAdType === 'Product') {
       if (this.productType) promptParts.push(this.productType);
@@ -112,19 +116,33 @@ export class FluxPageComponent implements OnInit {
     this.selectedDimension = dimension;
     this.showDimensionsDropdown = false;
 
+    // 1024x1024, 1536x1024 (landscape), 1024x1536 (portrait)
     switch (dimension) {
-      case "Vertical (1080 × 1920)":
-        this.width = 1080;
-        this.height = 1920;
-        break;
-      case "YouTube Thumbnail (1280 × 720)":
-        this.width = 1280;
-        this.height = 720;
-        break;
-      case "3:4 Post (1080 × 1440)":
-        this.width = 1080;
-        this.height = 1440;
-        break;
+      // case "Vertical (1080 × 1920)":
+      //   this.width = 1080;
+      //   this.height = 1920;
+      //   break;
+      
+      // case "YouTube Thumbnail (1280 × 720)":
+      //   this.width = 1280;
+      //   this.height = 720;
+      //   break;
+      // case "3:4 Post (1080 × 1440)":
+      //   this.width = 1080;
+      //   this.height = 1440;
+      //   break;
+      case "Landscape Post (1536 × 1024)":
+          this.width = 1080;
+          this.height = 1440;
+          break;
+      case "1x1 Post (1024 x 1024)":
+          this.width = 1024;
+          this.height = 1024;
+          break;
+      case "Portrait Post (1536 × 1024)":
+            this.width = 1024;
+            this.height = 1536;
+            break;
     }
   }
 
