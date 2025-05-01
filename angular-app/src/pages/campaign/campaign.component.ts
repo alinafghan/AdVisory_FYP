@@ -65,7 +65,6 @@ export class CampaignComponent {
       (response) => {
         console.log('Campaign created:', response);
         alert('Campaign created successfully!');
-        this.router.navigate(['/flux']); 
       },
       (error) => {
         console.error(newCampaign);

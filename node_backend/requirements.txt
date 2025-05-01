@@ -20,3 +20,4 @@ regex
 cli_interrogator
 tqdm
 clip @ git+https://github.com/openai/CLIP.git
+cvxpy
