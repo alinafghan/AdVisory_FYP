@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from '../pages/home/home.component';
 import { BudgetPageComponent } from '../pages/budget-page/budget-page.component';
 import { TrendsComponent } from '../components/trends-page/trends-page.component';
-import { FluxPageComponent } from '../components/flux-page/flux-page.component';
+import { FluxPageComponent } from '../components/image-gen/image-gen.component';
 import {MetricsPageComponent} from '../components/metrics-page/metrics-page.component';
 import { ManageCampaignComponent } from '../components/manage-campaign/manage-campaign.component';
 import { LoginComponent } from '../components/login/login.component';
