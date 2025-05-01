@@ -1,5 +1,13 @@
 {
   "dependencies": {
-    "@spartan-ng/brain": "^0.0.1-alpha.443"
+    "@angular/cdk": "^19.2.11",
+    "@ng-icons/core": "^31.3.0",
+    "@ng-icons/lucide": "^31.3.0",
+    "@spartan-ng/brain": "^0.0.1-alpha.445",
+    "@spartan-ng/ui-core": "^0.0.1-alpha.380",
+    "@swimlane/ngx-charts": "^22.0.0-alpha.1",
+    "chart.js": "^4.4.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1"
   }
 }

@@ -1,11 +1,10 @@
 ##first do pip install flask and xgboost
 import base64
+from io import BytesIO
 import os
-from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS 
-from transformers import pipeline  # ✅ This imports the pipeline function
 import xgboost as xgb
 import numpy as np
+import requests
 from flask_cors import CORS
 import pandas as pd
 from trends_analyzer import TrendAnalyzer  
@@ -14,13 +13,21 @@ from gradio_client import Client
 from dotenv import load_dotenv
 import openai
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
+from audience_predictor import AudiencePredictor
+from PIL import Image
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
 
 # Initialize Flask app
 app = Flask(__name__)
 
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 CORS(app)  
+audience_predictor = AudiencePredictor()
 
 # # Initialize the TrendAnalyzer
 # analyzer = TrendAnalyzer()
@@ -198,9 +205,7 @@ def generate_caption():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if openai_api_key is None:
-    raise ValueError("No API Key found. Please set the OPENAI_API_KEY in the .env file.")
+    
 
 ######################### ENHANCE ################################
 
@@ -214,6 +219,133 @@ enhancer = pipeline('text2text-generation',
                     tokenizer=tokenizer,
                     repetition_penalty=1.2,
                     device=device)
+
+
+@app.route("/")
+def home():
+    return "Flask is running!"
+
+######################### EDIT IMAGE #################################
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Configure upload folder for temporary image files
+UPLOAD_FOLDER = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/edit-image', methods=['POST'])
+def edit_image():
+    # Extract form data or JSON data
+    prompt = request.form.get('prompt')
+    model = request.form.get('model', 'gpt-image-1')  # Default to 'gpt-image-1' if not specified
+    n = request.form.get('n', 1)  # Default to 1 if not specified
+    quality = request.form.get('quality', 'auto')  # Default to 'auto' if not specified
+    size = request.form.get('size', '1024x1024')  # Default to '1024x1024' if not specified
+    
+    api_key = os.environ.get('OPENAI_API_KEY') or request.form.get('api_key')
+    if not api_key:
+        return jsonify({"error": "API key is required"}), 400
+
+    if not prompt:
+        return jsonify({"error": "Prompt is required"}), 400
+
+    if 'image' not in request.files:
+        return jsonify({"error": "At least one image file is required"}), 400
+    
+    # Handle multiple image files for gpt-image-1
+    image_files = request.files.getlist('image')
+    if model == 'gpt-image-1' and len(image_files) > 16:
+        return jsonify({"error": "Maximum 16 images allowed for gpt-image-1"}), 400
+    elif model == 'dall-e-2' and len(image_files) > 1:
+        return jsonify({"error": "Only one image allowed for dall-e-2"}), 400
+
+    # Process mask if provided
+    mask = None
+    if 'mask' in request.files:
+        mask_file = request.files['mask']
+        if mask_file.filename:
+            mask_filename = secure_filename(mask_file.filename)
+            mask_path = os.path.join(app.config['UPLOAD_FOLDER'], mask_filename)
+            mask_file.save(mask_path)
+            mask = ('mask', (mask_filename, open(mask_path, 'rb'), 'image/png'))
+    
+    # Save images
+    images = []
+    for img_file in image_files:
+        if img_file.filename:
+            filename = secure_filename(img_file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            img_file.save(filepath)
+            
+            # For gpt-image-1, append images to a list
+            images.append(('image[]', (filename, open(filepath, 'rb'), 'image/png')))
+    
+    # Prepare data
+    data = {
+        'prompt': prompt,
+        'model': model,
+        'n': int(n),
+        'quality': quality,
+        'size': size
+    }
+    
+    # Prepare headers
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+    
+    try:
+        # For dall-e-2 with single image
+        if model == 'dall-e-2':
+            files = [images[0]]  # Only one image for dall-e-2
+            if mask:
+                files.append(mask)
+        # For gpt-image-1 with multiple images
+        else:
+            files = images  # All images for gpt-image-1
+            if mask:
+                files.append(mask)
+        
+        # Make request to OpenAI API
+        response = requests.post(
+            "https://api.openai.com/v1/images/edits",
+            headers=headers,
+            data=data,
+            files=files
+        )
+        
+        # Close all open file handles
+        for file_tuple in files:
+            try:
+                file_tuple[1][1].close()
+            except:
+                pass
+        
+        # Get the base64 encoded image from the response
+        if response.status_code == 200:
+            response_json = response.json()
+            image_base64 = response_json['data'][0]['b64_json']
+
+            # Save the base64 image to your device
+            image_data = base64.b64decode(image_base64)
+            image_filename = "edited_image.png"  # You can customize the filename
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            with open(image_path, 'wb') as f:
+                f.write(image_data)
+
+            # Return response with the image URL for download
+            return jsonify({
+                'message': 'Image edited and saved successfully.',
+                'imageBase64': image_base64,
+                'saved_image_path': image_path
+            }), 200
+        
+        return jsonify({"error": "Failed to generate image"}), 500
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/enhance', methods=['POST'])
 def enhance_prompt():
@@ -237,5 +369,43 @@ def enhance_prompt():
 def health_check():
     return jsonify({"status": "up"}), 200
 
+
+@app.route('/analyze', methods=['POST'])
+@app.route('/analyze', methods=['POST'])
+def analyze_image_from_base64():
+    try:
+        data = request.get_json()
+        if not data or 'image_data' not in data:
+            return jsonify({'error': 'No image_data provided'}), 400
+
+        image_data_base64 = data['image_data']
+
+        # Remove the data URL prefix if it exists
+        if ";base64," in image_data_base64:
+            _, base64_data = image_data_base64.split(";base64,")
+        else:
+            base64_data = image_data_base64
+
+        image_bytes = base64.b64decode(base64_data)
+        image = Image.open(BytesIO(image_bytes)).convert("RGB")
+
+        # Save the image temporarily to a file
+        temp_image_path = "temp_image.png"
+        image.save(temp_image_path)
+
+        # Analyze the image using the instance
+        report = audience_predictor.generate_report(temp_image_path)
+
+        # Clean up the temporary image file
+        os.remove(temp_image_path)
+
+        if report:
+            return jsonify(report), 200
+        else:
+            return jsonify({'error': 'Image analysis failed'}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

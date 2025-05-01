@@ -1,0 +1,93 @@
+<div *ngIf="loading">Loading audience report...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div *ngIf="audienceReport">
+  <h2>Raw Audience Report Data</h2>
+  <pre>{{ audienceReport | json }}</pre>
+
+  <h2>Audience Analysis</h2>
+
+  <div *ngIf="audienceReport?.summary">
+    <h3>Summary</h3>
+    <p><strong>Primary Persona:</strong> {{ audienceReport.summary?.primary_persona }}</p>
+    <p><strong>Visual Style:</strong> {{ audienceReport.summary?.visual_style }}</p>
+    <p><strong>Content Type:</strong> {{ audienceReport.summary?.content_type }}</p>
+  </div>
+
+  <div *ngIf="audienceReport?.detailed_demographics">
+    <h3>Detailed Demographics</h3>
+
+    <div>
+      <h4>Age</h4>
+      <ul>
+        <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.age)">
+          {{ key }}: {{ audienceReport.detailed_demographics?.age[key] | percent }}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Gender</h4>
+      <ul>
+        <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.gender)">
+          {{ key }}: {{ audienceReport.detailed_demographics?.gender[key] | percent }}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Income</h4>
+      <ul>
+        <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.income)">
+          {{ key }}: {{ audienceReport.detailed_demographics?.income[key] | percent }}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Education</h4>
+      <ul>
+        <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.education)">
+          {{ key }}: {{ audienceReport.detailed_demographics?.education[key] | percent }}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <div>
+        <h4>Top Professions</h4>
+        <ul>
+          <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.profession)">
+            {{ key }}: {{ audienceReport.detailed_demographics?.profession[key] | percent }}
+          </li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4>Top Interests</h4>
+        <ul>
+          <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.interests)">
+            {{ key }}: {{ audienceReport.detailed_demographics?.interests[key] | percent }}
+          </li>
+        </ul>
+      </div>
+
+    <div>
+      <h4>Visual Style</h4>
+      <ul>
+        <li *ngFor="let key of getSortedKeys(audienceReport.detailed_demographics?.visual_style)">
+          {{ key }}: {{ audienceReport.detailed_demographics?.visual_style[key] | percent }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div *ngIf="audienceReport?.content_analysis">
+    <h3>Content Analysis</h3>
+    <ul>
+      <li *ngFor="let key of getSortedKeys(audienceReport?.content_analysis)">
+        {{ key }}: {{ audienceReport?.content_analysis[key] | percent }}
+      </li>
+    </ul>
+  </div>
+</div>

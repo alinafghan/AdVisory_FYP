@@ -1,0 +1,4 @@
+/* target-audience.component.css */
+h2, h3, p, li {
+    color: black; /* Or any color that contrasts with your background */
+  }
