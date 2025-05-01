@@ -28,8 +28,8 @@ app.use(
     credentials: true, // Allow sending cookies (if needed)
   })
 );
-app.use(express.json({ limit: '500mb' }));  // Increase body size limit for JSON payload
-app.use(express.urlencoded({ limit: '500mb', extended: true }));  // Increase body size limit for form data
+app.use(express.json({ limit: "500mb" })); // Increase body size limit for JSON payload
+app.use(express.urlencoded({ limit: "500mb", extended: true })); // Increase body size limit for form data
 console.log("Its working");
 //ROUTES
 // /predict is the prediction router
