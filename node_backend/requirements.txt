@@ -8,14 +8,4 @@ prophet
 pytrends
 python-dotenv
 openai
-transformers
-torch
-torchvision
-numpy
-Pillow
-matplotlib
-pandas
-ftfy
-regex
-tqdm
-clip @ git+https://github.com/openai/CLIP.git
+cvxpy
