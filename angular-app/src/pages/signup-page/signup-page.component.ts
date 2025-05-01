@@ -2,13 +2,15 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { FooterComponent } from '../../components/footer/footer.component';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-signup-page',
   templateUrl: './signup-page.component.html',
   styleUrls: ['./signup-page.component.css'],
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule, FooterComponent, NavbarComponent],
 })
 export class SignupPageComponent {
   username: string = '';

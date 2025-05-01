@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from '../../pages/sidebar/sidebar.component';
+import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { LucideAngularModule, Route } from 'lucide-angular';
 import { ArrowRight } from 'lucide-angular/src/icons';
 import { HttpClient } from '@angular/common/http';

@@ -1,31 +1,7 @@
-/* Footer Styling */
-footer {
-    background-color: var(--background);
-    color: var(--text);
-    padding: 40px 0;
-    text-align: center;
-}
-
-footer a {
-    color: var(--primary);
-    transition: color 0.3s ease;
-}
-
-footer a:hover {
-    color: var(--accent);
-}
-
-/* Social Media Icon Styling */
-footer .social-icons svg {
-    width: 24px;
-    height: 24px;
-    transition: fill 0.3s ease;
-}
-
-footer .social-icons svg:hover {
-    fill: var(--accent);
-}
-
-footer .social-icons a {
-    margin-right: 16px;
-}
+/* You can add any specific styling here that's not covered by Tailwind */
+/* For example, if you want to style the container or specific elements further */
+.container {
+    max-width: 1200px; /* Adjust as needed */
+    margin-left: auto;
+    margin-right: auto;
+  }

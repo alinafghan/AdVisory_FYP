@@ -14,8 +14,7 @@
             AdVisory is an AI-powered platform that creates and optimizes <br> social media ads with intelligent content generation and real-time performance tracking.
         </p>
         
-        <!-- Get Started Button -->
-        <app-button type="outlined" label="Get Started" [link]="'/login'"></app-button>  
+        <app-button type="outlined" variant="get-started" label="Get Started" link="/login"></app-button>
     </div>
 
     <!-- SVG Positioned to Overlap -->
@@ -68,49 +67,60 @@
         <p style="font-size: 32px; text-align: center;">Just one step away from joining the AdVisory Journey</p>
     </div>
    
-<!-- Horizontal Scrollable Carousel with AOS Fade -->
-<div class="carousel-container">
-    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-        <div class="card-content">
-            <h3>Card 1</h3>
-            <p>Some text on card 1</p>
+    <div class="carousel-container" style="overflow-x: auto; display: flex; gap: 20px; padding: 20px; -ms-overflow-style: none; scrollbar-width: none;">
+        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300"
+             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
+            <div class="card-content" style="padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 1</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Some compelling text on card 1 that might entice users to learn more.</p>
+                <button style="background-color: var(--accent); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Learn More</button>
+            </div>
         </div>
-    </div>
-
-    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600">
-        <div class="card-content">
-            <h3>Card 2</h3>
-            <p>Some text on card 2</p>
-        </div>
-    </div>
-
-    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="900">
-        <div class="card-content">
-            <h3>Card 3</h3>
-            <p>Some text on card 3</p>
-        </div>
-    </div>
-
-    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200">
-        <div class="card-content">
-            <h3>Card 4</h3>
-            <p>Some text on card 4</p>
-        </div>
-    </div>
     
-    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200">
-        <div class="card-content">
-            <h3>Card 4</h3>
-            <p>Some text on card 4</p>
+        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600"
+             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
+            <div class="card-content" style="padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 2</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Engaging content for card 2 to highlight key features or benefits.</p>
+                <button style="background-color: var(--secondary); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">View Details</button>
+            </div>
         </div>
-    </div>
-
-    <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200">
-        <div class="card-content">
-            <h3>Card 4</h3>
-            <p>Some text on card 4</p>
+    
+        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="900"
+             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
+            <div class="card-content" style="padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 3</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Interesting information on card 3 that could capture user attention.</p>
+                <button style="background-color: var(--destructive); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Read More</button>
+            </div>
         </div>
-    </div>
+    
+        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200"
+             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
+            <div class="card-content" style="padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 4</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">More details about card 4 and what it offers to the user.</p>
+                <button style="background-color: var(--accent); color: var(--primary); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Explore</button>
+            </div>
+        </div>
+    
+        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200"
+             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
+            <div class="card-content" style="padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 5</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">Additional content for the fifth card in the horizontal carousel.</p>
+                <button style="background-color: var(--primary); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Discover</button>
+            </div>
+        </div>
+    
+        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200"
+             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
+            <div class="card-content" style="padding: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 6</h3>
+                <p style="color: var(--text-secondary); line-height: 1.6;">The last card in this aesthetic and horizontally scrollable carousel.</p>
+                <button style="background-color: var(--accent); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">View All</button>
+            </div>
+        </div>
 </div>
 <app-footer></app-footer>
 </div>

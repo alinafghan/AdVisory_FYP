@@ -4,10 +4,12 @@ import { AuthService } from '../../services/auth.service'; // Import the auth se
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';  
 import { NavbarComponent } from '../../components/navbar/navbar.component';
+import { FooterComponent } from '../../components/footer/footer.component';
+import { LucideAngularModule, Facebook } from 'lucide-angular';
 
 @Component({
   selector: 'login',
-  imports: [FormsModule, NavbarComponent],
+  imports: [FormsModule, NavbarComponent, FooterComponent, LucideAngularModule], 
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -66,3 +68,4 @@ export class LoginComponent {
     this.authService.fblogin(); // Calls the backend to handle FB login
   }
 }
+

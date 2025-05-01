@@ -15,9 +15,9 @@
   
   /* Hover effect */
   .btn:hover {
-    background-color: var(--primary);  /* Set the background color to primary */
-    color: white;  /* Change text color to white */
-    border-color: var(--primary);  /* Keep border color as primary */
+    background-color: var(--primary); /* Set the background color to primary */
+    color: white; /* Change text color to white */
+    border-color: var(--primary); /* Keep border color as primary */
   }
   
   /* Primary button */
@@ -43,12 +43,12 @@
   
   /* Outlined button */
   .btn-outlined {
-    background-color: transparent;  /* Transparent background */
-    color: var(--primary);  /* Primary text color */
-    border: 2px solid var(--primary);  /* Primary border color */
-    padding: 12px 50px;  /* Consistent padding */
-    border-radius: 30px;  /* Rounded corners */
-    text-align: center;  /* Center text */
+    background-color: transparent; /* Transparent background */
+    color: var(--primary); /* Primary text color */
+    border: 2px solid var(--primary); /* Primary border color */
+    padding: 12px 50px; /* Consistent padding */
+    border-radius: 30px; /* Rounded corners */
+    text-align: center; /* Center text */
   }
   
   /* Disabled button */
@@ -61,11 +61,7 @@
   
   /* Hover styles for outlined button */
   .btn-outlined:hover {
-    background-color: var(--primary);  /* Change background to primary color */
-    color: white;  /* Change text color to white */
-    border-color: var(--primary);  /* Keep the border color primary */
-  }  
-  
-  /* Example usage: 
-   <app-button type="primary" label="Get Started" [link]="'/login'"></app-button>
-*/
+    background-color: var(--primary); /* Change background to primary color */
+    color: white; /* Change text color to white */
+    border-color: var(--primary); /* Keep the border color primary */
+  }

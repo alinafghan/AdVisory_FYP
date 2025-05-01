@@ -1,61 +1,121 @@
 <div class="bg-background min-h-screen flex flex-col justify-center">
-    <!-- Navigation Bar -->
     <app-navbar></app-navbar>
-
-    <!-- Welcome Text Above the Form -->
-    <div class="flex items-center justify-center flex-grow"> 
-        <h1 class="text-3xl font-bold text-white text-center">Welcome Back!</h1>
-    </div>
-
-    <!-- Centered Login Form -->
-    <div class="flex items-center justify-center flex-grow">
-        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="bg-transparent p-8 rounded-xl shadow-lg w-full max-w-sm">
-            <!-- Username Input -->
-            <div class="mb-6">
-                <label for="username" class="block text-lg text-text font-semibold mb-2">Username</label>
-                <input type="text" id="username" name="username" [(ngModel)]="user.username" required
-                    class="w-full p-3 bg-secondary text-white rounded-md focus:outline-none focus:ring-2 focus:ring-accent transition duration-300 ease-in-out hover:bg-secondary/80">
+  
+    <div class="flex items-center justify-center flex-grow p-4 md:p-8">
+      <div class="bg-[#070d10] rounded-xl shadow-xl flex w-full max-w-4xl overflow-hidden">
+        <!-- Left side with SVG animation -->
+        <div class="hidden md:flex md:w-1/2 items-center justify-center p-6">
+          <div class="svg-container">
+            <div class="svg-wrapper">
+              <img src="assets/svg/third.svg" alt="Animated SVG" class="svg-animated" />
             </div>
-
-            <!-- Password Input -->
-            <div class="mb-6">
-                <label for="password" class="block text-lg text-text font-semibold mb-2">Password</label>
-                <input type="password" id="password" name="password" [(ngModel)]="user.password" required
-                    class="w-full p-3 bg-secondary text-white rounded-md focus:outline-none focus:ring-2 focus:ring-accent transition duration-300 ease-in-out hover:bg-secondary/80">
+          </div>
+        </div>
+  
+        <!-- Right side with login form -->
+        <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
+          <div class="mb-8 text-center">
+            <h1 class="text-2xl font-normal text-text">Welcome back</h1>
+            <p class="text-gray-400 text-sm mt-2">Sign in to continue your experience</p>
+          </div>
+  
+          <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-5">
+            <div>
+              <label for="username" class="block text-sm text-gray-400 mb-1.5">Username</label>
+              <input type="text" id="username" name="username" [(ngModel)]="user.username" required
+                class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200">
             </div>
-
-            <!-- Submit Button -->
+  
+            <div>
+              <label for="password" class="block text-sm text-gray-400 mb-1.5">Password</label>
+              <input type="password" id="password" name="password" [(ngModel)]="user.password" required
+                class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200">
+            </div>
+  
+            <div class="flex items-center justify-between text-xs mt-1">
+              <div class="flex items-center">
+                <input type="checkbox" id="remember" class="mr-1.5 h-3.5 w-3.5 accent-primary">
+                <label for="remember" class="text-gray-400">Remember me</label>
+              </div>
+              <a href="/reset-password" class="text-primary hover:text-accent transition-colors">Forgot password?</a>
+            </div>
+  
             <button type="submit"
-                class="w-full p-3 bg-primary text-background rounded-full font-semibold hover:bg-accent transition duration-300 ease-in-out">
-                Login
+              class="w-full py-2.5 bg-primary text-background rounded-full font-normal hover:bg-accent transition-all duration-200">
+              Sign In
             </button>
-
-            <!-- Facebook Login Button -->
-            <script async defer crossorigin="anonymous"
-                src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v5.0&appId='541525585715121'&autoLogAppEvents=1"></script>
-            
-            <div class="mt-4">
-                <button type="button"
-                    class="fb-login-button w-full p-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition duration-300 ease-in-out flex items-center justify-center"
-                    data-width="250px" data-size="medium" data-button-type="login_with" data-use-continue-as="false"
-                    data-auto-logout-link="true" (click)="onfblogin()">
-                    <!-- Facebook Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 12.1c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10zM11.3 6.5h1.4c.7 0 1.2.6 1.2 1.3s-.5 1.3-1.2 1.3h-1.4v5.2h-1.3v-5.2h-1v-1.3h2.3c1.4 0 2.5-1.2 2.5-2.5 0-1.4-1.1-2.5-2.5-2.5s-2.5 1.1-2.5 2.5c0 .6.3 1.2.9 1.5z"/>
-                    </svg>
-                    Login with Facebook
-                </button>
-            </div>
-        </form>
+          </form>
+  
+          <div class="my-5 flex items-center">
+            <div class="flex-grow h-px bg-[#1a2530]"></div>
+            <p class="mx-4 text-xs text-gray-500">or continue with</p>
+            <div class="flex-grow h-px bg-[#1a2530]"></div>
+          </div>
+  
+          <button type="button"
+            class="w-full py-2.5 px-4 bg-[#1877F2] text-white rounded-full font-normal hover:bg-[#166FE5] transition-all duration-200 flex items-center justify-center"
+            data-width="250px" data-size="medium" data-button-type="continue_with" data-use-continue-as="false"
+            data-auto-logout-link="true" (click)="onfblogin()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="mr-2">
+              <path fill="white" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C18.34 21.21 22 17.06 22 12.06C22 6.53 17.5 2.04 12 2.04Z" />
+            </svg>
+            Continue with Facebook
+          </button>
+  
+          <div class="mt-6 text-center">
+            <p class="text-sm text-gray-400">Not registered yet? <a href="/signup" class="text-primary hover:text-accent transition-colors">Create an account</a></p>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Footer Text (Placed below the form) -->
-    <div class="bg-black text-white text-center p-4 mt-6">
-        <p class="text-sm">
-            By clicking <span class="text-accent">Continue with Facebook</span> above, you acknowledge you have read and understood and agree to 
-            <a href="/terms" class="text-accent">Advisory Terms and Conditions</a> and 
-            <a href="/privacy" class="text-accent">Privacy Policy</a>.
-        </p>
-    </div>
-</div>
+  
+    <app-footer></app-footer>
+  </div>
+  
+  <style>
+    .svg-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      background-color: #04090b;
+      border-radius: 8px;
+    }
+  
+    .svg-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+  
+    .svg-animated {
+      max-width: 85%;
+      max-height: 85%;
+      opacity: 0.9;
+      transition: opacity 1s ease;
+    }
+  
+    .svg-animated.visible {
+      opacity: 1;
+    }
+  </style>
+  
+  <script>
+    // Select the SVG element
+    const svg = document.querySelector('.svg-animated');
+  
+    // Create an Intersection Observer
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.5 });
+  
+    // Observe the SVG
+    observer.observe(svg);
+  </script>

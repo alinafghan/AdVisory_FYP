@@ -3,7 +3,5 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { CommonModule } from '@angular/common';
 
-
-bootstrapApplication(AppComponent, appConfig, )
+bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));
-

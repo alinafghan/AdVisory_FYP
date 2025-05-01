@@ -1,0 +1,24 @@
+.carousel-container {
+    overflow-x: auto;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    -ms-overflow-style: none; /* Internet Explorer and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+.carousel-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+
+.animated-text {
+    font-size: 30px; /* Increased font size */
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(50px); /* Increased the initial translateY value to make the movement more noticeable */
+    animation: fadeInUp 2s ease-out forwards; /* Increased animation duration */
+    animation-delay: 0.5s; /* Added delay for the animation to start */
+    font-weight: bold; /* Added bold font weight */
+    text-align: center; /* Centered the text */ 
+}
+

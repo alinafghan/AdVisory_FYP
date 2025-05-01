@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { LoggedInNavbarComponent } from '../../components/loggedin-navbar/loggedin-navbar.component';
 import { LucideAngularModule } from 'lucide-angular/src/icons';
-import { DarkModeToggleComponent } from '../../components/dark-mode-toggle/dark-mode-toggle.component';
 import { ArrowRight } from 'lucide-angular';
 import {
 	HlmTabsComponent,
@@ -15,11 +14,18 @@ import {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SidebarComponent, NavbarComponent, LucideAngularModule, DarkModeToggleComponent],
+  imports: [SidebarComponent, LucideAngularModule,  LoggedInNavbarComponent],
   templateUrl: './home.component.html',
 
 })
 export class HomeComponent {
   readonly ArrowRight = ArrowRight;
 
+
+  activeTab: string = 'account';
+
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
 }

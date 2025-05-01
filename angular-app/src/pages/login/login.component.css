@@ -1,0 +1,8 @@
+.login-form-container { /* You can use this class instead of relying solely on Tailwind */
+    background-color: transparent;
+    padding: 2rem; /* Tailwind's p-8 is 2rem */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Similar to Tailwind's shadow-lg */
+    width: 100%;
+    max-width: 24rem; /* Tailwind's max-w-sm is 24rem */
+    border-radius: 25px; /* Adjust this value as needed */
+  }
