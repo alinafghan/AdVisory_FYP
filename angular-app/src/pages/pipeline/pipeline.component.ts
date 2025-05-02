@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { CampaignComponent } from '../campaign/campaign.component';
-import { FluxPageComponent } from '../flux-page/flux-page.component';
+import { FluxPageComponent } from '../image-gen/image-gen.component';
 import {CaptionPageComponent} from '../caption-page/caption-page.component';
-import { TrendsComponent } from '../../pages/trends-page/trends-page.component';
+import { TrendsComponent } from '../trends-page/trends-page.component';
 import { BudgetComponent } from '../budget/budget.component';
 import { Router } from '@angular/router';
 

@@ -15,9 +15,7 @@ import { HlmDatePickerComponent } from '@spartan-ng/ui-datepicker-helm';
 @Component({
   selector: 'app-campaign',
   templateUrl: './campaign.component.html',
-  imports: [CommonModule, ReactiveFormsModule,HlmSelectContentDirective,HlmSelectOptionComponent, 
-    HlmSelectValueDirective,HlmSelectTriggerComponent,HlmDatePickerComponent, HlmFormFieldModule, 
-    HlmInputDirective, BrnSelectImports, HlmSelectImports],
+  imports: [CommonModule, ReactiveFormsModule,HlmSelectContentDirective,HlmSelectOptionComponent, HlmSelectValueDirective,HlmSelectTriggerComponent,HlmDatePickerComponent, HlmFormFieldModule, HlmInputDirective, BrnSelectImports, HlmSelectImports],
 })
 export class CampaignComponent {
   campaignForm: FormGroup;

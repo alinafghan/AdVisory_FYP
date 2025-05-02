@@ -5,13 +5,15 @@
 
     <div class="mx-auto mt-10 items-center flex flex-col w-full">
       <div
-        class="progress-bar w-[512px] h-4 bg-[#2c2b2e] rounded-full overflow-hidden mb-5"
-      >
-        <div
-          class="h-full bg-white transition-all duration-300"
-          [style.width.%]="((currentStep + 1) / steps.length) * 100"
-        ></div>
-      </div>
+  class="progress-bar w-[512px] h-4 bg-[#2c2b2e] rounded-full overflow-hidden mb-5"
+>
+  <div
+    class="h-full transition-all duration-300"
+    [style.width.%]="((currentStep + 1) / steps.length) * 100"
+    style="background-color: #8e3be0"
+  ></div>
+</div>
+
 
       <!-- Step Content -->
       <ng-container [ngSwitch]="currentStep">
@@ -22,40 +24,52 @@
         <div *ngSwitchCase="4"><app-trends></app-trends></div>
       </ng-container>
 
-      <!-- Buttons -->
-      <div
-        class="absolute top-1/2 left-0 transform -translate-y-1/2 flex justify-between w-full px-10"
-      >
-        <button
-          class="px-4 py-2 bg-gray-300 rounded text-background"
-          (click)="prevStep()"
-          [disabled]="currentStep === 0"
-        >
-          Back
-        </button>
-        <!-- <button
-          class="px-4 py-2 bg-blue-600 text-white rounded"
-          (click)="nextStep()"
-          [disabled]="currentStep === steps.length - 1"
-        >
-          Next
-        </button> -->
-        <button
-          class="px-4 py-2 bg-blue-600 text-white rounded"
-          *ngIf="currentStep < steps.length - 1"
-          (click)="nextStep()"
-        >
-          Next
-        </button>
+<!-- Buttons -->
+<div
+  class="absolute top-1/2 left-0 transform -translate-y-1/2 flex justify-between w-full px-10"
+>
+  <!-- Back Button -->
+  <button
+    class="transition transform hover:scale-110"
+    (click)="prevStep()"
+    [disabled]="currentStep === 0"
+    aria-label="Back"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none"
+      viewBox="0 0 24 24" stroke="#8e3be0" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
 
-        <button
-          class="px-4 py-2 bg-green-600 text-white rounded"
-          *ngIf="currentStep === steps.length - 1"
-          (click)="finish()"
-        >
-          Finish
-        </button>
-      </div>
+  <!-- Next Button -->
+  <button
+    class="transition transform hover:scale-110"
+    *ngIf="currentStep < steps.length - 1"
+    (click)="nextStep()"
+    aria-label="Next"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none"
+      viewBox="0 0 24 24" stroke="#8e3be0" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+
+  <!-- Finish Button -->
+  <button
+    class="transition transform hover:scale-110"
+    *ngIf="currentStep === steps.length - 1"
+    (click)="finish()"
+    aria-label="Finish"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none"
+      viewBox="0 0 24 24" stroke="#8e3be0" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  </button>
+</div>
+
+
+
     </div>
   </div>
 </body>

@@ -20,7 +20,7 @@ import base64 # For encoding and decoding base64
 from PIL import Image # For image processing
 import io # For handling byte streams
 import matplotlib.pyplot as plt # For plotting (if needed)
-from audience_predictor import SmartAudiencePredictor # Import your custom audience predictor module
+from audience_predictor import SmartAudiencePredictor 
 
 # Initialize Flask app
 app = Flask(__name__)
