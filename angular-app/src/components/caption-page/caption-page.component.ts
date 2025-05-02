@@ -56,40 +56,34 @@ export class CaptionPageComponent implements OnInit {
   }
 
   generateCaption() {
-  this.caption = undefined;
-  this.isLoading = true;
-
-  let body: any = {};
-
-  if (this.captionSource === 'text') {
+    this.caption = undefined;
+    this.isLoading = true;
+  
     if (!this.textPrompt?.trim()) {
       alert('Please enter a text prompt.');
       this.isLoading = false;
       return;
     }
-    body = { text_prompt: this.textPrompt };
-  } else if (this.captionSource === 'image') {
-    if (!this.ad?.imageData) {
-      alert('No image data available.');
-      this.isLoading = false;
-      return;
-    }
-    body = { image_base64: this.ad.imageData };
+  
+    const body = {
+      text_prompt: this.textPrompt
+    };
+  
+    this.http.post<{ caption: string }>('http://127.0.0.1:5000/generate-caption', body)
+      .subscribe({
+        next: (response) => {
+          this.caption = response.caption.replace(/^"|"$/g, '');
+          console.log('Clean caption:', this.caption);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error generating caption:', error);
+          this.caption = 'Error generating caption.';
+          this.isLoading = false;
+        }
+      });
   }
-
-  this.http.post<{ caption: string }>('http://127.0.0.1:5000/generate-caption', body)
-    .subscribe({
-      next: (response) => {
-        this.caption = response.caption;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error generating caption:', error);
-        this.caption = 'Error generating caption.';
-        this.isLoading = false;
-      }
-    });
-}
+  
 
 
   saveAdWithCaption() {
