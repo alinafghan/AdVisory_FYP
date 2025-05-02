@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FluxPageComponent } from './flux-page.component';
+import { PipelineComponent } from './pipeline.component';
 
-describe('FluxPageComponent', () => {
-  let component: FluxPageComponent;
-  let fixture: ComponentFixture<FluxPageComponent>;
+describe('PipelineComponent', () => {
+  let component: PipelineComponent;
+  let fixture: ComponentFixture<PipelineComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FluxPageComponent]
+      imports: [PipelineComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FluxPageComponent);
+    fixture = TestBed.createComponent(PipelineComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

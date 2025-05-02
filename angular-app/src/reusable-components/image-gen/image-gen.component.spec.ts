@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ImageGenComponent } from './image-gen.component';
+import { FluxPageComponent } from './image-gen.component';
 
-describe('ImageGenComponent', () => {
-  let component: ImageGenComponent;
-  let fixture: ComponentFixture<ImageGenComponent>;
+describe('FluxPageComponent', () => {
+  let component: FluxPageComponent;
+  let fixture: ComponentFixture<FluxPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImageGenComponent]
+      imports: [FluxPageComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ImageGenComponent);
+    fixture = TestBed.createComponent(FluxPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
