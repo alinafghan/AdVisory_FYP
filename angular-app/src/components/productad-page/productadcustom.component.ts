@@ -17,12 +17,20 @@ export class ProductAdCustomComponent implements OnInit, AfterViewInit {
   
   productImage: string | null = null;
   selectedBackground: string = '';
-  backgrounds: string[] = ['assets/images/1.png', 'assets/images/2.png', 'assets/images/3.png'];
+  backgrounds: string[] = ['assets/images/1.png', 'assets/images/2.png', 'assets/images/3.png','assets/images/5.png','assets/images/6.png'];
   customMode = false;
+  
+customStyle: string = '';
+customLighting: string = '';
   customPrompt = '';
   customExclude = '';
+  
   //save prompt for when saving it to adservice
   latestUsedPrompt: string = 'custom';
+
+  //for spinner while generating background
+  isGenerating: boolean = false;
+
 
 
   // Display dimensions (what's shown on the screen)
@@ -48,9 +56,12 @@ promptMode = false;
 selectedPrompt = '';
 selectedPromptBackground = '';
 imagePrompts: { [key: string]: string } = {
-  'assets/images/2.png': 'Blue studio lighting',
-  'assets/images/3.png': "A podium base, painted in a soft pink hue, is the focal point of this minimal scene. The podium occupies approximately 15% of the image height. Its base is adorned with a small, round plate, adding a touch of elegance to the design. Positioned on a pristine white surface, the podium casts a soft shadow on the floor beneath it. The backdrop features a cream-colored wall that contrasts with the podium and the floor. The lighting, seemingly artificial, highlights the podium's base and plate, adding depth and dimension without dominating the scene."
-};
+  'assets/images/2.png': 'light beige wooden plinth resting centrally , white background, green leaves on the outer edges, natural bright lighting, product shoot',
+  'assets/images/3.png': "A podium base, painted in a soft pink hue, is the focal point of this minimal scene. The podium occupies approximately 15% of the image height. Its base is adorned with a small, round plate, adding a touch of elegance to the design. Positioned on a pristine white surface, the podium casts a soft shadow on the floor beneath it. The backdrop features a cream-colored wall that contrasts with the podium and the floor. The lighting, seemingly artificial, highlights the podium's base and plate, adding depth and dimension without dominating the scene.",
+  'assets/images/5.png': "Close-up shot of a modern kitchen countertop with ample clean white marble surface in the foreground, taking up most of the frame, soft natural lighting from side windows, blurred kitchen elements in the background (sink, cabinets), minimalistic decor, high-end feel, neutral tones, photorealistic, product photography setup, 8k, shallow depth of field focusing on the countertop",
+  'assets/images/6.png': "Close-up shot of a modern  empty room floor with wide open clean hardwood or neutral-toned flooring occupying most of the frame, soft natural lighting from large side windows with curtains, minimalistic and spacious aesthetic, , photorealistic, 8k, shallow depth of field focused on the floor area, suitable for  product placement"
+}
+
 
 //for saving generated image to campaign
 campaigns: any[] = [];
@@ -85,6 +96,7 @@ selectedCampaign: string | null = null;
   selectBackground(bg: string) {
     this.selectedBackground = bg;
   }
+  
 
   toggleCustomMode() {
     this.customMode = !this.customMode;
@@ -255,49 +267,45 @@ makeItYourOwn(bg: string, event: MouseEvent) {
   this.selectedPrompt = this.imagePrompts[bg] || '';
 }
 
-  // Method to call the backend API to generate custom background
-  
-  generateCustomBackground() {
-    let width: number;
-    let height: number;
-    let prompt = '';
+generateCustomBackground() {
+  this.isGenerating = true; // Start spinner
+
+  let width: number;
+  let height: number;
+  let prompt = '';
   let negativePrompt = '';
-  
+
   if (this.promptMode) {
-    // In edit mode, we're using an existing prompt
     prompt = this.selectedPrompt || this.imagePrompts[this.selectedBackground] || '';
   } else if (this.customMode) {
-    // In custom prompt mode, use the user-entered prompt
-    prompt = this.customPrompt;
+    prompt = `${this.customPrompt}, ${this.customStyle}, ${this.customLighting}`;
     negativePrompt = this.customExclude;
   }
-  
-    // Determine dimensions based on selection
-    if (this.selectedDimension === 'square') {
-      width = 1080;
-      height = 1080;
-    } else if (this.selectedDimension === 'vertical') {
-      width = 720;
-      height = 1280;
-    } else if (this.selectedDimension === 'custom') {
-      if (this.customWidth && this.customHeight) {
-        width = this.customWidth;
-        height = this.customHeight;
-      } else {
-        console.error('Custom dimensions are not set!');
-        return;
-      }
+
+  if (this.selectedDimension === 'square') {
+    width = 1080;
+    height = 1080;
+  } else if (this.selectedDimension === 'vertical') {
+    width = 720;
+    height = 1280;
+  } else if (this.selectedDimension === 'custom') {
+    if (this.customWidth && this.customHeight) {
+      width = this.customWidth;
+      height = this.customHeight;
     } else {
-      // Fallback to default dimensions
-      width = 512;
-      height = 512;
+      console.error('Custom dimensions are not set!');
+      this.isGenerating = false;
+      return;
     }
-  
-    // Log or send data to the backend
+  } else {
+    width = 512;
+    height = 512;
+  }
+
   console.log('Prompt:', prompt);
   console.log('Negative Prompt:', negativePrompt);
-  console.log('Dimensions:', this.outputWidth, 'x', this.outputHeight);
-  //save prompt 
+  console.log('Dimensions:', width, 'x', height);
+
   this.latestUsedPrompt = prompt;
 
   const requestData = {
@@ -305,26 +313,26 @@ makeItYourOwn(bg: string, event: MouseEvent) {
     negative_prompt: negativePrompt,
     width: width,
     height: height,
-    
   };
-    // Send POST request to the backend API
-    this.http.post<any>('http://localhost:5000/generate', requestData).subscribe(
-      response => {
-        if (response.images && response.images.length > 0) {
-          // Set the first generated image as the background
-          this.selectedBackground = `data:image/png;base64,${response.images[0]}`;
-        }
-      },
-      error => {
-        console.error('Error generating image:', error);
-      }
-    );
-  
-    // Close custom mode after sending the request
-    this.customMode = false;
-    
 
-  }
+  this.http.post<any>('http://localhost:5000/generate', requestData).subscribe(
+    response => {
+      if (response.images && response.images.length > 0) {
+        this.selectedBackground = `data:image/png;base64,${response.images[0]}`;
+      }
+      this.isGenerating = false;
+      this.customMode = false; // move here!
+    },
+    error => {
+      console.error('Error generating image:', error);
+      this.isGenerating = false;
+      this.customMode = false; // move here too!
+    }
+  );
+  
+
+  this.customMode = false;
+}
 
 // fetch campaigns for a user
 fetchUserCampaigns() {
