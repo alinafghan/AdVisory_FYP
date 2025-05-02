@@ -8,48 +8,110 @@
       <!-- Model Selection -->
       <div class="mb-6">
         <label class="block text-sm font-medium text-white mb-2.5"></label>
-        <div class="grid grid-cols-2 gap-2">
+        
+        
+        <div class="grid grid-cols-3 gap-2">
 
           <button
-  [ngClass]="{
-    'bg-[#dbc7f3] text-black border-black': selectedModel === 'Flux',
-    'bg-black text-white border-white': selectedModel !== 'Flux'
-  }"
-  class="h-10 rounded-md border text-sm font-medium flex items-center justify-center transition-colors duration-200"
-  (click)="selectedModel = 'Flux'"
->
-  FLUX.1
-</button>
+            [ngClass]="{
+              'bg-[#dbc7f3] text-black border-black': selectedModel === 'Flux',
+              'bg-black text-white border-white': selectedModel !== 'Flux'
+            }"
+            class="h-10 rounded-md border text-sm font-medium flex items-center justify-center transition-colors duration-200"
+            (click)="selectedModel = 'Flux'; onModelChange()"
+          >
+            FLUX.1
+          </button>
 
-<button
-  [ngClass]="{
-    'bg-[#dbc7f3] text-black border-black': selectedModel === 'GPT Image',
-    'bg-black text-white border-white': selectedModel !== 'GPT Image'
-  }"
-  class="h-10 rounded-md border text-sm font-medium flex items-center justify-center transition-colors duration-200"
-  (click)="selectedModel = 'GPT Image'"
->
-  GPT Image 1
-</button>
-
-      
+          <button
+            [ngClass]="{
+              'bg-[#dbc7f3] text-black border-black': selectedModel === 'GPT Image',
+              'bg-black text-white border-white': selectedModel !== 'GPT Image'
+            }"
+            class="h-10 rounded-md border text-sm font-medium flex items-center justify-center transition-colors duration-200"
+            (click)="selectedModel = 'GPT Image'; onModelChange()"
+          >
+            GPT Image 1
+          </button>
+          <button
+            [ngClass]="{
+              'bg-[#dbc7f3] text-black border-black': selectedModel === 'Edit Images',
+              'bg-black text-white border-white': selectedModel !== 'Edit Images'
+            }"
+            class="h-10 rounded-md border text-sm font-medium flex items-center justify-center transition-colors duration-200"
+            (click)="selectedModel = 'Edit Images'; onModelChange()"
+          >
+            Edit Images
+          </button>
         </div>
+      
         <p class="text-xs text-gray-400 mt-1.5">
           <span *ngIf="selectedModel === 'Flux'">FLUX.1 Schnell: Black Forest Labs model for efficient image generation</span>
           <span *ngIf="selectedModel === 'GPT Image'">GPT Image 1: OpenAI vision model for high-quality image generation</span>
+          <span *ngIf="selectedModel === 'Edit Images'">Image Editing: OpenAI vision model for high-quality image editing</span>
+
         </p>
       </div>
-
-      <div class="mb-6">
+      <div *ngIf="selectedModel === 'Edit Images'">
+        <!-- Source Image Upload -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-white mb-2"></label>
-          <input
-            type="text"
-            [(ngModel)]="details"
-            placeholder="Details about ad visual"
-            class="w-full h-10 px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none focus:border-gray-300"
-          />
+          <label class="text-white block mb-1"></label>
+          <label class="block">
+            <label
+              class="cursor-pointer inline-block bg-black text-white border border-white rounded px-4 py-2 hover:bg-gray-900 transition-colors"
+            >
+              Upload Source Image
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="onSourceImageSelected($event)"
+                class="hidden"
+              />
+            </label>
+          </label>
+                    <img *ngIf="sourceImagePreview" [src]="sourceImagePreview" class="max-h-48 rounded mt-2" />
         </div>
+      
+        <div class="mb-4">
+          <label class="text-white block mb-1"></label>
+          <label class="block">
+            <label
+              class="cursor-pointer inline-block bg-black text-white border border-white rounded px-4 py-2 hover:bg-gray-900 transition-colors"
+            >
+              Upload Mask Image (optional)
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onMaskImageSelected($event)"
+                class="hidden"
+              />
+            </label>
+          </label>
+                    <img *ngIf="maskImagePreview" [src]="maskImagePreview" class="max-h-48 rounded mt-2" />
+        </div>
+      
+        <!-- Text Prompt -->
+        <div class="mb-4">
+          <label class="text-white block mb-1"></label>
+          <input [(ngModel)]="textPrompt" placeholder="Describe your edit..." class="w-full h-10 px-3.5 py-2.5 rounded-md bg-black border border-white text-white" />
+        </div>
+      </div>
+      
+      <div class="mb-6">
+
+
+        <!-- Show only if not in Edit Images mode -->
+<div class="mb-4" *ngIf="selectedModel !== 'Edit Images'">
+  <label class="block text-sm font-medium text-white mb-2"></label>
+  <input
+    type="text"
+    [(ngModel)]="details"
+    placeholder="Details about ad visual"
+    class="w-full h-10 px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none focus:border-gray-300"
+  />
+</div>
+
         
         <!-- Lighting, Colors, Style in one row -->
         <div class="grid grid-cols-3 gap-4 mb-4">
@@ -57,22 +119,22 @@
             <label class="block text-sm font-medium text-white mb-2"></label>
             <div class="relative">
               <select
-              [(ngModel)]="lighting"
-              [ngClass]="{
-                'text-gray-400': !lighting,
-                'text-white': lighting
-              }"
-              class="w-full h-10 px-3.5 py-2 appearance-none rounded-md bg-black border border-white focus:outline-none focus:border-gray-300"
-            >
-              <option value="" disabled selected>Lighting</option>
-              <option value="Soft">Soft</option>
-              <option value="Bright">Bright</option>
-              <option value="Dramatic">Dramatic</option>
-              <option value="Natural">Natural</option>
-              <option value="Studio">Studio</option>
-              <option value="Cinematic">Cinematic</option>
-            </select>
-            
+                [(ngModel)]="lighting"
+                [ngClass]="{
+                  'text-gray-400': !lighting,
+                  'text-white': lighting
+                }"
+                class="w-full h-10 px-3.5 py-2 appearance-none rounded-md bg-black border border-white focus:outline-none focus:border-gray-300"
+              >
+                <option value="" disabled selected>Lighting</option>
+                <option value="Soft">Soft</option>
+                <option value="Bright">Bright</option>
+                <option value="Dramatic">Dramatic</option>
+                <option value="Natural">Natural</option>
+                <option value="Studio">Studio</option>
+                <option value="Cinematic">Cinematic</option>
+              </select>
+              
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -85,23 +147,23 @@
             <label class="block text-sm font-medium text-white mb-2"></label>
             <div class="relative">
               <select
-  [(ngModel)]="colors"
-  [ngClass]="{
-    'text-gray-400': !colors,
-    'text-white': colors
-  }"
-  class="w-full h-10 px-3.5 py-2 appearance-none rounded-md bg-black border border-white focus:outline-none focus:border-gray-300"
->
-  <option value="" disabled selected>Colors</option>
-  <option value="Vibrant">Vibrant</option>
-  <option value="Pastel">Pastel</option>
-  <option value="Monochrome">Monochrome</option>
-  <option value="Blue and White">Blue and White</option>
-  <option value="Earth Tones">Earth Tones</option>
-  <option value="Neon">Neon</option>
-  <option value="Warm">Warm</option>
-  <option value="Cool">Cool</option>
-</select>
+                [(ngModel)]="colors"
+                [ngClass]="{
+                  'text-gray-400': !colors,
+                  'text-white': colors
+                }"
+                class="w-full h-10 px-3.5 py-2 appearance-none rounded-md bg-black border border-white focus:outline-none focus:border-gray-300"
+              >
+                <option value="" disabled selected>Colors</option>
+                <option value="Vibrant">Vibrant</option>
+                <option value="Pastel">Pastel</option>
+                <option value="Monochrome">Monochrome</option>
+                <option value="Blue and White">Blue and White</option>
+                <option value="Earth Tones">Earth Tones</option>
+                <option value="Neon">Neon</option>
+                <option value="Warm">Warm</option>
+                <option value="Cool">Cool</option>
+              </select>
 
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -115,13 +177,13 @@
             <label class="block text-sm font-medium text-white mb-2"></label>
             <div class="relative">
               <select
-              [(ngModel)]="style"
-              [ngClass]="{
-                'text-gray-400': !colors,
-                'text-white': colors
-              }"
-              class="w-full h-10 px-3.5 py-2 appearance-none rounded-md bg-black border border-white focus:outline-none focus:border-gray-300"
-            >
+                [(ngModel)]="style"
+                [ngClass]="{
+                  'text-gray-400': !style,
+                  'text-white': style
+                }"
+                class="w-full h-10 px-3.5 py-2 appearance-none rounded-md bg-black border border-white focus:outline-none focus:border-gray-300"
+              >
                 <option value="" disabled selected>Style</option>
                 <option value="Minimalist">Minimalist</option>
                 <option value="Retro">Retro</option>
@@ -148,11 +210,11 @@
         <label class="block text-sm font-medium text-white mb-2.5"></label>
         <div class="relative">
           <textarea
-          [value]="constructedPrompt"
-          readonly
-          rows="2"
-          class="w-full px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none resize-none"
-        ></textarea>
+            [value]="constructedPrompt"
+            readonly
+            rows="2"
+            class="w-full px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none resize-none"
+          ></textarea>
           <!-- Modified star icon to be a clickable button for enhancement -->
           <button 
             *ngIf="selectedModel === 'Flux'"
@@ -250,35 +312,15 @@
             </div>
           </div>
         </div>
-
-        <!-- Width and Height Inputs -->
-        <!-- <div class="grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-white mb-2">Width</label>
-            <input
-              type="number"
-              [(ngModel)]="width"
-              class="w-full h-10 px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none focus:border-gray-300"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-white mb-2">Height</label>
-            <input
-              type="number"
-              [(ngModel)]="height"
-              class="w-full h-10 px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none focus:border-gray-300"
-            />
-          </div>
-        </div> -->
       </div>
 
-      <!-- Generate Button -->
+      <!-- Generate/Edit Button (text changes based on presence of source image) -->
       <button
         (click)="generateAdImage()"
         [disabled]="isLoading"
         class="w-full h-12 rounded-md bg-black border border-black text-white font-medium text-base flex items-center justify-center gap-2 hover:bg-gray-900 transition-colors duration-200"
       >
-        <span>Generate Image</span>
+        <span>{{ sourceImage ? 'Edit Image' : 'Generate Image' }}</span>
         <svg
           class="ml-2"
           width="20"
@@ -306,7 +348,7 @@
             class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"
           ></div>
           <p class="text-white font-semibold">
-            Generating your ad image... Please wait.
+            {{ sourceImage ? 'Editing your image' : 'Generating your ad image' }}... Please wait.
           </p>
         </div>
       </div>
@@ -354,10 +396,10 @@
             ></path>
           </svg>
           <p class="font-medium text-white">
-            Your generated image will appear here
+            Your {{ sourceImage ? 'edited' : 'generated' }} image will appear here
           </p>
           <p class="text-sm mt-2 text-gray-400">
-            Configure parameters and click "Generate Image"
+            Configure parameters and click "{{ sourceImage ? 'Edit Image' : 'Generate Image' }}"
           </p>
         </div>
       </div>

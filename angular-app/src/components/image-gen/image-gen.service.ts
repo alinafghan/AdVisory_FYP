@@ -9,6 +9,7 @@ export class FluxService {
   private apiUrl = 'http://localhost:5000/flux';
   private gptApiUrl = 'http://localhost:5000/generate-ad-image';
   private enhanceUrl = 'http://localhost:5000/enhance';
+  private editImageUrl = 'http://localhost:5000/edit-image';
 
   constructor(private http: HttpClient) {}
 
@@ -43,4 +44,16 @@ export class FluxService {
     console.log('Sending request to EnhanceFlux API:', requestData);
     return this.http.post(this.enhanceUrl, requestData, { headers });
   }
+
+  editImage(prompt: string, imageFiles: File[]): Observable<any> {
+    const formData = new FormData();
+    formData.append('prompt', prompt);
+    imageFiles.forEach((file, i) => {
+      formData.append('image', file); // appending multiple under same key
+    });
+  
+    return this.http.post<any>('http://127.0.0.1:5000/edit-image', formData);
+  }
+  
+  
 }
