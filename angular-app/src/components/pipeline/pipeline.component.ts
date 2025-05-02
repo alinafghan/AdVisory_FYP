@@ -2,15 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CampaignComponent } from '../campaign/campaign.component';
-import { ChooseComponent } from '../flux-page/choose.component';
-import { FluxPageComponent } from '../flux-page/flux-page.component';
-import { ProductAdComponent } from '../productad-page/productad.component';
-import { ProductAdCustomComponent } from '../productad-page/productadcustom.component';
-import { CaptionPageComponent } from '../caption-page/caption-page.component';
+import { FluxPageComponent } from '../image-gen/image-gen.component';
+import {CaptionPageComponent} from '../caption-page/caption-page.component';
 import { TrendsComponent } from '../trends-page/trends-page.component';
 import { BudgetComponent } from '../budget/budget.component';
 import { Router } from '@angular/router';
-
+import { ChooseComponent } from '../image-gen/choose.component';
+import { ProductAdComponent } from '../productad-page/productad.component';
+import { ProductAdCustomComponent } from '../productad-page/productadcustom.component';
 @Component({
   selector: 'app-pipeline',
   standalone: true,

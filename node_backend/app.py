@@ -1,30 +1,37 @@
 ##first do pip install flask and xgboost
 import base64
+from io import BytesIO
 import os
-from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS 
-from transformers import pipeline  # ✅ This imports the pipeline function
 import xgboost as xgb
 import numpy as np
+import requests
 from flask_cors import CORS
+from flask import Flask, request, jsonify, send_file
 import pandas as pd
 from trends_analyzer import TrendAnalyzer  
 import logging
 from gradio_client import Client
+from transformers import pipeline
 from dotenv import load_dotenv
 import openai
 from rembg_helper import remove_background
 from diffusers import DiffusionPipeline
 from PIL import Image
+import replicate
 import io
 import torch
-import replicate
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
+from PIL import Image
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
+import cvxpy as cp
+from scipy.optimize import curve_fit
 
 
 # Initialize Flask app
 app = Flask(__name__)
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 CORS(app)  
 
@@ -151,6 +158,36 @@ def flux():
     else:
         return jsonify({'error': 'Image generation failed.'}), 500
 
+@app.route('/generate-ad-image', methods=['POST'])
+def generate_ad_image():
+    try:
+        data = request.get_json()
+        
+        # Ensure the prompt is provided
+        if 'prompt' not in data:
+            return jsonify({'error': 'Prompt is required for image generation'}), 400
+        
+        # Call OpenAI to generate an image
+        result = openai.images.generate(
+            model="gpt-image-1",  # Use the appropriate model for image generation
+            prompt=data['prompt']  
+        )
+        
+        image_base64 = result.data[0].b64_json
+        image_bytes = base64.b64decode(image_base64)
+        # Save the image to a file
+        with open("blackhole.png", "wb") as f:
+            f.write(image_bytes)
+        
+        # Return the image in base64 format or the path of the saved image
+        return jsonify({
+            'message': 'Ad image generated successfully',
+            'imageBase64': image_base64  # Return base64 image data if needed
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 ##################### caption ##############################
 load_dotenv()
 @app.route('/generate-caption', methods=['POST'])
@@ -203,9 +240,7 @@ def generate_caption():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if openai_api_key is None:
-    raise ValueError("No API Key found. Please set the OPENAI_API_KEY in the .env file.")
+    
 
 ######################### ENHANCE ################################
 
@@ -219,6 +254,133 @@ enhancer = pipeline('text2text-generation',
                     tokenizer=tokenizer,
                     repetition_penalty=1.2,
                     device=device)
+
+
+@app.route("/")
+def home():
+    return "Flask is running!"
+
+######################### EDIT IMAGE #################################
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Configure upload folder for temporary image files
+UPLOAD_FOLDER = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/edit-image', methods=['POST'])
+def edit_image():
+    # Extract form data or JSON data
+    prompt = request.form.get('prompt')
+    model = request.form.get('model', 'gpt-image-1')  # Default to 'gpt-image-1' if not specified
+    n = request.form.get('n', 1)  # Default to 1 if not specified
+    quality = request.form.get('quality', 'auto')  # Default to 'auto' if not specified
+    size = request.form.get('size', '1024x1024')  # Default to '1024x1024' if not specified
+    
+    api_key = os.environ.get('OPENAI_API_KEY') or request.form.get('api_key')
+    if not api_key:
+        return jsonify({"error": "API key is required"}), 400
+
+    if not prompt:
+        return jsonify({"error": "Prompt is required"}), 400
+
+    if 'image' not in request.files:
+        return jsonify({"error": "At least one image file is required"}), 400
+    
+    # Handle multiple image files for gpt-image-1
+    image_files = request.files.getlist('image')
+    if model == 'gpt-image-1' and len(image_files) > 16:
+        return jsonify({"error": "Maximum 16 images allowed for gpt-image-1"}), 400
+    elif model == 'dall-e-2' and len(image_files) > 1:
+        return jsonify({"error": "Only one image allowed for dall-e-2"}), 400
+
+    # Process mask if provided
+    mask = None
+    if 'mask' in request.files:
+        mask_file = request.files['mask']
+        if mask_file.filename:
+            mask_filename = secure_filename(mask_file.filename)
+            mask_path = os.path.join(app.config['UPLOAD_FOLDER'], mask_filename)
+            mask_file.save(mask_path)
+            mask = ('mask', (mask_filename, open(mask_path, 'rb'), 'image/png'))
+    
+    # Save images
+    images = []
+    for img_file in image_files:
+        if img_file.filename:
+            filename = secure_filename(img_file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            img_file.save(filepath)
+            
+            # For gpt-image-1, append images to a list
+            images.append(('image[]', (filename, open(filepath, 'rb'), 'image/png')))
+    
+    # Prepare data
+    data = {
+        'prompt': prompt,
+        'model': model,
+        'n': int(n),
+        'quality': quality,
+        'size': size
+    }
+    
+    # Prepare headers
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+    
+    try:
+        # For dall-e-2 with single image
+        if model == 'dall-e-2':
+            files = [images[0]]  # Only one image for dall-e-2
+            if mask:
+                files.append(mask)
+        # For gpt-image-1 with multiple images
+        else:
+            files = images  # All images for gpt-image-1
+            if mask:
+                files.append(mask)
+        
+        # Make request to OpenAI API
+        response = requests.post(
+            "https://api.openai.com/v1/images/edits",
+            headers=headers,
+            data=data,
+            files=files
+        )
+        
+        # Close all open file handles
+        for file_tuple in files:
+            try:
+                file_tuple[1][1].close()
+            except:
+                pass
+        
+        # Get the base64 encoded image from the response
+        if response.status_code == 200:
+            response_json = response.json()
+            image_base64 = response_json['data'][0]['b64_json']
+
+            # Save the base64 image to your device
+            image_data = base64.b64decode(image_base64)
+            image_filename = "edited_image.png"  # You can customize the filename
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            with open(image_path, 'wb') as f:
+                f.write(image_data)
+
+            # Return response with the image URL for download
+            return jsonify({
+                'message': 'Image edited and saved successfully.',
+                'imageBase64': image_base64,
+                'saved_image_path': image_path
+            }), 200
+        
+        return jsonify({"error": "Failed to generate image"}), 500
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/enhance', methods=['POST'])
 def enhance_prompt():
@@ -242,10 +404,7 @@ def enhance_prompt():
 def health_check():
     return jsonify({"status": "up"}), 200
 
-
-
-
-################################productad##########################################
+###############################productad##########################################
 api_token = os.getenv("API_TOKEN")
 replicate_client = replicate.Client(api_token)
 REPLICATE_MODEL_URL = "bytedance/sdxl-lightning-4step:6f7a773af6fc3e8de9d5a3c00be77c17308914bf67772726aff83496ba1e3bbe"
@@ -344,6 +503,105 @@ def remove_bg():
 
     except Exception as e:
         return jsonify({'error': 'Failed to process image', 'details': str(e)}), 500
+
+
+
+###########################################budget##########################################
+
+# Stage 1
+def stage1_equal_allocation(n_ads, B):
+    return np.full(n_ads, B / n_ads)
+
+# Stage 2: β = y / log(x), α=0
+def stage2_estimate_beta(x, y):
+    x = np.maximum(x, 1e-6)
+    return y / np.log(x)
+
+# Stage 3: fit α,β with bounds β>=0
+def stage3_estimate_alpha_beta(x, y):
+    x = np.maximum(x, 1e-6)
+    def model(x, alpha, beta):
+        return alpha + beta * np.log(x)
+    popt, _ = curve_fit(
+        model, x, y, p0=[0.0,1.0],
+        bounds=([-np.inf,0.0],[np.inf,np.inf])
+    )
+    return popt[0], popt[1]
+
+# Dual formula
+def compute_dual(alpha, beta, lam, B):
+    return (
+        lam * B
+        + np.sum(alpha)
+        + np.sum(beta * (np.log(beta) - 1))
+        - np.sum(beta) * np.log(lam)
+    )
+
+# CVXPY solve
+def run_optimization(alpha, beta, B):
+    n = len(beta)
+    x = cp.Variable(n, pos=True)
+    obj = cp.Maximize(cp.sum(alpha + cp.multiply(beta, cp.log(x))))
+    cons = [cp.sum(x) <= B]
+    prob = cp.Problem(obj, cons)
+    prob.solve()
+    lam = cons[0].dual_value
+    return {
+        "x_opt": x.value.tolist(),
+        "primal": prob.value,
+        "dual_var": lam,
+        "dual_obj": compute_dual(alpha, beta, lam, B)
+    }
+
+@app.route("/allocate", methods=["POST"])
+def allocate_budget():
+    data = request.get_json()
+    n_ads = int(data["n_ads"])
+    B = float(data["budget"])
+    conv = data["conversions"]      # list of lists
+
+    # decide stage
+    all_zero = all(all(y==0 for y in hist) for hist in conv)
+    lengths = [len(hist) for hist in conv]
+
+    if all_zero:
+        stage = 1
+        x_opt = stage1_equal_allocation(n_ads, B).tolist()
+        return jsonify(stage=stage, x_opt=x_opt)
+
+    # Stage 2: every history length == 1
+    if all(l==1 for l in lengths):
+        stage = 2
+        x1 = stage1_equal_allocation(n_ads, B)
+        beta = np.array([stage2_estimate_beta(x1[i], conv[i][0]) for i in range(n_ads)])
+        alpha = np.zeros(n_ads)
+        res = run_optimization(alpha, beta, B)
+        return jsonify(stage=stage, **res)
+
+    # Stage 3:
+    stage = 3
+    # build history arrays
+    alpha = np.zeros(n_ads)
+    beta  = np.zeros(n_ads)
+    x1 = stage1_equal_allocation(n_ads, B)
+    # Need a baseline spend; let's re-run stage 2 to get x2
+    beta2 = np.array([stage2_estimate_beta(x1[i], conv[i][0]) for i in range(n_ads)])
+    alpha2 = np.zeros(n_ads)
+    res2 = run_optimization(alpha2, beta2, B)
+    x2 = np.array(res2["x_opt"])
+
+    for i in range(n_ads):
+        xi = np.array([x1[i], x2[i]])
+        yi = np.array(conv[i])  # must be length >=2
+        yi_full = conv[i]
+        if len(yi_full) < 2:
+           yi = np.array([yi_full[0], yi_full[0]])
+        else:
+            yi = np.array(yi_full[:2])
+        alpha[i], beta[i] = stage3_estimate_alpha_beta(xi, yi)
+
+    res3 = run_optimization(alpha, beta, B)
+    return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
 
 
 if __name__ == '__main__':
