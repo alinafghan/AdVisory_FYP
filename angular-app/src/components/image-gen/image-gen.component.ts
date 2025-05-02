@@ -158,60 +158,189 @@ onMaskImageSelected(event: any) {
 
 editImageFiles: File[] = [];
 
+  // generateAdImage() {
+  //   this.errorMessage = '';
+  // this.isLoading = true;
+
+  // if (this.selectedModel === 'Edit Images') {
+  //   if (!this.editImageFiles.length || !this.textPrompt) {
+  //     this.errorMessage = 'Both image(s) and prompt are required.';
+  //     this.isLoading = false;
+  //     return;
+  //   }
+
+  //   // Construct enhancement context
+  //   const enhancementParts: string[] = [];
+  //   if (this.lighting) enhancementParts.push(`${this.lighting} lighting`);
+  //   if (this.colors) enhancementParts.push(`color scheme: ${this.colors}`);
+  //   if (this.style) enhancementParts.push(`style: ${this.style}`);
+
+  //   // Build full prompt
+  //   const enhancementText = enhancementParts.length
+  //     ? ` in ${enhancementParts.join(', ')}`
+  //     : '';
+  //   const fullPrompt = `${this.textPrompt.trim()}${enhancementText}`;
+
+  //   this.prompt = fullPrompt;
+
+  //   this.fluxService.editImage(fullPrompt, this.editImageFiles)
+  //     .subscribe({
+  //       next: (res) => {
+  //         this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+  //         this.isLoading = false;
+  //       },
+  //       error: (err) => {
+  //         this.errorMessage = err?.error?.error || 'Image editing failed';
+  //         this.isLoading = false;
+  //       }
+  //     });
+
+  //   return;
+  //   }
+  //   else {
+  //     // GENERATE IMAGE
+  //     this.fluxService.generateImage({prompt: prompt})
+  //       .subscribe({
+  //         next: (res) => {
+  //           this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+  //           this.isLoading = false;
+  //         },
+  //         error: (err) => {
+  //           this.errorMessage = err?.error?.error || 'Image generation failed';
+  //           this.isLoading = false;
+  //         }
+  //       });
+  //   }
+  // }
   generateAdImage() {
-    this.errorMessage = '';
-  this.isLoading = true;
-
-  if (this.selectedModel === 'Edit Images') {
-    if (!this.editImageFiles.length || !this.textPrompt) {
-      this.errorMessage = 'Both image(s) and prompt are required.';
-      this.isLoading = false;
-      return;
-    }
-
-    // Construct enhancement context
-    const enhancementParts: string[] = [];
-    if (this.lighting) enhancementParts.push(`${this.lighting} lighting`);
-    if (this.colors) enhancementParts.push(`color scheme: ${this.colors}`);
-    if (this.style) enhancementParts.push(`style: ${this.style}`);
-
-    // Build full prompt
-    const enhancementText = enhancementParts.length
-      ? ` in ${enhancementParts.join(', ')}`
-      : '';
-    const fullPrompt = `${this.textPrompt.trim()}${enhancementText}`;
-
-    this.prompt = fullPrompt;
-
-    this.fluxService.editImage(fullPrompt, this.editImageFiles)
-      .subscribe({
-        next: (res) => {
-          this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
-          this.isLoading = false;
-        },
-        error: (err) => {
-          this.errorMessage = err?.error?.error || 'Image editing failed';
-          this.isLoading = false;
+    this.errorMessage = ''; // Clear any previous errors
+    this.isLoading = true; // Show loading indicator
+  
+    // Check if the selected model requires image editing
+    if (this.selectedModel === 'Edit Image') {
+        // --- Existing Edit Image Logic (no change needed here based on the new error) ---
+        if (!this.editImageFiles.length || !this.textPrompt) {
+             this.errorMessage = 'Both image(s) and prompt are required for editing.';
+             this.isLoading = false;
+             return;
         }
-      });
-
-    return;
+  
+        const enhancementParts: string[] = [];
+        if (this.lighting) enhancementParts.push('${this.lighting} lighting');
+        if (this.colors) enhancementParts.push('color scheme: ${this.colors}');
+        if (this.style) enhancementParts.push('style: ${this.style}');
+  
+        const enhancementText = enhancementParts.length
+            ? ` in ${enhancementParts.join(', ')}`
+            : '';
+        const fullPrompt = '${this.textPrompt.trim()}${enhancementText}';
+  
+        console.log('Sending request to Edit Image API with prompt:', fullPrompt);
+  
+        this.fluxService.editImage(fullPrompt, this.editImageFiles)
+            .subscribe({
+                next: (res) => {
+                    // Assuming res.imageBase64 is returned by the /edit-image endpoint
+                    if (res && res.imageBase64) { // Add check for response data
+                        this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+                    } else {
+                         this.errorMessage = 'Image editing response missing image data.';
+                         console.error('Edit image response:', res);
+                    }
+                    this.isLoading = false;
+                },
+                error: (err) => {
+                    console.error('Image editing failed:', err);
+                    this.errorMessage = err?.error?.error || 'Image editing failed. Check console for details.';
+                    this.isLoading = false;
+                }
+            });
+  
+        return; // Exit after handling edit mode
+    }
+    // Handle Image Generation models (Flux and GPT Image)
+    else if (this.selectedModel === 'Flux') {
+         // Ensure prompt has some value
+         if (!this.prompt) {
+             this.prompt = this.constructedPrompt.trim();
+         }
+         if (!this.prompt) {
+             this.errorMessage = 'A prompt is required for Flux image generation.';
+             this.isLoading = false;
+             return;
+         }
+  
+        const requestData = {
+            prompt: this.prompt,
+            width: this.width,
+            height: this.height,
+            seed: this.randomizeSeed ? 0 : this.seed,
+            num_inference_steps: this.num_inference_steps
+        };
+  
+        // Call the generateImage service method (targets /flux)
+        this.fluxService.generateImage(requestData)
+            .subscribe({
+                next: (res) => {
+                    // --- FIX IS HERE for the Flux model ---
+                    // Access the image data using the key 'Generated Image' from your Flask backend
+                    if (res && res['Generated Image']) { // Add check for response data
+                         this.generatedImage = `data:image/png;base64,${res['Generated Image']}`;
+                    } else {
+                         this.errorMessage = 'Flux image generation response missing image data.';
+                         console.error('Flux response:', res); // Log the response to see its structure
+                    }
+  
+                    this.isLoading = false;
+                },
+                error: (err) => {
+                    console.error('Flux Image generation failed:', err);
+                    this.errorMessage = err?.error?.error || 'Flux Image generation failed. Check console for details.';
+                    this.isLoading = false;
+                }
+            });
+    } else if (this.selectedModel === 'GPT Image') {
+         // Ensure prompt has some value
+         if (!this.prompt) {
+              this.prompt = this.constructedPrompt.trim();
+         }
+          if (!this.prompt) {
+             this.errorMessage = 'A prompt is required for GPT Image generation.';
+             this.isLoading = false;
+             return;
+         }
+  
+        const requestData = {
+            prompt: this.prompt
+        };
+  
+        // Call the generateGptImage service method (targets /generate-ad-image)
+        this.fluxService.generateGptImage(requestData)
+            .subscribe({
+                next: (res) => {
+                     // --- This was already correct for the GPT Image endpoint ---
+                     // Your /generate-ad-image backend returns 'imageBase64'
+                    if (res && res.imageBase64) { // Add check for response data
+                        this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+                    } else {
+                         this.errorMessage = 'GPT image generation response missing image data.';
+                         console.error('GPT response:', res); // Log the response to see its structure
+                    }
+                    this.isLoading = false;
+                },
+                error: (err) => {
+                    console.error('GPT Image generation failed:', err);
+                    this.errorMessage = err?.error?.error || 'GPT Image generation failed. Check console for details.';
+                    this.isLoading = false;
+                }
+            });
     }
     else {
-      // GENERATE IMAGE
-      this.fluxService.generateImage(prompt)
-        .subscribe({
-          next: (res) => {
-            this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
-            this.isLoading = false;
-          },
-          error: (err) => {
-            this.errorMessage = err?.error?.error || 'Image generation failed';
-            this.isLoading = false;
-          }
-        });
+        this.errorMessage = 'Please select a valid image generation model.';
+        this.isLoading = false;
     }
   }
+
   
 removeSourceImage() {
   this.sourceImagePreview = null;
