@@ -1,5 +1,5 @@
 // flux-page.component.ts
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FluxService } from "./image-gen.service";
 import { FormsModule } from "@angular/forms";
@@ -13,7 +13,10 @@ import { AdDataService } from "../../services/ad-data.service";
   styleUrls: ["./image-gen.component.css"],
 })
 export class FluxPageComponent implements OnInit {
-  modelOptions: string[] = ["Flux", "GPT Image"];
+  @ViewChild('imageUpload') imageUpload!: ElementRef;
+  @ViewChild('maskUpload') maskUpload!: ElementRef;
+
+  modelOptions: string[] = ["Flux", "GPT Image", "Edit Image"];
   selectedModel: string = "Flux";
 
   selectedAdType: string | null = null;
@@ -42,6 +45,15 @@ export class FluxPageComponent implements OnInit {
   randomizeSeed: boolean = true;
   num_inference_steps: number = 4;
 
+  // Edit mode properties
+  sourceImage: File | null = null;
+  sourceImagePreview: string | null = null;
+  maskImage: File | null = null;
+  maskImagePreview: string | null = null;
+  editQuality: string = 'auto';
+  editModel: string = 'gpt-image-1';
+  n: number = 1;
+
   campaigns: any[] = [];
   selectedCampaign!: string;
 
@@ -53,11 +65,6 @@ export class FluxPageComponent implements OnInit {
   showDimensionsDropdown: boolean = false;
 
   dimensions: string[] = [
-    // "Vertical (1080 × 1920)",
-    // "YouTube Thumbnail (1280 × 720)",
-    // "3:4 Post (1080 × 1440)",
-    // "Custom",
-
     "Square 1024x1024", 
     "Landscape 1536x1024", 
     "Portrait 1024x1536" 
@@ -66,6 +73,7 @@ export class FluxPageComponent implements OnInit {
 
   enhancedPrompt: string = "";
   isPromptEnhanced: boolean = false;
+  textPrompt!: string;
 
   constructor(private fluxService: FluxService, private adDataService: AdDataService) {}
 
@@ -80,7 +88,7 @@ export class FluxPageComponent implements OnInit {
   }
 
   get constructedPrompt(): string {
-    let promptParts: string[] = ["A social media ad for"];
+    let promptParts: string[] = ["A social media ad"];
 
     if (this.selectedAdType === 'Product') {
       if (this.productType) promptParts.push(this.productType);
@@ -118,92 +126,108 @@ export class FluxPageComponent implements OnInit {
 
     // 1024x1024, 1536x1024 (landscape), 1024x1536 (portrait)
     switch (dimension) {
-      // case "Vertical (1080 × 1920)":
-      //   this.width = 1080;
-      //   this.height = 1920;
-      //   break;
-      
-      // case "YouTube Thumbnail (1280 × 720)":
-      //   this.width = 1280;
-      //   this.height = 720;
-      //   break;
-      // case "3:4 Post (1080 × 1440)":
-      //   this.width = 1080;
-      //   this.height = 1440;
-      //   break;
-      case "Landscape Post (1536 × 1024)":
-          this.width = 1080;
-          this.height = 1440;
+      case "Landscape 1536x1024":
+          this.width = 1536;
+          this.height = 1024;
           break;
-      case "1x1 Post (1024 x 1024)":
+      case "Square 1024x1024":
           this.width = 1024;
           this.height = 1024;
           break;
-      case "Portrait Post (1536 × 1024)":
-            this.width = 1024;
-            this.height = 1536;
-            break;
+      case "Portrait 1024x1536":
+          this.width = 1024;
+          this.height = 1536;
+          break;
     }
   }
 
-  generateAdImage(): void {
-    this.isLoading = true;
-    this.errorMessage = null;
-    this.generatedImage = null;
+  sourceImageFile: File | null = null;
+maskImageFile: File | null = null;
 
-    const promptToUse = this.isPromptEnhanced ? this.enhancedPrompt : this.constructedPrompt;
-    const requestData: any = { prompt: promptToUse };
+onMaskImageSelected(event: any) {
+  const file = event.target.files[0];
+  if (file) {
+    this.maskImageFile = file;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.maskImagePreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
 
-    if (this.selectedModel === 'Flux') {
-      console.log('[Model] Using FLUX model for generation');
-      requestData.seed = this.seed;
-      requestData.randomize_seed = this.randomizeSeed;
-      requestData.width = this.width;
-      requestData.height = this.height;
-      requestData.num_inference_steps = this.num_inference_steps;
+editImageFiles: File[] = [];
 
-      this.fluxService.generateImage(requestData).subscribe({
-        next: (response: any) => {
-          if (response["Generated Image"]) {
-            const base64ImageData = response["Generated Image"];
-            this.generatedImage = `data:image/webp;base64,${base64ImageData}`;
-            console.log("[Response] Flux image generated successfully");
-          } else {
-            this.errorMessage = "Unexpected response from server.";
-          }
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error("[Error] Flux image generation failed:", error);
-          this.errorMessage = "Failed to generate the image. Please try again later.";
-          this.isLoading = false;
-        },
-      });
-    } else if (this.selectedModel === 'GPT Image') {
-      console.log('[Model] Using GPT Image model for generation');
+  generateAdImage() {
+    this.errorMessage = '';
+  this.isLoading = true;
 
-      this.fluxService.generateGptImage(requestData).subscribe({
-        next: (response: any) => {
-          if (response.imageBase64) {
-            this.generatedImage = `data:image/png;base64,${response.imageBase64}`;
-            console.log("[Response] GPT image generated successfully");
-          } else {
-            this.errorMessage = "Unexpected response from server.";
-          }
-          this.isLoading = false;
-        },
-        error: (error: any) => {
-          console.error("[Error] GPT image generation failed:", error);
-          this.errorMessage = "Failed to generate the image. Please try again later.";
-          this.isLoading = false;
-        },
-      });
-    } else {
-      console.warn('[Model] No model selected');
-      this.errorMessage = "No model selected.";
+  if (this.selectedModel === 'Edit Images') {
+    if (!this.editImageFiles.length || !this.textPrompt) {
+      this.errorMessage = 'Both image(s) and prompt are required.';
       this.isLoading = false;
+      return;
+    }
+
+    // Construct enhancement context
+    const enhancementParts: string[] = [];
+    if (this.lighting) enhancementParts.push(`${this.lighting} lighting`);
+    if (this.colors) enhancementParts.push(`color scheme: ${this.colors}`);
+    if (this.style) enhancementParts.push(`style: ${this.style}`);
+
+    // Build full prompt
+    const enhancementText = enhancementParts.length
+      ? ` in ${enhancementParts.join(', ')}`
+      : '';
+    const fullPrompt = `${this.textPrompt.trim()}${enhancementText}`;
+
+    this.prompt = fullPrompt;
+
+    this.fluxService.editImage(fullPrompt, this.editImageFiles)
+      .subscribe({
+        next: (res) => {
+          this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.error || 'Image editing failed';
+          this.isLoading = false;
+        }
+      });
+
+    return;
+    }
+    else {
+      // GENERATE IMAGE
+      this.fluxService.generateImage(prompt)
+        .subscribe({
+          next: (res) => {
+            this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            this.errorMessage = err?.error?.error || 'Image generation failed';
+            this.isLoading = false;
+          }
+        });
     }
   }
+  
+removeSourceImage() {
+  this.sourceImagePreview = null;
+  this.sourceImageFile = null;
+}
+
+browseSourceImage() {
+  const input = document.querySelector<HTMLInputElement>('#imageUpload');
+  input?.click();
+}
+
+browseMaskImage() {
+  const input = document.querySelector<HTMLInputElement>('#maskUpload');
+  input?.click();
+}
+
 
   submitImageToCampaign(imageData: string) {
     if (!imageData) {
@@ -279,5 +303,35 @@ export class FluxPageComponent implements OnInit {
   resetPrompt(): void {
     this.enhancedPrompt = "";
     this.isPromptEnhanced = false;
+  }
+
+  // Image upload handling methods
+  onSourceImageSelected(event: any) {
+    const files = event.target.files;
+    if (files.length) {
+      this.editImageFiles = Array.from(files);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.sourceImagePreview = e.target.result;
+      };
+      reader.readAsDataURL(files[0]); // preview only 1st image
+    }
+  }
+  
+
+  removeMaskImage(): void {
+    this.maskImage = null;
+    this.maskImagePreview = null;
+    if (this.maskUpload) {
+      this.maskUpload.nativeElement.value = '';
+    }
+  }
+
+  onModelChange(): void {
+    // Reset errors when changing models
+    this.errorMessage = null;
+    
+    // Reset generated image if switching between generate/edit modes
+    this.generatedImage = null;
   }
 }
