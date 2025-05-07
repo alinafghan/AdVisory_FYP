@@ -19,6 +19,9 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import cvxpy as cp
 from scipy.optimize import curve_fit
+from flask import Flask, jsonify
+from apify_client import ApifyClient
+import re
 
 app = Flask(__name__)
 
@@ -496,5 +499,62 @@ def allocate_budget():
     res3 = run_optimization(alpha, beta, B)
     return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
 
+def extract_social_links(text):
+    """Extract social media links from text"""
+    social_links = {}
+    
+    # Common social media patterns
+    patterns = {
+        'instagram': r'https?://(?:www\.)?instagram\.com/[a-zA-Z0-9_.]+/?',
+        'facebook': r'https?://(?:www\.)?facebook\.com/[a-zA-Z0-9_.]+/?',
+        'linkedin': r'https?://(?:www\.)?linkedin\.com/(?:company|in)/[a-zA-Z0-9_.-]+/?',
+        'twitter': r'https?://(?:www\.)?twitter\.com/[a-zA-Z0-9_]+/?',
+        'youtube': r'https?://(?:www\.)?youtube\.com/[a-zA-Z0-9_]+/?',
+    }
+    
+    for platform, pattern in patterns.items():
+        match = re.search(pattern, text)
+        if match:
+            social_links[platform] = match.group(0)
+    
+    return social_links
+
+@app.route('/scrape-facebook-ads', methods=['POST'])
+def scrape_facebook_ads():
+    client = ApifyClient("apify_api_NjSZxqtGL9yuEkNE2WTX38WZMf14dt1QevpQ")
+    
+    run_input = {
+        "urls": [
+            {"url": "https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=IN&q=linkedin&search_type=keyword_unordered&media_type=all"},
+            {"url": "https://www.facebook.com/ZapierApp"},
+        ],
+        "count": 100,
+        "scrapePageAds.activeStatus": "all",
+        "period": "",
+    }
+    
+    run = client.actor("XtaWFhbtfxyzqrFmd").call(run_input=run_input)
+    filtered_results = []
+    
+    for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+        filtered_item = {}
+        snapshot = item.get('snapshot', {})
+        body_text = snapshot.get('body', {}).get('text', '')
+        filtered_item['body_text'] = body_text
+        filtered_item['social_links'] = extract_social_links(body_text)
+        filtered_item['page_categories'] = snapshot.get('page_categories', [])
+        filtered_item['page_name'] = snapshot.get('page_name', '')
+        filtered_item['page_profile_picture_url'] = snapshot.get('page_profile_picture_url', '')
+        images = snapshot.get('images', [])
+        if images:
+            filtered_item['original_image_urls'] = [img.get('original_image_url', '') for img in images if img.get('original_image_url')]
+        
+        videos = snapshot.get('videos', [])
+        if videos:
+            filtered_item['video_preview_image_urls'] = [video.get('video_preview_image_url', '') for video in videos if video.get('video_preview_image_url')]
+        
+        filtered_results.append(filtered_item)
+    
+    return jsonify(filtered_results)
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

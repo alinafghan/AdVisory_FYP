@@ -12,7 +12,7 @@ import { SelectedCampaignComponent } from '../components/selected-campaign/selec
 import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
 import { PipelineComponent } from '../components/pipeline/pipeline.component';
 import { LandingComponent } from '../components/home/home.component';
-
+import { CompetitorAdsComponent } from '../components/competitor-ads/competitor-ads.component';
 
 export const routes: Routes = [
     {path:'landing', component: LandingComponent},
@@ -30,5 +30,6 @@ export const routes: Routes = [
     // {path: '**', redirectTo: '/home'}
     { path: 'caption', component: CaptionPageComponent },
     {path:'pipeline', component: PipelineComponent},
+    { path: 'competitor-ads', component: CompetitorAdsComponent }
 
 ];
