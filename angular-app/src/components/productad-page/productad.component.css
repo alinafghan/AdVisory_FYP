@@ -1,0 +1,176 @@
+/* Main editor container */
+.editor-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f4f4f9; /* Soft background color for the editor */
+}
+
+/* Left panel for background & product selection */
+.left-panel {
+  width: 30%;
+  padding: 20px;
+  background-color: #ffffff; /* White background for clarity */
+  overflow-y: auto;
+  border-right: 2px solid #e1e1e1; /* Light gray border to separate panels */
+}
+
+/* Right panel where editing happens */
+.right-panel {
+  width: 70%;
+  position: relative;
+  background-color: #ffffff; /* White background */
+  border: 2px solid #d1d1d1; /* Soft border for visual separation */
+  padding: 20px;
+}
+
+/* Resizable and draggable product image */
+.resizable-draggable {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  width: 250px;
+  height: auto;
+  cursor: grab;
+  border: 2px dashed #8a2be2; /* Purple border */
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Resize handle in bottom-right */
+.resize-handle {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border: 2px solid #8a2be2; /* Purple border for resize handle */
+  border-radius: 50%;
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  cursor: nwse-resize;
+}
+
+/* Container for image resizing */
+.resizable-container {
+  display: inline-block;
+  position: relative;
+}
+
+.resizable-container img {
+  cursor: nwse-resize;
+}
+
+/* File input field */
+input[type="file"] {
+  position: relative;
+  z-index: 10;
+}
+
+/* Canvas container for the editing area */
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #ddd;
+  width: 100%;
+  max-width: 800px;
+  height: 600px;
+  margin: auto;
+  background-color: #f9f9f9; /* Soft background for the canvas */
+  position: relative;
+}
+
+/* Control buttons */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Main container */
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wrapper for draggable image */
+.image-wrapper {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+}
+
+/* Product image styles */
+#productimage {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Resize handle positions */
+.resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #8a2be2;
+  border-radius: 50%;
+  cursor: nwse-resize;
+}
+
+/* Resize handle positions for corners */
+.top-left {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+
+.top-right {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+
+.bottom-left {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+
+.bottom-right {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
+}
+
+/* Rotate handle */
+.rotate-handle {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 15px;
+  height: 15px;
+  background: #1e90ff; /* Blue color for rotate handle */
+  border-radius: 50%;
+  cursor: grab;
+  transform: translateX(-50%);
+}

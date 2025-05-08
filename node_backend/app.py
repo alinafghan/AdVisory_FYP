@@ -6,21 +6,27 @@ import xgboost as xgb
 import numpy as np
 import requests
 from flask_cors import CORS
+from flask import Flask, request, jsonify, send_file
 import pandas as pd
 from trends_analyzer import TrendAnalyzer  
 import logging
 from gradio_client import Client
+from transformers import pipeline
 from dotenv import load_dotenv
 import openai
+from rembg_helper import remove_background
+from diffusers import DiffusionPipeline
+from PIL import Image
+import replicate
+import io
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from PIL import Image
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import cvxpy as cp
 from scipy.optimize import curve_fit
 
-app = Flask(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -183,7 +189,6 @@ def generate_ad_image():
         return jsonify({'error': str(e)}), 500
 
 ##################### caption ##############################
-
 load_dotenv()
 @app.route('/generate-caption', methods=['POST'])
 def generate_caption():
@@ -399,6 +404,108 @@ def enhance_prompt():
 def health_check():
     return jsonify({"status": "up"}), 200
 
+###############################productad##########################################
+api_token = os.getenv("API_TOKEN")
+replicate_client = replicate.Client(api_token)
+REPLICATE_MODEL_URL = "bytedance/sdxl-lightning-4step:6f7a773af6fc3e8de9d5a3c00be77c17308914bf67772726aff83496ba1e3bbe"
+REPLICATE_MODEL = "daanelson/real-esrgan-a100:f94d7ed4a1f7e1ffed0d51e4089e4911609d5eeee5e874ef323d2c7562624bed"
+@app.route('/generate', methods=['POST'])
+def generate_image():
+    # Get data from the frontend (prompt, width, height, etc.)
+    data = request.get_json()
+
+    # Define the input for the Replicate model
+    input_data = {
+        "prompt": data.get('prompt', ''),
+        "negative_prompt": data.get('negative_prompt', ''),
+        "width": data.get('width', 512),  # Default width
+        "height": data.get('height', 512),  # Default height
+        "num_inference_steps":4,
+        "scheduler":'K_EULER_ANCESTRAL',
+        "guidance_scale":0,
+        "seed":0
+        # You can add more params based on your needs
+    }
+
+    # Call Replicate API for SDXL Lightning model
+    output = replicate_client.run(
+        REPLICATE_MODEL_URL,
+        input=input_data
+    )
+
+    # Handle the output if it's a list of file-like objects (binary data)
+    if isinstance(output, list):
+        image_urls = []
+        for item in output:
+            # Read the binary data from the file-like object
+            image_data = item.read()
+
+            # Convert the image data to a base64-encoded string
+            image_base64 = base64.b64encode(image_data).decode('utf-8')
+
+            # Add the base64 string to the list of images
+            image_urls.append(image_base64)
+
+        # Return the list of base64-encoded images
+        return jsonify({'images': image_urls})
+
+    # Return an error if the output format is unexpected
+    return jsonify({'error': 'Unexpected output format'}), 500
+
+def upscale_image_with_realesrgan(image_bytes):
+    try:
+        # Base64 encode the image bytes
+        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+
+        # Pass the base64-encoded string to the model
+        input = {
+            "image": f"data:image/png;base64,{image_base64}",
+            "scale": 4,  # Adjust scale as needed
+            "face_enhance": True
+        }
+        output_url = replicate_client.run(REPLICATE_MODEL, input=input)
+        return output_url  # Output is a URL to the enhanced image
+    except Exception as e:
+        raise RuntimeError(f"Real-ESRGAN processing failed: {str(e)}")
+
+def download_image(url):
+    import requests
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise RuntimeError("Failed to download processed image")
+    return response.content
+    
+@app.route('/remove-bg', methods=['POST'])
+def remove_bg():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image uploaded'}), 400
+
+    image = request.files['image']
+    image_bytes = image.read()
+
+    try:
+        # Step 1: Pass the image through Real-ESRGAN
+        enhanced_image_url = upscale_image_with_realesrgan(image_bytes)
+
+        # Step 2: Download the enhanced image from the output URL
+        enhanced_image_bytes = download_image(enhanced_image_url)
+
+        # Step 3: Remove the background from the enhanced image
+        output_image_bytes = remove_background(enhanced_image_bytes)
+
+        # Return the final image
+        return send_file(
+            io.BytesIO(output_image_bytes),
+            mimetype='image/png',
+            as_attachment=False,
+            download_name='processed.png'
+        )
+
+    except Exception as e:
+        return jsonify({'error': 'Failed to process image', 'details': str(e)}), 500
+
+
+
 ###########################################budget##########################################
 
 # Stage 1
@@ -495,6 +602,7 @@ def allocate_budget():
 
     res3 = run_optimization(alpha, beta, B)
     return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
