@@ -14,6 +14,8 @@ import { ProductAdComponent } from '../components/productad-page/productad.compo
 import { ProductAdCustomComponent } from '../components/productad-page/productadcustom.component';
 import { PipelineComponent } from '../components/pipeline/pipeline.component';
 import { LandingComponent } from '../components/home/home.component';
+import { TosPageComponent } from '../pages/tos-page/tos-page.component';
+import { PpPageComponent } from '../pages/pp-page/pp-page.component';
 
 
 export const routes: Routes = [
@@ -25,7 +27,8 @@ export const routes: Routes = [
     { path: 'flux', component: FluxPageComponent },
     {path: 'metrics', component: MetricsPageComponent},
     {path: 'login', component : LoginComponent},
-
+    {path:'terms_of_service', component : TosPageComponent},
+    {path: 'privacy_policy', component : PpPageComponent},
     {path: 'signup', component: SignupPageComponent},
     {path:'manage_campaign', component : ManageCampaignComponent},
     {path: 'selected_campaign/:campaignId', component : SelectedCampaignComponent},
