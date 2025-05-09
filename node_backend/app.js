@@ -2,6 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser"); // While express has built-in, you might have reasons for this
 const cors = require("cors");
 const connectDB = require("./config/db.config");
+const bodyParser = require("body-parser");
+const fetch = require("node-fetch"); // Import node-fetch to make HTTP requests
+const cors = require("cors"); //middleware for working w angular frontend
+const connectDB = require("./config/db.config");
+
+//ROUTERS
 const userRouter = require("./routes/UserRouter");
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
@@ -21,6 +27,14 @@ app.use(cors({ origin: "http://localhost:4200", credentials: true }));
 app.use(express.json({ limit: "50mb" })); // For JSON request bodies
 app.use(express.urlencoded({ limit: "50mb", extended: false })); // For URL-encoded request bodies
 
+const adImageRouter = require("./routes/adImageRouter"); // Add the new ad image router
+const image_routes= require("./routes/imageRoute") //product ad
+
+const app = express();
+
+// Connect to MongoDB
+connectDB();
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" })); // Increase payload limit for image data
@@ -36,6 +50,8 @@ app.use(express.json({ limit: "500mb" })); // Increase body size limit for JSON 
 app.use(express.urlencoded({ limit: "500mb", extended: true })); // Increase body size limit for form data
 console.log("Its working");
 
+//ROUTES
+// /predict is the prediction router
 app.use("/ads", adRouter);
 app.use("/budget", budgetRouter);
 app.use("/auth", authRouter);
@@ -84,6 +100,8 @@ app.get('/debug/checkadbycampaign/:campaignId', async (req, res) => {
 app.get("/api/test", (req, res) => {
     res.send("API test endpoint works!");
 });
+app.use("/adImages", adImageRouter); // Add the new route for ad images
+app.use('/api/image', image_routes); // Product-ad
 
 app.get("/", (req, res) => {
     res.send("Server is running!");

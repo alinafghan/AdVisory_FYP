@@ -10,4 +10,5 @@ import { LucideAngularModule, FileIcon } from 'lucide-angular';
 })
 export class NavbarComponent {
   readonly FileIcon = FileIcon;
+
 }

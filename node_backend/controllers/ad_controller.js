@@ -148,4 +148,8 @@ module.exports = {
   postCampaign,
   getAllCampaigns,
   getCampaign,
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 9cdd41d88121cafcd18fe38aa8fe58c340c1acd5

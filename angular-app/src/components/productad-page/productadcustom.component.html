@@ -1,0 +1,148 @@
+<div class="flex h-screen bg-black">
+  <!-- Left Panel: Background Selection -->
+  <div class="w-1/2 bg-gray-800 p-4 overflow-y-auto">
+    <!-- Background Grid -->
+    <div *ngIf="!customMode && !promptMode" class="grid grid-cols-3 gap-2">
+      <div
+        *ngFor="let bg of backgrounds; let i = index"
+        (click)="i === 0 ? toggleCustomMode() : selectBackground(bg)"
+        class="cursor-pointer border p-2 rounded-lg hover:border-blue-500 transition-all relative group"
+      >
+        <div *ngIf="i === 0" class="w-full h-20 bg-gray-600 flex items-center justify-center text-gray-300">
+          Custom
+        </div>
+        <ng-container *ngIf="i !== 0">
+          <img [src]="bg" class="w-full h-auto rounded-lg" />
+          <div
+            class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <button class="bg-white text-black text-sm px-3 py-1 rounded" (click)="makeItYourOwn(bg, $event)">
+              Make it your own
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- PROMPT MODE -->
+    <div *ngIf="promptMode" class="space-y-6">
+      <label class="text-xl font-bold text-white">Original Prompt</label>
+      <textarea class="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-gray-200 focus:ring-2 focus:ring-purple-600 focus:outline-none shadow-md transition" rows="4" [(ngModel)]="selectedPrompt"></textarea>
+
+      <div class="flex justify-between">
+        <button class="bg-gray-800 text-white px-5 py-3 rounded-md shadow hover:shadow-lg hover:bg-gray-700 transition" (click)="promptMode = false">Back</button>
+        <button class="bg-purple-600 text-white px-5 py-3 rounded-md shadow hover:bg-purple-700 transition font-semibold" (click)="generateCustomBackground()">Generate</button>
+      </div>
+    </div>
+
+    <!-- CUSTOM MODE -->
+    <div *ngIf="customMode" class="space-y-6">
+      <div>
+        <label class="block text-xl font-bold text-white mb-2">Describe your photo</label>
+        <textarea class="w-full p-3 bg-gray-800 text-white border border-gray-700 text-lg rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" rows="3" [(ngModel)]="customPrompt" placeholder="e.g. Your product is in the middle of a desert"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-xl font-bold text-white mb-2">Lighting</label>
+        <textarea class="w-full p-3 bg-gray-800 text-white border border-gray-700 text-lg rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" rows="2" [(ngModel)]="customLighting" placeholder="e.g. soft light, golden hour, spotlight"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-xl font-bold text-white mb-2">Style</label>
+        <textarea class="w-full p-3 bg-gray-800 text-white border border-gray-700 text-lg rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" rows="2" [(ngModel)]="customStyle" placeholder="e.g. minimal, cozy, editorial"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-xl font-bold text-white mb-2">Choose Dimensions</label>
+        <select class="w-full p-3 bg-gray-800 text-white border border-gray-700 text-lg rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" [(ngModel)]="selectedDimension" (change)="onDimensionChange()">
+          <option value="square">Square (1080x1080)</option>
+          <option value="vertical">Vertical (720x1280)</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+
+      <div *ngIf="selectedDimension === 'custom'" class="space-y-4">
+        <label class="block text-xl font-bold text-white">Custom Width</label>
+        <input type="number" class="w-full p-3 bg-gray-800 text-white border border-gray-700 text-lg rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" [(ngModel)]="customWidth" placeholder="Width in pixels" />
+        <label class="block text-xl font-bold text-white">Custom Height</label>
+        <input type="number" class="w-full p-3 bg-gray-800 text-white border border-gray-700 text-lg rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" [(ngModel)]="customHeight" placeholder="Height in pixels" />
+      </div>
+
+      <div class="flex justify-between pt-2">
+        <button class="bg-gray-800 text-white px-5 py-3 rounded-md shadow hover:shadow-lg hover:bg-gray-700 transition" (click)="toggleCustomMode()">Back</button>
+        <button class="bg-purple-600 text-white px-5 py-3 rounded-md shadow hover:bg-purple-700 transition font-semibold" (click)="generateCustomBackground()">Generate</button>
+      </div>
+
+      <!-- Spinner -->
+      <div *ngIf="isGenerating" class="flex items-center justify-center space-x-2 pt-4 text-white">
+        <svg class="animate-spin h-6 w-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+        <span>Generating background...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="w-1/2 bg-gray-800 p-6 overflow-y-auto space-y-6">
+    <div class="flex justify-between items-center">
+      <label class="text-xl font-bold text-white">Preview as:</label>
+      <select class="border p-3 rounded-lg bg-gray-700 text-white shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" [(ngModel)]="aspectRatio" (change)="onAspectRatioChange()">
+        <option value="1:1">Post</option>
+        <option value="9:16">Vertical</option>
+        <option value="Custom">Custom</option>
+      </select>
+    </div>
+
+    <div *ngIf="aspectRatio === 'Custom'" class="flex space-x-4 items-center mt-2">
+      <label class="text-white font-semibold">Width:</label>
+      <input type="number" [(ngModel)]="customWidth" class="p-3 w-24 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" />
+      <label class="text-white font-semibold">Height:</label>
+      <input type="number" [(ngModel)]="customHeight" class="p-3 w-24 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition" />
+      <button class="bg-purple-600 text-white px-4 py-2 rounded-md shadow hover:bg-purple-700 transition font-semibold" (click)="applyCustomDimensions()">Apply</button>
+    </div>
+
+    <!-- Preview Image -->
+    <div class="relative mt-4 border p-4 rounded-lg bg-white flex justify-center shadow-lg">
+      <div [ngStyle]="{ width: displayWidth + 'px', height: displayHeight + 'px' }" class="relative overflow-hidden">
+        <img *ngIf="selectedBackground" [src]="selectedBackground" class="absolute w-full h-full" />
+
+        <app-mrr
+          id="product-ad"
+          [minWidth]="253.73"
+          [minHeight]="133.33"
+          [initialTop]="300"
+          [initialLeft]="300"
+          [disabled]="false"
+          class="absolute top-0 left-0 w-full h-full"
+        >
+          <img *ngIf="productImage" [src]="productImage" alt="Product Image"
+               class="w-full h-full object-contain pointer-events-none" />
+        </app-mrr>
+      </div>
+    </div>
+
+    <!-- Campaign -->
+    <div>
+      <label class="block text-xl font-bold text-white">Select Campaign:</label>
+      <select [(ngModel)]="selectedCampaign"
+              class="w-full mt-2 p-3 bg-gray-700 text-white border border-gray-600 rounded-lg shadow-md focus:ring-2 focus:ring-purple-600 focus:outline-none transition">
+        <option *ngFor="let campaign of campaigns" [ngValue]="campaign.campaignId">
+          {{ campaign.campaignName }}
+        </option>
+      </select>
+
+      <button class="bg-purple-600 text-white px-5 py-3 rounded-md w-full mt-6 text-lg font-semibold shadow hover:bg-purple-700 transition" (click)="submitComposedImageToCampaign()">
+        Add to Campaign
+      </button>
+    </div>
+
+    <!-- Download -->
+    <div>
+      <button class="bg-purple-600 text-white px-5 py-3 rounded-md w-full font-semibold shadow hover:bg-purple-700 transition" (click)="downloadAd()">
+        Download Ad
+      </button>
+    </div>
+  </div>
+</div>
