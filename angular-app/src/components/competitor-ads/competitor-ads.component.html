@@ -1,101 +1,249 @@
-<div class="container mt-4 text-dark">
-  <div class="row mb-4">
-    <div class="col">
-      <h1>Competitor Ads Analysis</h1>
-      <p class="text-muted">View and analyze Facebook ads from competitors</p>
-      <button class="btn btn-primary" (click)="fetchAds()" [disabled]="loading">
-        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        {{ loading ? 'Loading...' : 'Refresh Ads' }}
-      </button>
-    </div>
-  </div>
-  <div *ngIf="error" class="alert alert-danger" role="alert">
-    {{ error }}
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Competitor Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <div *ngIf="loading" class="d-flex justify-content-center my-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              navy: {
+                light: "#1e3a5f",
+                DEFAULT: "#0a192f",
+                dark: "#051124",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwind">
+      body {
+        background-color: #0a192f;
+        color: white;
+      }
+      .bg-navy {
+        background-color: #0a192f;
+      }
+      .bg-navy-light {
+        background-color: #1e3a5f;
+      }
+      .bg-dark-gray {
+        background-color: #0f0f14;
+      }
+      .hover\:bg-opacity-80:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
 
-  <div *ngIf="!loading && ads.length === 0" class="text-center my-5">
-    <p class="lead">No competitor ads found. Try refreshing the data.</p>
-  </div>
+  <body class="font-sans min-h-screen" style="background-color: #0a192f;">
+    <!-- Navigation Bar -->
+    <nav
+      class="border-b border-gray-800 px-6 py-4 flex justify-between items-center"
+      style="background-color: #0f0f14"
+    >
+      <div class="flex items-center">
+        <span class="text-xl font-bold">
+          <span class="text-white">Ad</span
+          ><span class="text-purple-400">Visory</span>
+        </span>
+      </div>
+      <div class="flex items-center space-x-8">
+        <a href="#" class="text-white hover:text-gray-300">Home</a>
+        <div class="relative group">
+          <button class="flex items-center text-white hover:text-gray-300">
+            Services
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="ml-1 h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+        <a href="#" class="text-white hover:text-gray-300">Login</a>
+        <a href="#" class="text-white hover:text-gray-300">Sign Up</a>
+      </div>
+    </nav>
 
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <div class="col" *ngFor="let ad of ads; let i = index">
-      <div class="card h-100 shadow-sm">
-        <div class="card-header d-flex align-items-center">
-          <img [src]="ad.page_profile_picture_url" class="rounded-circle me-2" width="40" height="40" 
-               onerror="this.src='assets/images/placeholder-profile.png'">
-          <div>
-            <h5 class="mb-0">{{ ad.page_name }}</h5>
-            <div class="badge bg-light text-dark me-1" *ngFor="let category of ad.page_categories | slice:0:2">
-              {{ category }}
-            </div>
-            <span *ngIf="ad.page_categories && ad.page_categories.length > 2" class="badge bg-secondary">
-              +{{ ad.page_categories.length - 2 }} more
-            </span>
+    <div class="flex">
+      <app-sidebar></app-sidebar>
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col ml-20 mr-20">
+        <!-- Title and Caption -->
+        <div class="mt-16 text-center">
+          <h1 class="text-4xl font-bold mb-4">Competitor Ads Analysis</h1>
+          <p class="text-gray-300 max-w-2xl mx-auto">
+            View and analyze Facebook ads from competitors to gain insights and improve your advertising strategy.
+          </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="flex justify-center mt-12 max-w-lg mx-auto w-full">
+          <div class="relative w-full">
+            <input 
+              type="text" 
+              [(ngModel)]="keyword" 
+              placeholder="Enter keyword or competitor name" 
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-600 bg-gray-900 text-white focus:outline-none focus:border-purple-500" 
+              style="background-color: #0f0f14"
+              (keyup.enter)="fetchAds()"
+            >
+            <button 
+              (click)="fetchAds()" 
+              [disabled]="loading" 
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 rounded-md hover:bg-opacity-80 transition duration-300"
+              style="background-color: #1e3a5f"
+            >
+              Search
+            </button>
           </div>
         </div>
-        
-        <!-- Main images if available -->
-        <div *ngIf="ad.original_image_urls && ad.original_image_urls.length > 0">
-          <div [id]="'adCarousel-' + i" class="carousel slide" *ngIf="ad.original_image_urls.length > 1">
-            <div class="carousel-inner">
-              <div class="carousel-item" 
-                   *ngFor="let imgUrl of ad.original_image_urls; let j = index" 
-                   [class.active]="j === 0">
-                <img [src]="imgUrl" class="d-block w-100" alt="Ad Image"
-                     onerror="this.src='assets/images/placeholder-image.png'" style="height: 200px; object-fit: cover;">
+
+        <!-- Refresh Button -->
+        <div class="flex justify-center mt-4">
+          <button
+            (click)="fetchAds()"
+            [disabled]="loading || !keyword.trim()"
+            class="border border-gray-600 rounded-full px-8 py-3 hover:bg-navy-light transition duration-300 flex items-center gap-2"
+            style="background-color: #0f0f14"
+          >
+            <span *ngIf="loading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></span>
+            {{ loading ? 'Loading Ads...' : 'Search Competitor Ads' }}
+          </button>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="error" class="mt-6 mx-auto max-w-2xl">
+          <div class="bg-red-900 border border-red-700 text-white px-4 py-3 rounded" role="alert">
+            <span class="block sm:inline">{{ error }}</span>
+          </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div *ngIf="loading" class="flex justify-center my-12">
+          <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-400 border-r-transparent" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+
+        <!-- No Ads Message -->
+        <div *ngIf="!loading && ads.length === 0 && !error" class="text-center my-12">
+          <p class="text-xl text-gray-300">Search for competitor ads using keywords or brand names.</p>
+        </div>
+
+        <!-- Ads Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 mb-12">
+          <div *ngFor="let ad of ads; let i = index" 
+               class="bg-dark-gray rounded-lg overflow-hidden transition duration-300 hover:translate-y-[-5px] hover:shadow-lg"
+               style="background-color: #0f0f14">
+            <!-- Ad Header -->
+            <div class="p-4 border-b border-gray-800 flex items-center">
+              <img [src]="ad.page_profile_picture_url" 
+                   class="rounded-full mr-3" 
+                   width="40" 
+                   height="40"
+                   onerror="this.src='assets/images/placeholder-profile.png'">
+              <div>
+                <h5 class="font-semibold">{{ ad.page_name }}</h5>
+                <div class="flex flex-wrap gap-1 mt-1">
+                  <span class="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded-full" 
+                        *ngFor="let category of ad.page_categories | slice:0:2">
+                    {{ category }}
+                  </span>
+                  <span *ngIf="ad.page_categories && ad.page_categories.length > 2" 
+                        class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded-full">
+                    +{{ ad.page_categories.length - 2 }}
+                  </span>
+                </div>
               </div>
             </div>
-            <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#adCarousel-' + i" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#adCarousel-' + i" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-          
-          <!-- Single image display -->
-          <img *ngIf="ad.original_image_urls.length === 1" 
-               [src]="ad.original_image_urls[0]" 
-               class="card-img-top" 
-               alt="Ad Image"
-               onerror="this.src='assets/images/placeholder-image.png'" 
-               style="height: 200px; object-fit: cover;">
-        </div>
-        
-        <!-- Video preview image if available -->
-        <div *ngIf="ad.video_preview_image_urls && ad.video_preview_image_urls.length > 0" class="position-relative">
-          <img [src]="ad.video_preview_image_urls[0]" class="card-img-top" alt="Video Preview"
-               onerror="this.src='assets/images/placeholder-video.png'" style="height: 200px; object-fit: cover;">
-          <div class="position-absolute top-50 start-50 translate-middle">
-            <i class="bi bi-play-circle-fill text-white" style="font-size: 3rem;"></i>
-          </div>
-        </div>
-        
-        <div class="card-body">
-          <p class="card-text">{{ ad.body_text | slice:0:200 }}{{ ad.body_text.length > 200 ? '...' : '' }}</p>
-          
-          <div class="mt-3" *ngIf="ad.social_links && objectEntries(ad.social_links).length > 0">
-            <h6>Social Media Links:</h6>
-            <div class="d-flex flex-wrap gap-2">
-              <a *ngFor="let link of objectEntries(ad.social_links)" 
-                 [href]="link[1]" 
-                 target="_blank" 
-                 class="btn btn-sm btn-outline-secondary">
-                <i [class]="getSocialPlatformIcon(link[0])" class="me-1"></i>
-                {{ link[0] | titlecase }}
-              </a>
+            
+            <!-- Ad Images -->
+            <div *ngIf="ad.original_image_urls && ad.original_image_urls.length > 0">
+              <!-- Multiple Images Carousel -->
+              <div [id]="'adCarousel-' + i" class="carousel slide" *ngIf="ad.original_image_urls.length > 1">
+                <div class="carousel-inner">
+                  <div class="carousel-item" 
+                       *ngFor="let imgUrl of ad.original_image_urls; let j = index" 
+                       [class.active]="j === 0">
+                    <img [src]="imgUrl" 
+                         class="d-block w-100" 
+                         alt="Ad Image"
+                         onerror="this.src='assets/images/placeholder-image.png'" 
+                         style="height: 200px; object-fit: cover;">
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#adCarousel-' + i" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" [attr.data-bs-target]="'#adCarousel-' + i" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+              
+              <!-- Single Image -->
+              <img *ngIf="ad.original_image_urls.length === 1" 
+                   [src]="ad.original_image_urls[0]" 
+                   class="w-full" 
+                   alt="Ad Image"
+                   onerror="this.src='assets/images/placeholder-image.png'" 
+                   style="height: 200px; object-fit: cover;">
+            </div>
+            
+            <!-- Video Preview -->
+            <div *ngIf="ad.video_preview_image_urls && ad.video_preview_image_urls.length > 0" class="relative">
+              <img [src]="ad.video_preview_image_urls[0]" 
+                   class="w-full" 
+                   alt="Video Preview"
+                   onerror="this.src='assets/images/placeholder-video.png'" 
+                   style="height: 200px; object-fit: cover;">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="bg-black bg-opacity-50 rounded-full p-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Ad Body -->
+            <div class="p-5">
+              <p class="text-gray-300">{{ ad.body_text | slice:0:150 }}{{ ad.body_text.length > 150 ? '...' : '' }}</p>
+              
+              <!-- Social Links -->
+              <div class="mt-4" *ngIf="ad.social_links && objectEntries(ad.social_links).length > 0">
+                <h6 class="text-sm font-semibold mb-2 text-gray-400">Social Media Links:</h6>
+                <div class="flex flex-wrap gap-2">
+                  <a *ngFor="let link of objectEntries(ad.social_links)" 
+                     [href]="link[1]" 
+                     target="_blank" 
+                     class="px-3 py-1 rounded text-xs border border-gray-700 hover:bg-navy-light transition-colors flex items-center gap-1">
+                    <i [class]="getSocialPlatformIcon(link[0])"></i>
+                    {{ link[0] | titlecase }}
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </body>
+</html>

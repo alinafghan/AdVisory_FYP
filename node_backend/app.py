@@ -25,8 +25,6 @@ import re
 
 app = Flask(__name__)
 
-# Initialize Flask app
-app = Flask(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -521,40 +519,81 @@ def extract_social_links(text):
 
 @app.route('/scrape-facebook-ads', methods=['POST'])
 def scrape_facebook_ads():
-    client = ApifyClient("apify_api_NjSZxqtGL9yuEkNE2WTX38WZMf14dt1QevpQ")
-    
-    run_input = {
-        "urls": [
-            {"url": "https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=IN&q=linkedin&search_type=keyword_unordered&media_type=all"},
-            {"url": "https://www.facebook.com/ZapierApp"},
-        ],
-        "count": 100,
-        "scrapePageAds.activeStatus": "all",
-        "period": "",
-    }
-    
-    run = client.actor("XtaWFhbtfxyzqrFmd").call(run_input=run_input)
-    filtered_results = []
-    
-    for item in client.dataset(run["defaultDatasetId"]).iterate_items():
-        filtered_item = {}
-        snapshot = item.get('snapshot', {})
-        body_text = snapshot.get('body', {}).get('text', '')
-        filtered_item['body_text'] = body_text
-        filtered_item['social_links'] = extract_social_links(body_text)
-        filtered_item['page_categories'] = snapshot.get('page_categories', [])
-        filtered_item['page_name'] = snapshot.get('page_name', '')
-        filtered_item['page_profile_picture_url'] = snapshot.get('page_profile_picture_url', '')
-        images = snapshot.get('images', [])
-        if images:
-            filtered_item['original_image_urls'] = [img.get('original_image_url', '') for img in images if img.get('original_image_url')]
-        
-        videos = snapshot.get('videos', [])
-        if videos:
-            filtered_item['video_preview_image_urls'] = [video.get('video_preview_image_url', '') for video in videos if video.get('video_preview_image_url')]
-        
-        filtered_results.append(filtered_item)
-    
-    return jsonify(filtered_results)
+    logging.info("Received request to /scrape-facebook-ads")
+    try:
+        data = request.get_json()
+        keyword = data.get('keyword', '').strip()
+
+        if not keyword:
+            return jsonify({'error': 'Keyword is required'}), 400
+
+        client = ApifyClient("apify_api_NjSZxqtGL9yuEkNE2WTX38WZMf14dt1QevpQ")
+
+        search_url = f"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=PK&is_targeted_country=false&media_type=all&q={keyword}&search_type=keyword_unordered"
+
+        run_input = {
+            "urls": [{"url": search_url}],
+            "count": 100,
+            "scrapePageAds.activeStatus": "all",
+            "period": "",
+        }
+
+        logging.info(f"Triggering Apify actor with input: {run_input}")
+        run = client.actor("XtaWFhbtfxyzqrFmd").call(run_input=run_input)
+
+        filtered_results = []
+
+
+        for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+            snapshot = item.get('snapshot', {})
+            body = snapshot.get('body', {}) or {}
+            body_text = body.get('text', '') if isinstance(body, dict) else ''
+            page_name = snapshot.get('page_name', '')
+
+            if len(body_text.split()) > 500 or page_name == "Random Reading":
+                continue
+
+            filtered_item = {
+                'body_text': body_text,
+                'social_links': extract_social_links(body_text),
+                'page_categories': snapshot.get('page_categories', []),
+                'page_name': snapshot.get('page_name', ''),
+                'page_profile_picture_url': snapshot.get('page_profile_picture_url', ''),
+            }
+
+            # Gather all potential image source
+            all_image_urls = []
+            
+            images = snapshot.get('images', [])
+            all_image_urls += [
+                img.get('original_image_url') for img in images if img.get('original_image_url')
+            ]
+            
+            extra_images = snapshot.get('extra_images', [])
+            all_image_urls += [
+                img.get('original_image_url') for img in extra_images if img.get('original_image_url')
+            ]
+            card = snapshot.get('card', {})
+            if isinstance(card, dict):
+                card_image_urls = card.get('original_image_urls', [])
+                all_image_urls += [url for url in card_image_urls if url]
+                
+            filtered_item['original_image_urls'] = list(set(filter(None, all_image_urls)))
+
+            videos = snapshot.get('videos', [])
+            if videos:
+                filtered_item['video_preview_image_urls'] = [
+                    video.get('video_preview_image_url', '') for video in videos if video.get('video_preview_image_url')
+                ]
+
+            filtered_results.append(filtered_item)
+
+        logging.info(f"Returning {len(filtered_results)} ad results.")
+        return jsonify(filtered_results)
+
+    except Exception as e:
+        logging.exception("Error while processing request")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

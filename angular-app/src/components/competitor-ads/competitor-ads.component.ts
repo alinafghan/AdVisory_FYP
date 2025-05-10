@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { RouterModule } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
+import { FormsModule } from '@angular/forms';
 
 interface SocialLinks {
   instagram?: string;
@@ -23,7 +27,7 @@ interface FacebookAd {
 @Component({
   selector: 'app-competitor-ads',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SidebarComponent, RouterModule, LucideAngularModule, FormsModule],
   templateUrl: './competitor-ads.component.html',
   styleUrls: ['./competitor-ads.component.scss']
 })
@@ -31,26 +35,34 @@ export class CompetitorAdsComponent implements OnInit {
   ads: FacebookAd[] = [];
   loading = false;
   error: string | null = null;
+  keyword = '';
   
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.fetchAds();
+    // Don't auto-fetch on init since we need a keyword
   }
 
   fetchAds(): void {
+    if (!this.keyword.trim()) {
+      this.error = 'Please enter a keyword to search for ads';
+      return;
+    }
+    
     this.loading = true;
     this.error = null;
     
-    this.http.post<FacebookAd[]>('/api/scrape-facebook-ads', {})
+    // Pass the keyword to the backend endpoint
+    this.http.post<FacebookAd[]>('http://localhost:5000/scrape-facebook-ads', { keyword: this.keyword })
       .subscribe({
         next: (data) => {
           this.ads = data;
           this.loading = false;
+          console.log('Fetched ads:', data);
         },
         error: (err) => {
           console.error('Error fetching Facebook ads:', err);
-          this.error = 'Failed to load competitor ads. Please try again later.';
+          this.error = err.error?.error || 'Failed to load competitor ads. Please try again later.';
           this.loading = false;
         }
       });
