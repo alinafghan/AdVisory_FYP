@@ -6,16 +6,17 @@ import {CaptionPageComponent} from '../caption-page/caption-page.component';
 import { TrendsComponent } from '../trends-page/trends-page.component';
 import { BudgetComponent } from '../budget/budget.component';
 import { Router } from '@angular/router';
+import { CompetitorAdsComponent } from '../competitor-ads/competitor-ads.component';
 
 
 @Component({
   selector: 'app-pipeline',
   standalone: true,
-  imports: [CommonModule, CampaignComponent, TrendsComponent, BudgetComponent, FluxPageComponent, CaptionPageComponent],
+  imports: [CommonModule, CampaignComponent, TrendsComponent, BudgetComponent, FluxPageComponent, CaptionPageComponent, CompetitorAdsComponent],
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
-  steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5'];
+  steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6'];
 currentStep = 0;
 
 nextStep() {

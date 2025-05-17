@@ -13,8 +13,8 @@
             colors: {
               navy: {
                 light: "#1e3a5f",
-                DEFAULT: "#0a192f",
-                dark: "#051124",
+                DEFAULT: "#000000",
+                dark: "#000000",
               },
             },
           },
@@ -23,17 +23,17 @@
     </script>
     <style type="text/tailwind">
       body {
-        background-color: #0a192f;
+        background-color: #000000;
         color: white;
       }
       .bg-navy {
-        background-color: #0a192f;
+        background-color: #000000;
       }
       .bg-navy-light {
-        background-color: #1e3a5f;
+        background-color: #000000;
       }
       .bg-dark-gray {
-        background-color: #0f0f14;
+        background-color: #000000;
       }
       .hover\:bg-opacity-80:hover {
         opacity: 0.8;
@@ -41,46 +41,8 @@
     </style>
   </head>
 
-  <body class="font-sans min-h-screen" style="background-color: #0a192f;">
-    <!-- Navigation Bar -->
-    <nav
-      class="border-b border-gray-800 px-6 py-4 flex justify-between items-center"
-      style="background-color: #0f0f14"
-    >
-      <div class="flex items-center">
-        <span class="text-xl font-bold">
-          <span class="text-white">Ad</span
-          ><span class="text-purple-400">Visory</span>
-        </span>
-      </div>
-      <div class="flex items-center space-x-8">
-        <a href="#" class="text-white hover:text-gray-300">Home</a>
-        <div class="relative group">
-          <button class="flex items-center text-white hover:text-gray-300">
-            Services
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="ml-1 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-        </div>
-        <a href="#" class="text-white hover:text-gray-300">Login</a>
-        <a href="#" class="text-white hover:text-gray-300">Sign Up</a>
-      </div>
-    </nav>
-
+  <body class="font-sans min-h-screen" style="background-color: #000000;">   
     <div class="flex">
-      <app-sidebar></app-sidebar>
       <!-- Main Content -->
       <div class="flex-1 flex flex-col ml-20 mr-20">
         <!-- Title and Caption -->
@@ -121,8 +83,8 @@
             class="border border-gray-600 rounded-full px-8 py-3 hover:bg-navy-light transition duration-300 flex items-center gap-2"
             style="background-color: #0f0f14"
           >
-            <span *ngIf="loading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></span>
-            {{ loading ? 'Loading Ads...' : 'Search Competitor Ads' }}
+            <span *ngIf="loading" class="inline-block h-4 w-4 animate-spin rounded-full border border-current border-r-transparent" role="status"></span>
+            {{ loading ? 'Loading Ads...' : '' }}
           </button>
         </div>
 
@@ -175,7 +137,7 @@
             <!-- Ad Images -->
             <div *ngIf="ad.original_image_urls && ad.original_image_urls.length > 0">
               <!-- Multiple Images Carousel -->
-              <div [id]="'adCarousel-' + i" class="carousel slide" *ngIf="ad.original_image_urls.length > 1">
+              <!-- <div [id]="'adCarousel-' + i" class="carousel slide" *ngIf="ad.original_image_urls.length > 1">
                 <div class="carousel-inner">
                   <div class="carousel-item" 
                        *ngFor="let imgUrl of ad.original_image_urls; let j = index" 
@@ -185,8 +147,18 @@
                          alt="Ad Image"
                          onerror="this.src='assets/images/placeholder-image.png'" 
                          style="height: 200px; object-fit: cover;">
+                  </div> -->
+                  <div *ngIf="ad.original_image_urls && ad.original_image_urls.length > 0">
+                    <div *ngFor="let imgUrl of ad.original_image_urls">
+                      <img [src]="imgUrl" 
+                          class="w-full mb-4" 
+                          alt="Ad Image"
+                          onerror="this.src='assets/images/placeholder-image.png'" 
+                          style="height: 200px; object-fit: cover;">
+                    </div>
                   </div>
-                </div>
+
+                <!-- </div> -->
                 <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#adCarousel-' + i" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                   <span class="visually-hidden">Previous</span>

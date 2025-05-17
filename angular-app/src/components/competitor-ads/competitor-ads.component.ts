@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
@@ -27,7 +26,7 @@ interface FacebookAd {
 @Component({
   selector: 'app-competitor-ads',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, RouterModule, LucideAngularModule, FormsModule],
+  imports: [CommonModule, RouterModule, LucideAngularModule, FormsModule],
   templateUrl: './competitor-ads.component.html',
   styleUrls: ['./competitor-ads.component.scss']
 })
