@@ -10,9 +10,14 @@ import { SignupPageComponent } from '../components/signup-page/signup-page.compo
 import { CampaignComponent } from '../components/campaign/campaign.component';
 import { SelectedCampaignComponent } from '../components/selected-campaign/selected-campaign.component';
 import { CaptionPageComponent } from '../components/caption-page/caption-page.component';
+import { ProductAdComponent } from '../components/productad-page/productad.component';
+import { ProductAdCustomComponent } from '../components/productad-page/productadcustom.component';
 import { PipelineComponent } from '../components/pipeline/pipeline.component';
 import { LandingComponent } from '../components/home/home.component';
 import { CompetitorAdsComponent } from '../components/competitor-ads/competitor-ads.component';
+import { TosPageComponent } from '../pages/tos-page/tos-page.component';
+import { PpPageComponent } from '../pages/pp-page/pp-page.component';
+
 
 export const routes: Routes = [
     {path:'landing', component: LandingComponent},
@@ -23,12 +28,16 @@ export const routes: Routes = [
     { path: 'flux', component: FluxPageComponent },
     {path: 'metrics', component: MetricsPageComponent},
     {path: 'login', component : LoginComponent},
+    {path:'terms_of_service', component : TosPageComponent},
+    {path: 'privacy_policy', component : PpPageComponent},
     {path: 'signup', component: SignupPageComponent},
     {path:'manage_campaign', component : ManageCampaignComponent},
     {path: 'selected_campaign/:campaignId', component : SelectedCampaignComponent},
     {path: 'campaign', component : CampaignComponent},
     // {path: '**', redirectTo: '/home'}
     { path: 'caption', component: CaptionPageComponent },
+    {path: 'productad', component : ProductAdComponent},
+    {path: 'productadcustom', component : ProductAdCustomComponent},
     {path:'pipeline', component: PipelineComponent},
     { path: 'competitor-ads', component: CompetitorAdsComponent }
 

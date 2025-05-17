@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LucideAngularModule, Home, SquareDashedMousePointer, User, Settings, ArrowLeft, Globe , LogOut} from 'lucide-angular';
+import { LucideAngularModule, Home, SquareDashedMousePointer, User, Settings, ArrowLeft, Globe , LogOut, FileLock2, FileCheck2} from 'lucide-angular';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,4 +15,7 @@ export class SidebarComponent {
   readonly Logout = LogOut;
   readonly ArrowLeft = ArrowLeft;
   readonly Globe = Globe;
+  readonly FileLock2 = FileLock2;
+  readonly FileCheck2 = FileCheck2;
+
 }

@@ -11,6 +11,7 @@ const authRouter = require("./routes/authRouter");
 const adRouter = require("./routes/adsRouter");
 const budgetRouter = require("./routes/budgetRouter");
 const adImageRouter = require("./routes/adImageRouter"); // Add the new ad image router
+const image_routes= require("./routes/imageRoute") //product ad
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/trends", trendsRoutes);
 app.use("/adImages", adImageRouter); // Add the new route for ad images
+app.use('/api/image', image_routes); // Product-ad
 
 // Default route (optional)
 app.get("/", (req, res) => {

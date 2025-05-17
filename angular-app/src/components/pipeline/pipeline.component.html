@@ -23,7 +23,44 @@
         <div *ngSwitchCase="3"><app-caption-page></app-caption-page></div>
         <div *ngSwitchCase="4"><app-budget></app-budget></div>
         <div *ngSwitchCase="5"><app-trends></app-trends></div>
+        <div *ngSwitchCase="0">
+          <app-campaign></app-campaign>
+        </div>
+      
+        <div *ngSwitchCase="1">
+          <app-choose (optionSelected)="handleOptionSelection($event)"></app-choose>
+        </div>
+      
+        <div *ngSwitchCase="2">
+          <ng-container *ngIf="selectedOption === 'textPrompt'">
+            <app-flux-page></app-flux-page>
+          </ng-container>
+        
+          <ng-container *ngIf="selectedOption === 'uploadPhoto'">
+            <ng-container *ngIf="!isProductAdCustomPage">
+              <app-productad-page (continueEvent)="handleContinue()"></app-productad-page>
+            </ng-container>
+            <ng-container *ngIf="isProductAdCustomPage">
+              <app-productadcustom-page></app-productadcustom-page>
+            </ng-container>
+          </ng-container>
+        </div>
+        
+      
+        <div *ngSwitchCase="3">
+          <app-caption-page></app-caption-page>
+        </div>
+      
+        <div *ngSwitchCase="4">
+          <app-budget></app-budget>
+        </div>
+      
+        <div *ngSwitchCase="5">
+          <app-trends></app-trends>
+        
+        </div>
       </ng-container>
+      
 
 <!-- Buttons -->
 <div
