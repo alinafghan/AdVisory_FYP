@@ -9,3 +9,6 @@ pytrends
 python-dotenv
 openai
 cvxpy
+rembg
+onnxruntime
+replicate

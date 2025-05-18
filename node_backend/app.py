@@ -9,7 +9,7 @@ from transformers import pipeline
 from dotenv import load_dotenv
 import openai
 from rembg_helper import remove_background
-from diffusers import DiffusionPipeline
+# from diffusers import DiffusionPipeline
 from PIL import Image
 import replicate
 import io
@@ -26,6 +26,7 @@ import tempfile, json, uuid, time, shutil, re
 from datetime import datetime
 
 
+app = Flask(__name__)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,6 +36,8 @@ logging.basicConfig(
 
 CACHE_DIR = os.path.join(tempfile.gettempdir(), 'facebook_ad_cache')
 os.makedirs(CACHE_DIR, exist_ok=True)
+CACHE_METADATA = os.path.join(CACHE_DIR, 'cache_metadata.json')
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -626,143 +629,98 @@ def extract_social_links(text):
         links.extend(matches)
     
     return links
+from flask import Blueprint, request, jsonify
+from apify_client import ApifyClient
+import logging, os, json, time, uuid, requests
+from datetime import datetime
+# from utils import extract_social_links, save_to_cache, CACHE_DIR  # assume utils.py handles cache/init
+import torch
 
-@app.route('/scrape-facebook-ads', methods=['POST'])
+ads_bp = Blueprint('ads', __name__)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+@ads_bp.route('/scrape-facebook-ads', methods=['POST'])
 def scrape_facebook_ads():
     logging.info("Received request to /scrape-facebook-ads")
     try:
         data = request.get_json()
         keyword = data.get('keyword', '').strip()
-        
+
         if not keyword:
             return jsonify({'error': 'Keyword is required'}), 400
-        
+
         client = ApifyClient("apify_api_NjSZxqtGL9yuEkNE2WTX38WZMf14dt1QevpQ")
-        
         search_url = f"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=PK&is_targeted_country=false&media_type=all&q={keyword}&search_type=keyword_unordered"
-        
+
         run_input = {
             "urls": [{"url": search_url}],
             "count": 100,
             "scrapePageAds.activeStatus": "all",
             "period": "",
         }
-        
+
         logging.info(f"Triggering Apify actor with input: {run_input}")
         run = client.actor("XtaWFhbtfxyzqrFmd").call(run_input=run_input)
-        
+
         filtered_results = []
-        
+
         for item in client.dataset(run["defaultDatasetId"]).iterate_items():
             snapshot = item.get('snapshot', {})
             body = snapshot.get('body', {}) or {}
             body_text = body.get('text', '') if isinstance(body, dict) else ''
             page_name = snapshot.get('page_name', '')
             page_categories = snapshot.get('page_categories', [])
-            
+
             if len(body_text.split()) > 500 or page_name == "Random Reading" or page_categories == "Movies":
                 continue
-            
-            filtered_item = {
+
+            ad_data = {
                 'body_text': body_text,
+                'page_name': page_name,
+                'page_categories': page_categories,
                 'social_links': extract_social_links(body_text),
-                'page_categories': snapshot.get('page_categories', []),
-                'page_name': snapshot.get('page_name', ''),
                 'page_profile_picture_url': snapshot.get('page_profile_picture_url', ''),
+                'original_image_urls': [],
+                'video_preview_image_urls': []
             }
-            
-            # Gather all potential image source
-            all_image_urls = []
-            
+
+            # Collect image sources
             images = snapshot.get('images', [])
-            all_image_urls += [
-                img.get('original_image_url') for img in images if img.get('original_image_url')
-            ]
-            
             extra_images = snapshot.get('extra_images', [])
-            all_image_urls += [
-                img.get('original_image_url') for img in extra_images if img.get('original_image_url')
-            ]
             card = snapshot.get('card', {})
-            if isinstance(card, dict):
-                card_image_urls = card.get('original_image_urls', [])
-                all_image_urls += [url for url in card_image_urls if url]
-                
-            filtered_item['original_image_urls'] = list(set(filter(None, all_image_urls)))
-            
+            card_image_urls = card.get('original_image_urls', []) if isinstance(card, dict) else []
+
+            all_image_urls = [
+                img.get('original_image_url') for img in images + extra_images if img.get('original_image_url')
+            ] + [url for url in card_image_urls if url]
+
+            ad_data['original_image_urls'] = list(set(filter(None, all_image_urls)))
+
+            # Collect videos if present
             videos = snapshot.get('videos', [])
             if videos:
-                filtered_item['video_preview_image_urls'] = [
-                    video.get('video_preview_image_url', '') for video in videos if video.get('video_preview_image_url')
+                ad_data['video_preview_image_urls'] = [
+                    v.get('video_preview_image_url') for v in videos if v.get('video_preview_image_url')
                 ]
-            
-            filtered_results.append(filtered_item)
-        
-        logging.info(f"Processing {len(filtered_results)} ad results.")
-        
-        # Save ads and images to client-side cache
+
+            filtered_results.append(ad_data)
+
+        logging.info(f"Found {len(filtered_results)} ads for keyword '{keyword}'.")
+
+        # Save ads and images to cache
         processed_ads = save_to_cache(keyword, filtered_results)
-        
-        # Prepare response with image paths for captioning
-        image_paths = []
-        for ad in processed_ads:
-            for image in ad['images']:
-                image_paths.append({
-                    'id': image['id'],
-                    'local_path': image['local_path'],
-                    'ad_id': ad['id'],
-                    'page_name': ad['page_name']
-                })
-        
+
         return jsonify({
             'success': True,
             'keyword': keyword,
             'processed_ads_count': len(processed_ads),
-            'images': image_paths[:10]  # Return only top 10 images for captioning
+            'ads': processed_ads  # Full ad metadata, including downloaded image paths
         })
-    
+
     except Exception as e:
-        logging.exception("Error while processing request")
+        logging.exception("Error during scrape-facebook-ads")
         return jsonify({'error': str(e)}), 500
 
-CACHE_DIR = os.path.join(tempfile.gettempdir(), 'facebook_ad_cache')
-os.makedirs(CACHE_DIR, exist_ok=True)
-CACHE_METADATA = os.path.join(CACHE_DIR, 'cache_metadata.json')
-
-def init_cache():
-    """Initialize the client-side cache metadata"""
-    if not os.path.exists(CACHE_METADATA):
-        with open(CACHE_METADATA, 'w') as f:
-            json.dump({
-                'keywords': {},
-                'images': {}
-            }, f)
-        logging.info("Cache metadata initialized")
-    else:
-        logging.info("Cache metadata already exists")
-
-# Initialize the cache at startup
-init_cache()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-def download_image(url, save_path):
-    """Download image from URL and save to client-side cache"""
-    try:
-        response = requests.get(url, stream=True, timeout=10)
-        response.raise_for_status()
-        
-        # Create directory if it doesn't exist
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        
-        # Save the image
-        with open(save_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        
-        return True
-    except Exception as e:
-        logging.error(f"Error downloading image {url}: {str(e)}")
-        return False
     
 def save_to_cache(keyword, ads):
     """Save ads and their images to client-side cache"""

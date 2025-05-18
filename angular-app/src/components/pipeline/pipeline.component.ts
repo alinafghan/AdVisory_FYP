@@ -16,8 +16,8 @@ import { ProductAdCustomComponent } from '../productad-page/productadcustom.comp
 @Component({
   selector: 'app-pipeline',
   standalone: true,
-  imports: [CommonModule, CampaignComponent, TrendsComponent, BudgetComponent, FluxPageComponent, CaptionPageComponent, CompetitorAdsComponent],
-  imports: [ FormsModule, CommonModule, CampaignComponent, ChooseComponent, FluxPageComponent, ProductAdComponent, ProductAdCustomComponent,CaptionPageComponent, TrendsComponent, BudgetComponent],
+  imports: [ FormsModule, CommonModule, CampaignComponent, ChooseComponent, FluxPageComponent, ProductAdComponent, 
+    ProductAdCustomComponent,CaptionPageComponent, TrendsComponent, BudgetComponent, CompetitorAdsComponent],
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
@@ -28,8 +28,6 @@ export class PipelineComponent {
   constructor(private router: Router) {}
   // flag for if user selects product ad, then they can continue to productadcustom page
   isProductAdCustomPage = false;
-  steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6'];
-currentStep = 0;
 
   //if user chooses not to generate an ad, they can skip to caption page
   nextStep() {
