@@ -14,7 +14,8 @@ mongoose.connect(process.env.MONGO_URI)
       duration: "2025-04-15 to 2025-06-15",
       platform: "Instagram",
       industry: "Fashion",
-      businessId: "67fed46a8ec968f1c324eb50", // ⬅️ Replace this with the actual user _id from your users collection
+      businessId: "67fed46a8ec968f1c324eb50", 
+      keywords: ['fashion', 'clothes']// ⬅️ Replace this with the actual user _id from your users collection
     });
 
     return newCampaign.save();

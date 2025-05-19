@@ -30,6 +30,10 @@ const campaignSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  keywords:{
+    type: [String],
+    required: false,
+  }
 });
 
 module.exports = mongoose.model("Campaign", campaignSchema);

@@ -52,7 +52,7 @@ export class CompetitorAdsComponent implements OnInit {
     this.error = null;
     
     // Pass the keyword to the backend endpoint
-    this.http.post<FacebookAd[]>('http://localhost:5000/scrape-facebook-ads', { keyword: this.keyword })
+    this.http.post<FacebookAd[]>('http://localhost:5000/scrape-ads', { keyword: this.keyword })
       .subscribe({
         next: (data) => {
           this.ads = data;
@@ -79,7 +79,6 @@ export class CompetitorAdsComponent implements OnInit {
     return icons[platform] || 'bi bi-link-45deg';
   }
   
-  // Helper method to use Object.entries in template
   objectEntries(obj: any): [string, any][] {
     return Object.entries(obj);
   }

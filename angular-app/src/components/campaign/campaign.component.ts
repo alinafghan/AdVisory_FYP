@@ -32,7 +32,8 @@ export class CampaignComponent {
       industry: ['', Validators.required],
       platform: ['', Validators.required],
       startDate: [null, Validators.required],
-      endDate: [null, Validators.required]
+      endDate: [null, Validators.required],
+      keywords: ['', Validators.required],
     });
   }
 
@@ -47,7 +48,7 @@ export class CampaignComponent {
       return;
     }
 
-    const { name, industry, platform, startDate, endDate } = this.campaignForm.value;
+    const { name, industry, platform, startDate, endDate, keywords } = this.campaignForm.value;
     const duration = `${startDate} to ${endDate}`;
 
     const newCampaign = {
@@ -56,7 +57,8 @@ export class CampaignComponent {
       campaignName: name,
       industry,
       platform,
-      duration
+      duration,
+      keywords: keywords.split(',').map((keyword: string) => keyword.trim()), // Split keywords by comma and trim whitespace
     };
 
     this.http.post(this.apiUrl, newCampaign).subscribe(

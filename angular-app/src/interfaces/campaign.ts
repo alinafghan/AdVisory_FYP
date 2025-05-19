@@ -5,4 +5,5 @@ export interface Campaign {
     industry: string;
     platform: string;
     duration: string;
+    keywords: string[];
 }
