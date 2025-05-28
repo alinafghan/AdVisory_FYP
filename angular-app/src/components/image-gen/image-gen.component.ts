@@ -157,61 +157,6 @@ onMaskImageSelected(event: any) {
 }
 
 editImageFiles: File[] = [];
-
-  // generateAdImage() {
-  //   this.errorMessage = '';
-  // this.isLoading = true;
-
-  // if (this.selectedModel === 'Edit Images') {
-  //   if (!this.editImageFiles.length || !this.textPrompt) {
-  //     this.errorMessage = 'Both image(s) and prompt are required.';
-  //     this.isLoading = false;
-  //     return;
-  //   }
-
-  //   // Construct enhancement context
-  //   const enhancementParts: string[] = [];
-  //   if (this.lighting) enhancementParts.push(`${this.lighting} lighting`);
-  //   if (this.colors) enhancementParts.push(`color scheme: ${this.colors}`);
-  //   if (this.style) enhancementParts.push(`style: ${this.style}`);
-
-  //   // Build full prompt
-  //   const enhancementText = enhancementParts.length
-  //     ? ` in ${enhancementParts.join(', ')}`
-  //     : '';
-  //   const fullPrompt = `${this.textPrompt.trim()}${enhancementText}`;
-
-  //   this.prompt = fullPrompt;
-
-  //   this.fluxService.editImage(fullPrompt, this.editImageFiles)
-  //     .subscribe({
-  //       next: (res) => {
-  //         this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
-  //         this.isLoading = false;
-  //       },
-  //       error: (err) => {
-  //         this.errorMessage = err?.error?.error || 'Image editing failed';
-  //         this.isLoading = false;
-  //       }
-  //     });
-
-  //   return;
-  //   }
-  //   else {
-  //     // GENERATE IMAGE
-  //     this.fluxService.generateImage({prompt: prompt})
-  //       .subscribe({
-  //         next: (res) => {
-  //           this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
-  //           this.isLoading = false;
-  //         },
-  //         error: (err) => {
-  //           this.errorMessage = err?.error?.error || 'Image generation failed';
-  //           this.isLoading = false;
-  //         }
-  //       });
-  //   }
-  // }
   generateAdImage() {
     this.errorMessage = ''; // Clear any previous errors
     this.isLoading = true; // Show loading indicator

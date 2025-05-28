@@ -10,7 +10,7 @@ import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
 import { HlmSelectContentDirective, HlmSelectOptionComponent, HlmSelectValueDirective } from '@spartan-ng/ui-select-helm';
 import { HlmSelectTriggerComponent } from '@spartan-ng/ui-select-helm';
 import { HlmDatePickerComponent } from '@spartan-ng/ui-datepicker-helm';
-
+import { AdDataService } from '../../services/ad-data-service';
 
 @Component({
   selector: 'app-campaign',
@@ -26,13 +26,15 @@ export class CampaignComponent {
      public maxDate = new Date(2030, 11, 31);
   apiUrl = 'http://localhost:3000/ads/postCampaign';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private adDataService: AdDataService) {
     this.campaignForm = this.fb.group({
       name: ['', Validators.required],
       industry: ['', Validators.required],
       platform: ['', Validators.required],
       startDate: [null, Validators.required],
-      endDate: [null, Validators.required]
+      endDate: [null, Validators.required],
+      keywords: ['', Validators.required],
+      campaignFocus: ['', Validators.required],
     });
   }
 
@@ -47,7 +49,7 @@ export class CampaignComponent {
       return;
     }
 
-    const { name, industry, platform, startDate, endDate } = this.campaignForm.value;
+    const { name, industry, platform, startDate, endDate, keywords, campaignFocus } = this.campaignForm.value;
     const duration = `${startDate} to ${endDate}`;
 
     const newCampaign = {
@@ -56,13 +58,44 @@ export class CampaignComponent {
       campaignName: name,
       industry,
       platform,
-      duration
+      duration,
+      keywords,
+      campaignFocus
     };
 
     this.http.post(this.apiUrl, newCampaign).subscribe(
       (response) => {
         console.log('Campaign created:', response);
         alert('Campaign created successfully!');
+
+        const adGenerationPayload = {
+        keyword: keywords,
+        businessName: "CatCare",          // Hardcoded
+        businessType: "food",           // Hardcoded
+        campaignName: name,
+        campaignFocus: campaignFocus
+      };
+
+       this.http.post('http://localhost:3000/generate-inspired-ads/get', adGenerationPayload)
+  .subscribe(
+    (res: any) => {
+      console.log('🎨 Inspired ads response:', res);
+
+      // Save data into shared service
+      this.adDataService.setCompetitorAds(res.competitorAds || []);
+      this.adDataService.setGeneratedAds(res.generatedAds || []);
+
+      // Navigate to display page
+      this.router.navigate(['/competitor-ads']);
+    },
+    (err) => {
+      console.error('❌ Error generating inspired ads:', err);
+      alert('Campaign created but ad generation failed.');
+    }
+  );
+
+
+
       },
       (error) => {
         console.error(newCampaign);

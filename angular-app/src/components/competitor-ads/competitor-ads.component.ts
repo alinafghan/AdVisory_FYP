@@ -4,24 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
-
-interface SocialLinks {
-  instagram?: string;
-  facebook?: string;
-  linkedin?: string;
-  twitter?: string;
-  youtube?: string;
-}
-
-interface FacebookAd {
-  body_text: string;
-  social_links: SocialLinks;
-  page_categories: string[];
-  page_name: string;
-  page_profile_picture_url: string;
-  original_image_urls?: string[];
-  video_preview_image_urls?: string[];
-}
+import { AdDataService } from '../../services/ad-data-service';
 
 @Component({
   selector: 'app-competitor-ads',
@@ -31,40 +14,34 @@ interface FacebookAd {
   styleUrls: ['./competitor-ads.component.scss']
 })
 export class CompetitorAdsComponent implements OnInit {
-  ads: FacebookAd[] = [];
-  loading = false;
-  error: string | null = null;
-  keyword = '';
+  competitorAds: any[] = [];
+  generatedAds: any[] = [];
   
-  constructor(private http: HttpClient) { }
+  loadingCompetitorAds = true;
+  loadingGeneratedAds = true;
+
+
+  // Fixes for binding in HTML
+  ads: any[] = [];  // you can combine both here if needed
+  keywords: string = '';
+  loading: boolean = false;
+  error: string | null = null;
+
+  constructor(private adDataService: AdDataService) {}
 
   ngOnInit(): void {
-    // Don't auto-fetch on init since we need a keyword
-  }
+    this.competitorAds = this.adDataService.getCompetitorAds();
+    this.generatedAds = this.adDataService.getGeneratedAds();
+    this.loadingCompetitorAds = false;
+    this.loadingGeneratedAds = false;
 
-  fetchAds(): void {
-    if (!this.keyword.trim()) {
-      this.error = 'Please enter a keyword to search for ads';
-      return;
-    }
-    
-    this.loading = true;
-    this.error = null;
-    
-    // Pass the keyword to the backend endpoint
-    this.http.post<FacebookAd[]>('http://localhost:5000/scrape-facebook-ads', { keyword: this.keyword })
-      .subscribe({
-        next: (data) => {
-          this.ads = data;
-          this.loading = false;
-          console.log('Fetched ads:', data);
-        },
-        error: (err) => {
-          console.error('Error fetching Facebook ads:', err);
-          this.error = err.error?.error || 'Failed to load competitor ads. Please try again later.';
-          this.loading = false;
-        }
-      });
+
+      // You can merge the ads into one view if you want
+    this.ads = [...this.competitorAds, ...this.generatedAds];
+  }
+  
+  objectEntries(obj: any): [string, any][] {
+    return Object.entries(obj || {});
   }
 
   getSocialPlatformIcon(platform: string): string {
@@ -75,12 +52,6 @@ export class CompetitorAdsComponent implements OnInit {
       'twitter': 'bi bi-twitter',
       'youtube': 'bi bi-youtube'
     };
-    
     return icons[platform] || 'bi bi-link-45deg';
-  }
-  
-  // Helper method to use Object.entries in template
-  objectEntries(obj: any): [string, any][] {
-    return Object.entries(obj);
   }
 }

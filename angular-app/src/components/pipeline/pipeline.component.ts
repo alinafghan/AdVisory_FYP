@@ -21,7 +21,7 @@ import { ProductAdCustomComponent } from '../productad-page/productadcustom.comp
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
-  steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6'];
+steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'];
   currentStep = 0;
   selectedOption: string | null = null; // track what user selected
 
@@ -31,7 +31,7 @@ export class PipelineComponent {
 
   //if user chooses not to generate an ad, they can skip to caption page
   nextStep() {
-    if (this.currentStep === 1 && !this.selectedOption) {
+    if (this.currentStep === 2 && !this.selectedOption) {
       this.currentStep = 3;
     } else {
       this.currentStep++;

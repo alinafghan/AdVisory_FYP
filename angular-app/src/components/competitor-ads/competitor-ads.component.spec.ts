@@ -29,10 +29,10 @@ describe('CompetitorAdsComponent', () => {
     expect(component.getSocialPlatformIcon('unknown')).toBe('bi bi-link-45deg');
   });
 
-  it('should not fetch ads if keyword is empty', () => {
+  it('should not fetch ads if keywords is empty', () => {
     const httpSpy = spyOn(component['http'], 'post').and.callThrough();
     
-    component.keyword = '';
+    component.keywords = '';
     component.fetchAds();
     
     expect(httpSpy).not.toHaveBeenCalled();
@@ -45,7 +45,7 @@ describe('CompetitorAdsComponent', () => {
     } as any);
     
     component.error = 'Previous error';
-    component.keyword = 'test';
+    component.keywords = 'test';
     component.fetchAds();
     
     expect(component.error).toBeNull();

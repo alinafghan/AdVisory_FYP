@@ -21,7 +21,6 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from scipy.optimize import curve_fit
 from flask import Flask, jsonify
-from apify_client import ApifyClient
 import tempfile, json, uuid, time, shutil, re
 from datetime import datetime
 
@@ -138,33 +137,36 @@ CORS(app)
 
 @app.route('/flux', methods=['POST'])
 def flux():
-    data = request.get_json()
-
-    prompt = data.get('prompt')
-    seed = data.get('seed')
-    randomize_seed = data.get('randomize_seed')
-    width = data.get('width') #576
-    height = data.get('height') #1024
-    num_inference_steps = data.get('num_inference_steps') #4
-
-    flux_client = Client("black-forest-labs/FLUX.1-schnell")
-    result = flux_client.predict(
-		prompt=prompt,
-        seed=0,
-        randomize_seed=True,
-        width=width,
-        height=height,
-        num_inference_steps=4,
-        api_name="/infer")
-    print(result)
-
-    image_path = result[0]  
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as f:
-            encoded_image = base64.b64encode(f.read()).decode("utf-8")
-        return jsonify({'Generated Image': encoded_image})
-    else:
-        return jsonify({'error': 'Image generation failed.'}), 500
+    try: 
+        data = request.get_json()
+        prompt = data.get('prompt')
+        seed = data.get('seed')
+        randomize_seed = data.get('randomize_seed')
+        width = data.get('width') #576
+        height = data.get('height') #1024
+        num_inference_steps = data.get('num_inference_steps') #4
+        
+        flux_client = Client("black-forest-labs/FLUX.1-schnell")
+        result = flux_client.predict(
+            prompt=prompt,
+            seed=0,
+            randomize_seed=True,
+            width=width,
+            height=height,
+            num_inference_steps=4,
+            api_name="/infer")
+        print(result)
+        
+        image_path = result[0]  
+        if os.path.exists(image_path):
+            with open(image_path, "rb") as f:
+                encoded_image = base64.b64encode(f.read()).decode("utf-8")
+            return jsonify({'Generated Image': encoded_image})
+    except Exception as e:
+        # Catch specific Gradio quota errors and notify user clearly
+        if "exceeded your GPU quota" in str(e):
+            return jsonify({'error': 'You have exceeded your GPU quota. Please wait or upgrade your plan.'}), 429
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/generate-ad-image', methods=['POST'])
 def generate_ad_image():
@@ -249,6 +251,8 @@ def generate_caption():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
+
 
 ######################### ENHANCE ################################
 
@@ -610,227 +614,6 @@ def allocate_budget():
     res3 = run_optimization(alpha, beta, B)
     return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
 
-
-def extract_social_links(text):
-    if not text:
-        return []
-    
-    patterns = [
-        r'https?://(?:www\.)?facebook\.com/\S+',
-        r'https?://(?:www\.)?instagram\.com/\S+',
-        r'https?://(?:www\.)?twitter\.com/\S+',
-        r'https?://(?:www\.)?linkedin\.com/\S+',
-        r'https?://(?:www\.)?tiktok\.com/\S+',
-    ]
-    
-    links = []
-    for pattern in patterns:
-        matches = re.findall(pattern, text)
-        links.extend(matches)
-    
-    return links
-from flask import Blueprint, request, jsonify
-from apify_client import ApifyClient
-import logging, os, json, time, uuid, requests
-from datetime import datetime
-# from utils import extract_social_links, save_to_cache, CACHE_DIR  # assume utils.py handles cache/init
-import torch
-
-ads_bp = Blueprint('ads', __name__)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-@ads_bp.route('/scrape-facebook-ads', methods=['POST'])
-def scrape_facebook_ads():
-    logging.info("Received request to /scrape-facebook-ads")
-    try:
-        data = request.get_json()
-        keyword = data.get('keyword', '').strip()
-
-        if not keyword:
-            return jsonify({'error': 'Keyword is required'}), 400
-
-        client = ApifyClient("apify_api_NjSZxqtGL9yuEkNE2WTX38WZMf14dt1QevpQ")
-        search_url = f"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=PK&is_targeted_country=false&media_type=all&q={keyword}&search_type=keyword_unordered"
-
-        run_input = {
-            "urls": [{"url": search_url}],
-            "count": 100,
-            "scrapePageAds.activeStatus": "all",
-            "period": "",
-        }
-
-        logging.info(f"Triggering Apify actor with input: {run_input}")
-        run = client.actor("XtaWFhbtfxyzqrFmd").call(run_input=run_input)
-
-        filtered_results = []
-
-        for item in client.dataset(run["defaultDatasetId"]).iterate_items():
-            snapshot = item.get('snapshot', {})
-            body = snapshot.get('body', {}) or {}
-            body_text = body.get('text', '') if isinstance(body, dict) else ''
-            page_name = snapshot.get('page_name', '')
-            page_categories = snapshot.get('page_categories', [])
-
-            if len(body_text.split()) > 500 or page_name == "Random Reading" or page_categories == "Movies":
-                continue
-
-            ad_data = {
-                'body_text': body_text,
-                'page_name': page_name,
-                'page_categories': page_categories,
-                'social_links': extract_social_links(body_text),
-                'page_profile_picture_url': snapshot.get('page_profile_picture_url', ''),
-                'original_image_urls': [],
-                'video_preview_image_urls': []
-            }
-
-            # Collect image sources
-            images = snapshot.get('images', [])
-            extra_images = snapshot.get('extra_images', [])
-            card = snapshot.get('card', {})
-            card_image_urls = card.get('original_image_urls', []) if isinstance(card, dict) else []
-
-            all_image_urls = [
-                img.get('original_image_url') for img in images + extra_images if img.get('original_image_url')
-            ] + [url for url in card_image_urls if url]
-
-            ad_data['original_image_urls'] = list(set(filter(None, all_image_urls)))
-
-            # Collect videos if present
-            videos = snapshot.get('videos', [])
-            if videos:
-                ad_data['video_preview_image_urls'] = [
-                    v.get('video_preview_image_url') for v in videos if v.get('video_preview_image_url')
-                ]
-
-            filtered_results.append(ad_data)
-
-        logging.info(f"Found {len(filtered_results)} ads for keyword '{keyword}'.")
-
-        # Save ads and images to cache
-        processed_ads = save_to_cache(keyword, filtered_results)
-
-        return jsonify({
-            'success': True,
-            'keyword': keyword,
-            'processed_ads_count': len(processed_ads),
-            'ads': processed_ads  # Full ad metadata, including downloaded image paths
-        })
-
-    except Exception as e:
-        logging.exception("Error during scrape-facebook-ads")
-        return jsonify({'error': str(e)}), 500
-
-    
-def save_to_cache(keyword, ads):
-    """Save ads and their images to client-side cache"""
-    # Load the cache metadata
-    try:
-        with open(CACHE_METADATA, 'r') as f:
-            cache_data = json.load(f)
-    except Exception:
-        cache_data = {'keywords': {}, 'images': {}}
-    
-    # Create a keyword entry if it doesn't exist
-    if keyword not in cache_data['keywords']:
-        cache_data['keywords'][keyword] = {
-            'timestamp': datetime.now().isoformat(),
-            'ads': []
-        }
-    
-    # Create images directory if it doesn't exist
-    images_dir = os.path.join(CACHE_DIR, 'images', keyword)
-    os.makedirs(images_dir, exist_ok=True)
-    
-    processed_ads = []
-    
-    for ad in ads[:10]:  # Process only top 10 results
-        ad_id = str(uuid.uuid4())
-        
-        ad_info = {
-            'id': ad_id,
-            'page_name': ad.get('page_name', ''),
-            'page_categories': ad.get('page_categories', []),
-            'body_text': ad.get('body_text', ''),
-            'social_links': ad.get('social_links', []),
-            'page_profile_picture_url': ad.get('page_profile_picture_url', ''),
-            'images': []
-        }
-        
-        # Process images
-        image_urls = ad.get('original_image_urls', [])
-        for idx, img_url in enumerate(image_urls):
-            if not img_url:
-                continue
-            
-            # Generate a unique filename
-            image_id = str(uuid.uuid4())
-            timestamp = int(time.time())
-            filename = f"{ad_id}_{idx}_{timestamp}.jpg"
-            local_path = os.path.join(images_dir, filename)
-            
-            # Download the image
-            if download_image(img_url, local_path):
-                # Add to cache metadata
-                image_info = {
-                    'id': image_id,
-                    'url': img_url,
-                    'local_path': local_path,
-                    'filename': filename,
-                    'ad_id': ad_id,
-                    'timestamp': datetime.now().isoformat()
-                }
-                
-                cache_data['images'][image_id] = image_info
-                ad_info['images'].append(image_info)
-        
-        # Add to the keyword's ads list
-        cache_data['keywords'][keyword]['ads'].append(ad_info)
-        processed_ads.append(ad_info)
-    
-    # Save the updated cache metadata
-    with open(CACHE_METADATA, 'w') as f:
-        json.dump(cache_data, f, indent=2)
-    
-    logging.info(f"Saved {len(processed_ads)} ads and their images to client-side cache")
-    return processed_ads
-
-
-@app.route('/cache-images/<path:filepath>', methods=['GET'])
-def serve_cached_image(filepath):
-    """Serve an image from the cache"""
-    directory = os.path.join(CACHE_DIR, 'images')
-    return send_from_directory(directory, filepath)
-
-@app.route('/clear-cache', methods=['POST'])
-def clear_cache():
-    """Clear the client-side cache"""
-    try:
-        # Remove all files in the cache directory
-        for root, dirs, files in os.walk(CACHE_DIR):
-            for file in files:
-                if file != 'cache_metadata.json':  # Keep the metadata file
-                    os.remove(os.path.join(root, file))
-            
-            for dir in dirs:
-                shutil.rmtree(os.path.join(root, dir))
-        
-        # Reset the cache metadata
-        with open(CACHE_METADATA, 'w') as f:
-            json.dump({
-                'keywords': {},
-                'images': {}
-            }, f)
-        
-        return jsonify({
-            'success': True,
-            'message': 'Cache cleared successfully'
-        })
-    
-    except Exception as e:
-        logging.exception("Error while clearing cache")
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/caption-image', methods=['POST'])
 def caption_image():
     """Send an image to the captioning API and return the result"""
@@ -869,71 +652,6 @@ def caption_image():
     
     except Exception as e:
         logging.exception("Error while captioning image")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/caption-cached-images', methods=['POST'])
-def caption_cached_images():
-    """Caption multiple images from the cache"""
-    try:
-        data = request.get_json()
-        image_paths = data.get('image_paths', [])
-        
-        if not image_paths:
-            return jsonify({'error': 'Image paths are required'}), 400
-        model = VisionEncoderDecoderModel.from_pretrained("nlpconnect/vit-gpt2-image-captioning")
-        feature_extractor = ViTImageProcessor.from_pretrained("nlpconnect/vit-gpt2-image-captioning")
-        tokenizer = AutoTokenizer.from_pretrained("nlpconnect/vit-gpt2-image-captioning")
-
-        model.to(device)
-        
-        results = []
-        
-        for image_path in image_paths:
-            try:
-                if not os.path.exists(image_path):
-                    results.append({
-                        'image_path': image_path,
-                        'success': False,
-                        'error': 'Image file not found'
-                    })
-                    continue
-                
-                max_length = 16
-                num_beams = 4
-                gen_kwargs = {"max_length": max_length, "num_beams": num_beams}
-                
-                i_image = Image.open(image_path)
-                if i_image.mode != "RGB":
-                    i_image = i_image.convert(mode="RGB")
-                
-                pixel_values = feature_extractor(images=[i_image], return_tensors="pt").pixel_values
-                pixel_values = pixel_values.to(device)
-                
-                output_ids = model.generate(pixel_values, **gen_kwargs)
-                
-                preds = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
-                caption = preds[0].strip()
-                
-                results.append({
-                    'image_path': image_path,
-                    'success': True,
-                    'caption': caption
-                })
-                
-            except Exception as e:
-                results.append({
-                    'image_path': image_path,
-                    'success': False,
-                    'error': str(e)
-                })
-        
-        return jsonify({
-            'success': True,
-            'results': results
-        })
-    
-    except Exception as e:
-        logging.exception("Error while captioning images")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
