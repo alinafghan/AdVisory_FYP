@@ -70,32 +70,30 @@ export class CampaignComponent {
 
         const adGenerationPayload = {
         keyword: keywords,
-        businessName: "CatCare",          // Hardcoded
-        businessType: "food",           // Hardcoded
+        businessName: "CatCare",    
+        businessType: "food",
+        // businessLogo: "https://example.com/logo.png", 
+        //TODO        
         campaignName: name,
         campaignFocus: campaignFocus
       };
+    this.adDataService.setCompetitorAds([]);  // will show loading UI
+    this.adDataService.setGeneratedAds([]);
+    this.router.navigate(['/competitor-ads']);
 
-       this.http.post('http://localhost:3000/generate-inspired-ads/get', adGenerationPayload)
-  .subscribe(
-    (res: any) => {
+    this.http.post('http://localhost:3000/generate-inspired-ads/get', adGenerationPayload).subscribe(
+      (res: any) => {
       console.log('🎨 Inspired ads response:', res);
 
       // Save data into shared service
       this.adDataService.setCompetitorAds(res.competitorAds || []);
       this.adDataService.setGeneratedAds(res.generatedAds || []);
-
-      // Navigate to display page
-      this.router.navigate(['/competitor-ads']);
     },
     (err) => {
       console.error('❌ Error generating inspired ads:', err);
       alert('Campaign created but ad generation failed.');
     }
-  );
-
-
-
+    );
       },
       (error) => {
         console.error(newCampaign);

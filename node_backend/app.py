@@ -614,46 +614,6 @@ def allocate_budget():
     res3 = run_optimization(alpha, beta, B)
     return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
 
-@app.route('/caption-image', methods=['POST'])
-def caption_image():
-    """Send an image to the captioning API and return the result"""
-    try:
-        data = request.get_json()
-        image_path = data.get('image_path')
-        
-        if not image_path or not os.path.exists(image_path):
-            return jsonify({'error': 'Valid image path is required'}), 400
-        
-        # Call the image captioning API
-        caption = generate_image_caption(image_path)
-        
-        # Update the cache metadata with the caption
-        with open(CACHE_METADATA, 'r') as f:
-            cache_data = json.load(f)
-        
-        # Find the image in the metadata
-        image_id = None
-        for img_id, img_data in cache_data['images'].items():
-            if img_data['local_path'] == image_path:
-                image_id = img_id
-                cache_data['images'][img_id]['caption'] = caption
-                break
-        
-        # Save the updated cache metadata
-        with open(CACHE_METADATA, 'w') as f:
-            json.dump(cache_data, f, indent=2)
-        
-        return jsonify({
-            'success': True,
-            'image_id': image_id,
-            'image_path': image_path,
-            'caption': caption
-        })
-    
-    except Exception as e:
-        logging.exception("Error while captioning image")
-        return jsonify({'error': str(e)}), 500
-
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # Use Render’s dynamic port
     app.run(debug=True, host='0.0.0.0', port=port)

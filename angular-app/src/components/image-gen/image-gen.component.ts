@@ -3,7 +3,7 @@ import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FluxService } from "./image-gen.service";
 import { FormsModule } from "@angular/forms";
-import { AdDataService } from "../../services/ad-data.service";
+import { AdDataService } from "../../services/ad-data-service";
 
 @Component({
   selector: "app-flux-page",

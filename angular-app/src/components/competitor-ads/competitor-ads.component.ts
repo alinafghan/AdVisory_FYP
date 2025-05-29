@@ -30,16 +30,12 @@ export class CompetitorAdsComponent implements OnInit {
   constructor(private adDataService: AdDataService) {}
 
   ngOnInit(): void {
-    this.competitorAds = this.adDataService.getCompetitorAds();
-    this.generatedAds = this.adDataService.getGeneratedAds();
-    this.loadingCompetitorAds = false;
-    this.loadingGeneratedAds = false;
-
-
-      // You can merge the ads into one view if you want
-    this.ads = [...this.competitorAds, ...this.generatedAds];
+  this.competitorAds = this.adDataService.getCompetitorAds() || [];
+  this.generatedAds = this.adDataService.getGeneratedAds() || [];
+  this.loadingCompetitorAds = false;
+  this.loadingGeneratedAds = false;
   }
-  
+
   objectEntries(obj: any): [string, any][] {
     return Object.entries(obj || {});
   }

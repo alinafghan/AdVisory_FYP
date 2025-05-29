@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class AdDataService {
   private competitorAds: any[] = [];
   private generatedAds: any[] = [];
+  private adImageId: string = '';
 
   setCompetitorAds(data: any[]) {
     this.competitorAds = data;
@@ -27,4 +28,18 @@ export class AdDataService {
     this.competitorAds = [];
     this.generatedAds = [];
   }
+  setAdImageId(id: string): void {
+    this.adImageId = id;
+  }
+
+  getAdImageId(): string {
+    return this.adImageId;
+  }
+
+  clearAdImageId(): void {
+    this.adImageId = '';
+  }
 }
+
+
+

@@ -178,10 +178,13 @@ Format:
 
     // Send response with both ideas and stored ads info
     res.json({ 
-      ideas,
-      storedCount: storedAds.length,
-      success: true 
-    });
+  ideas,
+  competitorAds: ads,       // include scraped competitor ads
+  generatedAds: storedAds,  // include stored/generated ads
+  storedCount: storedAds.length,
+  success: true 
+});
+
 
   } catch (error) {
     console.error("Failed to generate inspired ads:", error.message);
