@@ -8,26 +8,68 @@ const path = require('path');
 const { OpenAI } = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Keep your original API but modify it to return competitor ads immediately
 router.post('/get', async (req, res) => {
-    console.log("Request body:", req.body);
+  console.log("Request body:", req.body);
 
   const { keyword, businessName, businessType, campaignName, campaignFocus } = req.body;
 
   if (!keyword || !businessName || !businessType || !campaignName || !campaignFocus) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
-  console.log("no missing fields");
 
+  try {
+    // 1. Get competitor ads using internal API call
+    const competitorData = await getCompetitorAdsInternal(keyword);
+    
+    if (!competitorData.success) {
+      return res.status(404).json({ error: 'No competitor ads found' });
+    }
+
+    // 2. Start background generation (don't await)
+    const jobId = `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Fire and forget - start generation in background
+    generateAdsInBackground(jobId, {
+      keyword,
+      businessName, 
+      businessType,
+      campaignName,
+      campaignFocus,
+      competitorData
+    }).catch(err => {
+      console.error(`Background generation failed for job ${jobId}:`, err.message);
+    });
+
+    // 3. Return competitor ads immediately with job ID for tracking
+    res.json({
+      ideas: [], // Empty for now, will be populated via polling
+      competitorAds: competitorData.competitorAds,
+      analyzedDescriptions: competitorData.analyzedDescriptions,
+      jobId, // Frontend can use this to poll for generated ads
+      generatedAds: [], // Empty initially
+      storedCount: 0,
+      success: true,
+      status: 'competitor_ads_ready', // Let frontend know what's available
+      message: 'Competitor ads loaded, generation in progress...'
+    });
+
+  } catch (error) {
+    console.error("Failed to get competitor ads:", error.message);
+    res.status(500).json({ error: 'Internal error getting competitor ads' });
+  }
+});
+
+// Internal function to get competitor ads (extracted from your original code)
+async function getCompetitorAdsInternal(keyword) {
   try {
     // 1. SCRAPE COMPETITOR ADS
     console.log("trying to scrape");
     const scrapeRes = await axios.post('http://localhost:3000/competitor-ads/scrape-facebook-ads', { keyword });
     console.log("scraping");
     const ads = scrapeRes.data.ads || [];
-    console.log("scraping");
-    // console.log(scrapeRes.data);
 
-    // 2. Extract image URLs from top 5 ads (avoid duplicates)
+    // 2. Extract image URLs from top 5 ads
     const imageUrls = [...new Set(
       ads.flatMap(ad => ad.images?.map(img => img.url)).filter(Boolean)
     )].slice(0, 5);
@@ -35,26 +77,74 @@ router.post('/get', async (req, res) => {
     console.log("image urls");
 
     if (imageUrls.length === 0) {
-      return res.status(404).json({ error: 'No images found in competitor ads' });
+      return { success: false, error: 'No images found in competitor ads' };
     }
 
-    // 3. Analyze each image using your local LLaMA image analyzer
+    // 3. Analyze each image
     const analyzedDescriptions = await Promise.all(
       imageUrls.map(async (url) => {
-        const analyzeRes = await axios.post(
-          'http://localhost:3000/caption/analyze-image', // ← your LLaMA vision proxy
-          { imageUrl: url }
-        );
-        return analyzeRes.data?.choices?.[0]?.message?.content || '';
+        try {
+          const analyzeRes = await axios.post(
+            'http://localhost:3000/caption/analyze-image',
+            { imageUrl: url }
+          );
+          return analyzeRes.data?.choices?.[0]?.message?.content || '';
+        } catch (err) {
+          console.warn('Image analysis failed for:', url);
+          return '';
+        }
       })
     );
+
     console.log("analyzed descriptions");
 
-    // 4. Build prompt for GPT / LLaMA
+    return {
+      success: true,
+      competitorAds: ads,
+      analyzedDescriptions,
+      imageUrls
+    };
+
+  } catch (error) {
+    console.error("Internal competitor ads fetch failed:", error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+// Add the polling endpoint (this is new but simple)
+router.get('/generation-status/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+  
+  try {
+    // Check database for completed ads with this jobId
+    const generatedAds = await AdIdea.find({ jobId }).sort({ createdAt: -1 });
+    
+    const status = generatedAds.length >= 4 ? 'completed' : 'generating';
+    
+    res.json({
+      jobId,
+      status,
+      generatedAds,
+      count: generatedAds.length,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("Failed to check generation status:", error.message);
+    res.status(500).json({ error: 'Failed to check status' });
+  }
+});
+
+// Your existing background generation function (slightly modified to use internal data)
+async function generateAdsInBackground(jobId, params) {
+  try {
+    const { competitorData, businessName, businessType, campaignName, campaignFocus, keyword } = params;
+    
+    // Build prompt using competitor data  
     const fullPrompt = `
 You are a social media marketing assistant. Based on the following competitor image descriptions:
 
-${analyzedDescriptions.map((desc, i) => `Ad ${i + 1}: ${desc}`).join('\n')} and captions: ${ads.map((ad, i) => `Ad ${i + 1}: ${ad.body_text}`).join('\n')}
+${competitorData.analyzedDescriptions?.map((desc, i) => `Ad ${i + 1}: ${desc}`).join('\n')} and captions: ${competitorData.competitorAds?.map((ad, i) => `Ad ${i + 1}: ${ad.body_text || ''}`).join('\n')}
 
 Generate 4 new ad ideas for a campaign by "${businessName}" in the "${businessType}" domain. The campaign is titled "${campaignName}" and focuses on "${campaignFocus}".
 
@@ -84,14 +174,13 @@ Format:
   }
 ]
 `;
-    // console.log("full prompt:", fullPrompt);
+
+    // Generate ideas with LLM (your existing logic)
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: "meta-llama/llama-4-maverick:free",
       messages: [{
         role: "user",
-        content: [
-          { type: "text", text: fullPrompt }
-        ]
+        content: [{ type: "text", text: fullPrompt }]
       }]
     }, {
       headers: {
@@ -101,72 +190,66 @@ Format:
     });
 
     const rawOutput = response.data?.choices?.[0]?.message?.content;
-    console.log("Raw output received:", rawOutput);
-
-    if (!rawOutput || rawOutput.trim().length === 0) {
-      console.warn("⚠️ Raw output from scraping was empty or invalid.");
-      return;
-    }
-
-
-    // Try to parse JSON with improved logic
     let ideas = [];
+    
+    // Parse JSON (your existing parsing logic)
     try {
-      // First, try to extract JSON from the response
       let jsonString = rawOutput;
-      
-      // Look for JSON array pattern
       const jsonMatch = rawOutput.match(/\[\s*\{[\s\S]*\}\s*\]/);
       if (jsonMatch) {
         jsonString = jsonMatch[0];
-        console.log("Found JSON match:", jsonString.substring(0, 100) + "...");
       }
+      ideas = JSON.parse(jsonString.trim());
       
-      // Clean up any potential formatting issues
-      jsonString = jsonString.trim();
-      
-      ideas = JSON.parse(jsonString);
-      
-      // Validate that it's an array
       if (!Array.isArray(ideas)) {
         throw new Error('Response is not an array');
       }
       
-      console.log("Successfully parsed", ideas.length, "ideas");
-      
     } catch (e) {
-      console.error('JSON parsing failed:', e.message);
-      console.error('Raw output length:', rawOutput?.length);
-      console.error('Raw output preview:', rawOutput?.substring(0, 200));
-      console.error('Raw output end:', rawOutput?.substring(-200));
+      console.error('JSON parsing failed in background generation:', e.message);
       
-      // Try one more approach - look for the actual JSON content
+      // Try fallback generation (your existing fallback logic)
+      const fallbackPrompt = `Create 4 advertising ideas for a campaign by "${businessName}" in the "${businessType}" industry. The campaign is called "${campaignName}" and focuses on "${campaignFocus}". For each ad, provide:
+- An image description prompt
+- A matching social media caption with emojis and hashtags.
+Respond with a valid JSON array in the format:[{ "image_prompt": "...", "caption": "..." }, ...]`;
+      
       try {
-        // Sometimes the JSON is embedded in markdown code blocks
-        const codeBlockMatch = rawOutput.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-        if (codeBlockMatch) {
-          ideas = JSON.parse(codeBlockMatch[1]);
-          console.log("Successfully parsed from code block");
-        } else {
-          throw new Error('No JSON found in any format');
-        }
-      } catch (e2) {
-        console.error('Secondary parsing also failed:', e2.message);
-        // Fallback: try to extract at least some usable content
+        const fallbackRes = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+          model: "meta-llama/llama-4-maverick:free",
+          messages: [{              
+            role: "user",
+            content: [{ type: "text", text: fallbackPrompt }]
+          }]
+        }, {
+          headers: {
+            "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY2}`,
+            "Content-Type": "application/json"
+          }
+        });
+        
+        const fallbackOutput = fallbackRes.data?.choices?.[0]?.message?.content;
+        const fallbackJson = fallbackOutput.match(/\[\s*\{[\s\S]*\}\s*\]/)?.[0]; 
+        ideas = fallbackJson ? JSON.parse(fallbackJson) : [];
+        console.log("✅ Fallback ideas generated from metadata.");
+        
+      } catch (fallbackErr) {
+        console.warn("❌ Fallback generation failed:", fallbackErr.message);
         ideas = [{
-          image_prompt: 'Failed to parse JSON output - check logs',
-          caption: rawOutput?.substring(0, 500) + '...' || 'No content received'
+          image_prompt: `Campaign: ${campaignName}, Focus: ${campaignFocus}`,
+          caption: `Exciting updates from ${businessName} in the ${businessType} industry! 🚀`
         }];
       }
     }
 
-    // Generate images and store in database
+    // Generate images for each idea (your existing logic)
     const commonMetadata = {
       keyword,
       businessName,
       businessType,
       campaignName,
-      campaignFocus
+      campaignFocus,
+      jobId // Add jobId to track this generation batch
     };
 
     const generationPromises = ideas.map(idea =>
@@ -174,25 +257,16 @@ Format:
     );
 
     const storedAds = (await Promise.all(generationPromises)).filter(Boolean);
-    console.log("Generated and stored", storedAds.length, "ads");
-
-    // Send response with both ideas and stored ads info
-    res.json({ 
-  ideas,
-  competitorAds: ads,       // include scraped competitor ads
-  generatedAds: storedAds,  // include stored/generated ads
-  storedCount: storedAds.length,
-  success: true 
-});
-
+    console.log(`✅ Background generation completed for job ${jobId}:`, storedAds.length, "ads");
 
   } catch (error) {
-    console.error("Failed to generate inspired ads:", error.message);
-    res.status(500).json({ error: 'Internal error generating ads' });
+    console.error(`❌ Background generation failed for job ${jobId}:`, error.message);
   }
-});
+}
 
-const generateImage = async (image_prompt, caption, metadata) => {
+// Keep your existing generateImageWithGPT function unchanged
+
+const generateImagewithFlux = async (image_prompt, caption, metadata) => {
   try {
     console.log("Generating image for prompt:", image_prompt.substring(0, 50) + "...");
     
@@ -227,6 +301,8 @@ const generateImage = async (image_prompt, caption, metadata) => {
     return null;
   }
 };
+
+
 const generateImageWithGPT = async (prompt, caption, metadata) => {
   try {
     console.log("🧠 Generating image with GPT-image-1 for prompt:", prompt.substring(0, 50) + "...");

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AdDataService } from './ad-data.service';
+import { AdDataService } from './ad-data-service';
 
 describe('AdDataService', () => {
   let service: AdDataService;
