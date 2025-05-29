@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ad Results Dashboard</title>
+    <title>Competitor Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -12,21 +12,19 @@
           extend: {
             colors: {
               dark: {
-                900: '#0a0a0f',
+                900: '#00000',
                 800: '#1a1a2e',
-                700: '#16213e',
-                600: '#1f2937',
+                700: '#2a2a3e',
+                600: '#3a3a4e',
               },
               accent: {
                 purple: '#8b5cf6',
-                blue: '#3b82f6',
-                cyan: '#06b6d4',
+                blue: '#6366f1',
               }
             },
             animation: {
               'fade-in': 'fadeIn 0.5s ease-in-out',
               'slide-up': 'slideUp 0.6s ease-out',
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
               fadeIn: {
@@ -45,24 +43,22 @@
     
     <style>
       body {
-        background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        background: #0000;
         color: white;
-        overflow-x: hidden;
-      }
-      
-      .glass-effect {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       }
       
       .card-hover {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(42, 42, 62, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
       }
       
       .card-hover:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.3);
+        transform: translateY(-4px);
+        background: rgba(42, 42, 62, 0.8);
+        border-color: rgba(139, 92, 246, 0.3);
       }
       
       .scrollbar-thin::-webkit-scrollbar {
@@ -83,38 +79,15 @@
         background: rgba(139, 92, 246, 0.8);
       }
       
-      .gradient-text {
-        background: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      
-      .floating-orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(1px);
-        animation: float 6s ease-in-out infinite;
-      }
-      
-      @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-      }
     </style>
   </head>
 
-  <body class="font-sans min-h-screen relative">
-    <!-- Floating background orbs -->
-    <div class="floating-orb w-32 h-32 bg-gradient-to-r from-purple-500/20 to-pink-500/20 top-20 left-10"></div>
-    <div class="floating-orb w-24 h-24 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 top-40 right-20" style="animation-delay: -2s;"></div>
-    <div class="floating-orb w-20 h-20 bg-gradient-to-r from-green-500/20 to-teal-500/20 bottom-40 left-1/4" style="animation-delay: -4s;"></div>
-    
+  <body class="font-sans min-h-screen">
     <div class="flex flex-col h-screen">
       <!-- Header Section -->
-      <div class="flex-shrink-0 text-center py-8 px-6 animate-fade-in">
-        <h1 class="text-5xl font-bold mb-4 gradient-text">Ad Results Dashboard</h1>
-        <p class="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
+      <div class="flex-shrink-0 text-center py-12 px-6 animate-fade-in">
+        <h1 class="text-4xl font-bold mb-4 text-white">Competitor Intelligence</h1>
+        <p class="text-gray-400 max-w-2xl mx-auto text-base">
           Discover competitor insights and AI-generated creative solutions for your campaigns
         </p>
       </div>
@@ -122,28 +95,28 @@
       <!-- Competitor Ads Section (Scrollable) -->
       <div class="flex-1 overflow-hidden px-6">
         <div class="h-full flex flex-col">
-          <div class="flex-shrink-0 mb-6 animate-slide-up">
-            <h2 class="text-3xl font-semibold text-center mb-2 flex items-center justify-center gap-3">
-              <span class="text-3xl">🔍</span>
-              <span class="gradient-text">Competitor Intelligence</span>
+          <div class="flex-shrink-0 mb-8 animate-slide-up">
+            <h2 class="text-2xl font-semibold text-center mb-2 flex items-center justify-center gap-3">
+
+              <span class="text-indigo-400">Competitor Intelligence</span>
             </h2>
-            <p class="text-center text-gray-400">Real competitor ads from your market</p>
+            <p class="text-center text-gray-500 text-sm">Real competitor ads from your market</p>
           </div>
           
           <div class="flex-1 overflow-y-auto scrollbar-thin pr-2">
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-6">
               <!-- Loading State -->
               <ng-container *ngIf="loadingCompetitorAds">
-                <div *ngFor="let i of [0,1,2]" class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl shadow-2xl h-96 animate-pulse glass-effect"></div>
+                <div *ngFor="let i of [0,1,2]" class="bg-dark-700 rounded-xl h-96 animate-pulse"></div>
               </ng-container>
               
               <!-- Competitor Ads from API -->
-              <div *ngFor="let ad of competitorAds" class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl shadow-2xl card-hover glass-effect overflow-hidden">
+              <div *ngFor="let ad of competitorAds" class="card-hover overflow-hidden">
                 <!-- Header -->
-                <div class="flex items-center gap-3 px-6 py-4 border-b border-white/10">
-                  <img [src]="ad.page_profile_picture_url" alt="Profile" class="w-12 h-12 rounded-full object-cover" onerror="this.src='assets/images/placeholder-profile.png'">
+                <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-700">
+                  <img [src]="ad.page_profile_picture_url" alt="Profile" class="w-10 h-10 rounded-full object-cover" onerror="this.src='assets/images/placeholder-profile.png'">
                   <div>
-                    <p class="font-semibold text-lg">{{ ad.page_name }}</p>
+                    <p class="font-medium text-white">{{ ad.page_name }}</p>
                     <p class="text-xs text-gray-400 flex items-center gap-1">
                       <span class="w-2 h-2 bg-green-400 rounded-full"></span>
                       Sponsored
@@ -155,8 +128,8 @@
                 <img [src]="ad.images?.[0]?.url" alt="Competitor Ad" class="w-full h-48 object-cover" onerror="this.src='assets/images/placeholder-ad.png'" />
                 
                 <!-- Caption -->
-                <div class="px-6 py-4">
-                  <p class="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{{ ad.body_text }}</p>
+                <div class="px-4 py-4">
+                  <p class="text-sm text-gray-300 leading-relaxed">{{ ad.body_text }}</p>
                 </div>
               </div>
             </div>
@@ -165,34 +138,33 @@
       </div>
 
       <!-- Generated Ads Section (Fixed at Bottom) -->
-      <div class="flex-shrink-0 border-t border-white/10 bg-gradient-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-lg">
-        <div class="px-6 py-6">
-          <div class="mb-4 animate-slide-up">
+      <div class="flex-shrink-0 border-t border-gray-700 bg-dark-800">
+        <div class="px-6 py-8">
+          <div class="mb-6 animate-slide-up">
             <h2 class="text-2xl font-semibold text-center mb-2 flex items-center justify-center gap-3">
-              <span class="text-2xl">🎨</span>
-              <span class="gradient-text">AI Generated Ads</span>
+              <span class="text-indigo-400">AI Generated Ads</span>
             </h2>
-            <p class="text-center text-gray-400 text-sm">Powered by advanced AI creativity</p>
+            <p class="text-center text-gray-500 text-sm">Powered by advanced AI creativity</p>
           </div>
           
           <div class="overflow-x-auto">
-            <div class="flex gap-4 pb-2" style="width: max-content;">
+            <div class="flex gap-6 pb-2" style="width: max-content;">
               <!-- Loading State -->
               <ng-container *ngIf="loadingGeneratedAds">
-                <div *ngFor="let i of [0,1,2]" class="w-80 bg-gradient-to-br from-purple-900/50 to-indigo-900/50 rounded-2xl shadow-2xl h-64 animate-pulse glass-effect flex-shrink-0"></div>
+                <div *ngFor="let i of [0,1,2]" class="w-80 bg-dark-700 rounded-xl h-64 animate-pulse flex-shrink-0"></div>
               </ng-container>
               
               <!-- Generated Ads from API -->
-              <div *ngFor="let ad of generatedAds" class="w-80 bg-gradient-to-br from-purple-900/50 to-indigo-900/50 rounded-2xl shadow-2xl card-hover glass-effect overflow-hidden flex-shrink-0">
+              <div *ngFor="let ad of generatedAds" class="w-80 card-hover overflow-hidden flex-shrink-0">
                 <!-- Header -->
-                <div class="flex items-center gap-3 px-4 py-3 border-b border-white/10">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold text-sm">
+                <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-700">
+                  <div class="w-10 h-10 rounded-full bg-accent-purple flex items-center justify-center font-bold text-sm text-white">
                     AI
                   </div>
                   <div>
-                    <p class="font-semibold">AdVisory AI</p>
+                    <p class="font-medium text-white">AdVisory AI</p>
                     <p class="text-xs text-gray-400 flex items-center gap-1">
-                      <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse-slow"></span>
+                      <span class="w-2 h-2 bg-accent-purple rounded-full"></span>
                       Generated Post
                     </p>
                   </div>
@@ -202,8 +174,8 @@
                 <img [src]="'data:image/png;base64,' + ad.imageBase64" alt="Generated Ad" class="w-full h-40 object-cover" />
                 
                 <!-- Caption -->
-                <div class="px-4 py-3">
-                  <p class="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{{ ad.caption }}</p>
+                <div class="px-4 py-4">
+                  <p class="text-sm text-gray-300 leading-relaxed">{{ ad.caption }}</p>
                 </div>
               </div>
             </div>

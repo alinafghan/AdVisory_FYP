@@ -30,10 +30,43 @@ export class CompetitorAdsComponent implements OnInit {
   constructor(private adDataService: AdDataService) {}
 
   ngOnInit(): void {
-  this.competitorAds = this.adDataService.getCompetitorAds() || [];
-  this.generatedAds = this.adDataService.getGeneratedAds() || [];
-  this.loadingCompetitorAds = false;
-  this.loadingGeneratedAds = false;
+    //JUST THIS
+  // this.competitorAds = this.adDataService.getCompetitorAds() || [];
+  // this.generatedAds = this.adDataService.getGeneratedAds() || [];
+  // this.loadingCompetitorAds = false;
+  // this.loadingGeneratedAds = false;
+  const loadedCompetitors = this.adDataService.getCompetitorAds();
+  const loadedGenerated = this.adDataService.getGeneratedAds();
+
+  this.loadingCompetitorAds = !loadedCompetitors || loadedCompetitors.length === 0;
+  this.loadingGeneratedAds = !loadedGenerated || loadedGenerated.length === 0;
+
+  this.competitorAds = loadedCompetitors || [];
+  this.generatedAds = loadedGenerated || [];
+
+  // Watch for delayed updates (optional: use RxJS Subject for smarter updates)
+  setTimeout(() => {
+    const checkUpdates = () => {
+      const newCompetitors = this.adDataService.getCompetitorAds();
+      const newGenerated = this.adDataService.getGeneratedAds();
+
+      if (this.loadingCompetitorAds && newCompetitors.length > 0) {
+        this.competitorAds = newCompetitors;
+        this.loadingCompetitorAds = false;
+      }
+
+      if (this.loadingGeneratedAds && newGenerated.length > 0) {
+        this.generatedAds = newGenerated;
+        this.loadingGeneratedAds = false;
+      }
+
+      if (this.loadingCompetitorAds || this.loadingGeneratedAds) {
+        setTimeout(checkUpdates, 1000); // poll every second
+      }
+    };
+
+    checkUpdates();
+  }, 500);
   }
 
   objectEntries(obj: any): [string, any][] {

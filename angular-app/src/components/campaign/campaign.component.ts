@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,8 @@ import { AdDataService } from '../../services/ad-data-service';
   imports: [CommonModule, ReactiveFormsModule,HlmSelectContentDirective,HlmSelectOptionComponent, HlmSelectValueDirective,HlmSelectTriggerComponent,HlmDatePickerComponent, HlmFormFieldModule, HlmInputDirective, BrnSelectImports, HlmSelectImports],
 })
 export class CampaignComponent {
+  @Output() campaignCreated = new EventEmitter<void>(); // Add this output event
+
   campaignForm: FormGroup;
      /** The minimum date */
      public minDate = new Date(2023, 0, 1);
@@ -70,7 +72,7 @@ export class CampaignComponent {
 
         const adGenerationPayload = {
         keyword: keywords,
-        businessName: "CatCare",    
+        businessName: "Drop Coffee",    
         businessType: "food",
         // businessLogo: "https://example.com/logo.png", 
         //TODO        
@@ -79,7 +81,7 @@ export class CampaignComponent {
       };
     this.adDataService.setCompetitorAds([]);  // will show loading UI
     this.adDataService.setGeneratedAds([]);
-    this.router.navigate(['/competitor-ads']);
+    this.campaignCreated.emit();
 
     this.http.post('http://localhost:3000/generate-inspired-ads/get', adGenerationPayload).subscribe(
       (res: any) => {

@@ -13,7 +13,9 @@
 
       <!-- Step Content -->
       <ng-container [ngSwitch]="currentStep">
-        <div *ngSwitchCase="0"><app-campaign></app-campaign></div>
+        <div *ngSwitchCase="0">
+          <app-campaign (campaignCreated)="onCampaignCreated()"></app-campaign>
+        </div>
 
         <div *ngSwitchCase="1">
           <app-competitor-ads></app-competitor-ads>
