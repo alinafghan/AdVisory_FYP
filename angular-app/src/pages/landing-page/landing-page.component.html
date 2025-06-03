@@ -1,269 +1,50 @@
-<div class="bg-background">
-    <!-- Navigation Bar -->
+<div class="moving-gradient-page">
+  <section class="section_top">
+    <div class="section_background-wrap">
+      <canvas
+        id="gradient-canvas"
+        data-js-darken-top
+        data-transition-in
+      ></canvas>
+    </div>
+
     <app-navbar></app-navbar>
-    
-    <!-- All Content Inside the Background -->
-    <div class="p-8 mx-4 my-8 rounded-lg h-[calc(100vh-6rem)] flex flex-col items-center justify-center relative overflow-hidden -mt-20">
-        <!-- Centered Text -->
-        <h1 class="text-white text-4xl font-bold text-center mb-6 z-10 leading-tight">
-            One Solution. Zero Hassle. <br> Ad Campaigns Done Right.
-        </h1>
-        
-        <!-- Description Text -->
-        <p class="text-white text-center mb-8 z-10">
-            AdVisory is an AI-powered platform that creates and optimizes <br> social media ads with intelligent content generation and real-time performance tracking.
-        </p>
-        
-        <app-button type="outlined" variant="get-started" label="Get Started" link="/login"></app-button>
-    </div>
+    <div class="gradient-area">
+      <div class="gradient-title-area left-text">
+        <div data-aos="zoom-in" data-aos-duration="2000">
+          <p class="small-heading">AI-powered tool for smarter, faster ad creation and optimization</p>
+        </div>
 
-    <!-- SVG Positioned to Overlap -->
-    <div class="svg-wrapper">
-        <img src="assets/svg/download_animated.svg" alt="Animated SVG" class="svg-animated" />
-    </div>
+        <div data-aos="zoom-in" data-aos-duration="2100">
+          <h1 class="text text-above section-title-1">
+            <span class="headline-line">Empowering businesses through </span>
+            <span class="headline-line">intelligent, data-driven </span>
+            <span class="headline-line">ad campaigns</span>
+          </h1>
+          <div>
+          </div>
+        </div>
 
-    <!-- Accent Color Container Below the Button -->
-    <div class="container-wrapper">
-        <div class="accent-container">
-            <!-- Container Content with Left and Right Sides -->
-            <div class="container-content">
-                <!-- Left Side - Bold Text -->
-                <div class="left-content">
-                    <h2 class="text-white text-2xl font-bold">What can AdVisory do for you?</h2>
-                </div>
-                
-                <div class="right-content">
-                    <div class="text-white">
-                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
-                        <lucide-icon [img]="ArrowRight" class="my-icon" style="margin-right: 10px;"></lucide-icon>
-                        <span>Generate High-Impact Ads Instantly</span>
-                      </div>
-                      
-                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
-                        <lucide-icon [img]="NoAxesColumn" class="my-icon" style="margin-right: 10px;"></lucide-icon>
-                        <span>Optimize Campaigns in Real Time</span>
-                      </div>
-                  
-                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
-                        <lucide-icon [img]="User" class="my-icon" style="margin-right: 10px;"></lucide-icon>
-                        <span>Discover Your Ideal Audience</span>
-                      </div>
-                  
-                      <div class="my-icon-container" style="display: flex; align-items: center; margin-bottom: 20px;">
-                        <lucide-icon [img]="DollarSign" class="my-icon" style="margin-right: 10px;"></lucide-icon>
-                        <span>Maximize ROI with Smart Budgeting</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                 
-
-            </div>
+        <div data-aos="zoom-in" data-aos-duration="2400" data-aos-delay="200">
+          <a href="login" class="cta-button">
+            Create Now
+            <span class="arrow-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </a>
         </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Animated Text Below the Accent Container -->
-    <div class="text-container" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300">
-        <p style="font-size: 32px; text-align: center;">Just one step away from joining the AdVisory Journey</p>
+  <section class="content-section insight-section">
+    <div class="container">
+      <h2 class="text section-title-1">Where <b>Insights</b> Meet <b>Impact</b></h2>
+      <p>AdVisory is an AI-driven social media management and advertising solution built to empower brands with smarter, data-backed decisions. By combining cutting-edge generative AI, real-time analytics, and strategic campaign automation, we help ambitious businesses craft impactful ads, optimize performance, and connect meaningfully with their audiences—turning every campaign into measurable success.</p>
     </div>
-   
-    <div class="carousel-container" style="overflow-x: auto; display: flex; gap: 20px; padding: 20px; -ms-overflow-style: none; scrollbar-width: none;">
-        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300"
-             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
-            <div class="card-content" style="padding: 20px;">
-                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 1</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Some compelling text on card 1 that might entice users to learn more.</p>
-                <button style="background-color: var(--accent); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Learn More</button>
-            </div>
-        </div>
-    
-        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="600"
-             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
-            <div class="card-content" style="padding: 20px;">
-                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 2</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Engaging content for card 2 to highlight key features or benefits.</p>
-                <button style="background-color: var(--secondary); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">View Details</button>
-            </div>
-        </div>
-    
-        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="900"
-             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
-            <div class="card-content" style="padding: 20px;">
-                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 3</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Interesting information on card 3 that could capture user attention.</p>
-                <button style="background-color: var(--destructive); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Read More</button>
-            </div>
-        </div>
-    
-        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200"
-             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
-            <div class="card-content" style="padding: 20px;">
-                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 4</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">More details about card 4 and what it offers to the user.</p>
-                <button style="background-color: var(--accent); color: var(--primary); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Explore</button>
-            </div>
-        </div>
-    
-        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200"
-             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
-            <div class="card-content" style="padding: 20px;">
-                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 5</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">Additional content for the fifth card in the horizontal carousel.</p>
-                <button style="background-color: var(--primary); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Discover</button>
-            </div>
-        </div>
-    
-        <div class="carousel-card" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="1200"
-             style="min-width: 300px; background-color: var(--background); border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease-in-out;">
-            <div class="card-content" style="padding: 20px;">
-                <h3 style="color: var(--primary); margin-bottom: 10px;">Card 6</h3>
-                <p style="color: var(--text-secondary); line-height: 1.6;">The last card in this aesthetic and horizontally scrollable carousel.</p>
-                <button style="background-color: var(--accent); color: var(--background); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 15px;">View All</button>
-            </div>
-        </div>
+  </section>
+  
+  <app-footer></app-footer>
 </div>
-<app-footer></app-footer>
-</div>
-
-<style>
-    /* Position the SVG wrapper */
-    .svg-wrapper {
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-top: -200px; /* Adjust this value to control how much of the SVG is above the container */
-    }
-
-    /* Container wrapper for centering */
-    .container-wrapper {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin-top: -350px; /* This controls how much of the SVG is covered (70%) */
-    }
-
-    /* Adjust size of the SVG */
-    .svg-animated {
-        height: 700px;
-        opacity: 0.8;
-        transition: opacity 1s ease;
-        width: auto;
-    }
-
-    /* Full opacity once scrolled into view */
-    .svg-animated.visible {
-        opacity: 1;
-    }
-
-    /* Accent Color Container */
-    .accent-container {
-        position: relative;
-        background-color: var(--accent);
-        border-radius: 30px 30px 30px 30px;
-        width: 100%;
-        max-width: 1350px;
-        height: 400px;
-        z-index: 5;
-        padding: 40px 0 40px 40px; /* Removed right padding completely */
-    }
-
-    /* Container Content Flex Layout */
-    .container-content {
-        display: flex;
-        justify-content: space-between;
-        height: 100%;
-    }
-
-    /* Left Content Styling */
-    .left-content {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        padding-right: 20px;
-    }
-
-    /* Right Content Styling */
-    .right-content {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end; /* Align content to the right */
-        padding-right: 40px; /* Add padding on the right to push content to the far right */
-    }
-
-    /* List Styling */
-    .list {
-        text-align: right; /* Right-align the text within list items */
-        width: auto; /* Let the list width be determined by content */
-        margin-left: auto; /* Push list to the right */
-    }
-    
-    .list li {
-        margin-bottom: 12px;
-        font-size: 18px;
-        position: relative;
-        padding-left: 30px;
-        list-style-position: inside; /* Position bullets inside */
-    }
-
-    .list li:before {
-        content: "•";
-        position: absolute;
-        left: 0;
-        color: white;
-        font-size: 24px;
-        line-height: 1;
-    }
-
-    .bg-background {
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* Animated Text Styles */
-    .text-container {
-        text-align: center;
-        margin-top: 80px; /* Increased space above the text */
-        margin-bottom: 80px; /* Added more space below the text */
-    }
-
-    .animated-text {
-        font-size: 30px; /* Increased font size */
-        color: var(--text);
-        opacity: 0;
-        transform: translateY(50px); /* Increased the initial translateY value to make the movement more noticeable */
-        animation: fadeInUp 2s ease-out forwards; /* Increased animation duration */
-    }
-
-    /* Keyframes for Animation */
-    @keyframes fadeInUp {
-        0% {
-            opacity: 0;
-            transform: translateY(50px); /* More noticeable movement */
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
-
-<script>
-    // Select the SVG element
-    const svg = document.querySelector('.svg-animated');
-
-    // Create an Intersection Observer
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Add the 'visible' class when the SVG comes into view
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.5 }); // Trigger when 50% of the SVG is visible
-
-    // Observe the SVG
-    observer.observe(svg);
-</script>

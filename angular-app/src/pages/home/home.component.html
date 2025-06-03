@@ -1,64 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homepage</title>
-  </head>
+<div class="flex min-h-screen">
+  <app-topbar class="fixed top-0 left-0 right-0 z-50"></app-topbar>
+  <app-sidebar class="fixed left-0 top-0 bottom-0 z-40"></app-sidebar>
+  <div class="flex-1 flex flex-col ml-64 pt-16 pl-12 pr-8">
+    <div class="mt-8 text-center">
+      <h1 class="text-4xl font-bold mb-4">Welcome, {{ userName }}!</h1>
+      <p class="text-gray-300 max-w-2xl mx-auto">
+        Here's an overview of your social media performance.
+      </p>
+    </div>
 
-  <body class="min-h-screen bg-background text-text">
-    <nav-bar></nav-bar>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 mb-10">
+      <app-card-widget
+        [title]="'Total Campaigns'"
+        [value]="totalCampaigns.toString()"
+        [primaryText]="activeCampaigns + ' active'"
+        [secondaryText]="completedCampaigns + ' completed'"
+        [showManageButton]="true"
+        [routerLink]="['/campaigns']"
+        [manageButtonRouterLink]="['/campaigns']"
+        [manageButtonText]="'View'"
+        [manageButtonIconClass]="'pi pi-arrow-up-right'"
+        [manageButtonBgColorClass]="'bg-blue-500 hover:bg-blue-600'"
+        [manageButtonSizeClass]="'px-3 py-1 text-sm'"
+        [manageButtonTooltip]="'View all campaigns'">
+      </app-card-widget>
 
-    <div class="flex">
-      <app-sidebar></app-sidebar>
-      <div id="main-body" class="flex-1 flex flex-col ml-20 mr-20">
-        <!-- Title and Caption -->
-        <div class="mt-20">
-          <h1 class="text-5xl text-text font-bold">Welcome.</h1>
-          <a href="/pipeline">
-            <div class="flex flex-row mt-5 items-center">
-              <button class="text-text mr-3 underline-offset-4 underline">
-                Get Started
-              </button>
-              <lucide-icon
-                [img]="ArrowRight"
-                class="my-icon w-5 h-5 text-text"
-              ></lucide-icon>
+      <app-card-widget
+        [title]="'Total Ads'"
+        [value]="totalAds.toString()"
+        [primaryText]="'Currently running'"
+        [secondaryText]="'Across all campaigns'"
+        [showManageButton]="true"
+        [routerLink]="['/ads']"
+        [manageButtonRouterLink]="['/ads']"
+        [manageButtonText]="'View'"
+        [manageButtonIconClass]="'pi pi-arrow-up-right'"
+        [manageButtonBgColorClass]="'bg-blue-500 hover:bg-blue-600'"
+        [manageButtonSizeClass]="'px-3 py-1 text-sm'"
+        [manageButtonTooltip]="'View all ads'">
+      </app-card-widget>
+
+      <app-card-widget
+        [title]="'Total Spend'"
+        [value]="'$' + (totalSpend | number:'1.0-0')"
+        [primaryText]="'Remaining: $' + (remainingBudget | number:'1.0-0')"
+        [secondaryText]="'Budget management'"
+        [showManageButton]="true"
+        [routerLink]="['/budget']"
+        [manageButtonRouterLink]="['/budget']"
+        [manageButtonText]="'Manage'"
+        [manageButtonIconClass]="'pi pi-arrow-up-right'"
+        [manageButtonBgColorClass]="'bg-green-500 hover:bg-green-600'"
+        [manageButtonSizeClass]="'px-3 py-1 text-sm'"
+        [manageButtonTooltip]="'Manage budget'">
+      </app-card-widget>
+
+      <app-card-widget
+        [title]="'Overall Clicks'"
+        [value]="(overallClicks | number:'1.0-0') || '0'"
+        [primaryText]="overallClicksChange"
+        [secondaryText]="'Performance tracking'"
+        [showManageButton]="true"
+        [routerLink]="['/performance']"
+        [manageButtonRouterLink]="['/performance']"
+        [manageButtonText]="'View'"
+        [manageButtonIconClass]="'pi pi-arrow-up-right'"
+        [manageButtonBgColorClass]="'bg-blue-500 hover:bg-blue-600'"
+        [manageButtonSizeClass]="'px-3 py-1 text-sm'"
+        [manageButtonTooltip]="'View performance details'">
+      </app-card-widget>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      <div class="bg-gray-800 rounded-lg border border-gray-700">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-white">Campaign Performance</h3>
+            <span class="bg-gray-600 text-white px-2 py-1 rounded text-xs">Last 30 Days</span>
+          </div>
+          <div class="h-64 bg-gray-900 rounded-lg flex items-center justify-center text-gray-400">
+            <div class="text-center">
+              <p class="text-white font-medium mb-2">Line Chart Placeholder</p>
+              <p class="text-sm text-gray-400">Performance metrics visualization</p>
             </div>
-          </a>
+          </div>
         </div>
-        <!-- Cards Section -->
-        <!-- <hlm-tabs tab="account" class="block max-w-3xl mx-auto">
-          <hlm-tabs-list
-            class="w-full grid grid-cols-6"
-            aria-label="tabs example"
-          >
-            <button hlmTabsTrigger="ads">Generate Ads</button>
-            <button hlmTabsTrigger="prodimg">Use Product Images</button>
-            <button hlmTabsTrigger="caption">Generate Captions</button>
-            <button hlmTabsTrigger="budget">Allocate SmartBudget</button>
-            <button hlmTabsTrigger="trends">Trends</button>
-            <button hlmTabsTrigger="audience">Audience Analysis</button>
-          </hlm-tabs-list>
-          <div hlmTabsContent="ads">Generate Ads</div>
-          <div hlmTabsContent="prodimg">
-            Upload your own product images and customize your ad creatives
+      </div>
+
+      <div class="bg-gray-800 rounded-lg border border-gray-700">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-white">Budget Allocation</h3>
+            <span class="bg-gray-600 text-white px-2 py-1 rounded text-xs">By Channel</span>
           </div>
-          <div hlmTabsContent="caption">
-            Auto-generate a caption to go along with your ad creative
+          <div class="h-64 bg-gray-900 rounded-lg flex items-center justify-center text-gray-400">
+            <div class="text-center">
+              <p class="text-white font-medium mb-2">Pie Chart Placeholder</p>
+              <p class="text-sm text-gray-400">Budget distribution visualization</p>
+            </div>
           </div>
-          <div hlmTabsContent="budget">
-            Allocate your budget among all ads within your campaign to optimize
-            ROI
-          </div>
-          <div hlmTabsContent="trends">
-            Discover latest market trends in your industry
-          </div>
-          <div hlmTabsContent="audience">
-            Obtain insights on the core audience segment
-          </div>
-        </hlm-tabs> -->
+        </div>
       </div>
     </div>
-  </body>
-</html>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 pb-8">
+      <div class="bg-gray-800 rounded-lg border border-gray-700">
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-white mb-6">Quick Actions</h3>
+          <div class="flex flex-col space-y-3">
+            <app-custom-button
+              [label]="'Create New Campaign'"
+              [icon]="'pi pi-plus'"
+              [routerLink]="['/campaigns/new']"
+              [tooltipText]="'Create a new advertising campaign'"
+              tooltipPosition="top"
+              [buttonClass]="'p-button-outlined text-white border-gray-600 hover:bg-navy-light transition px-6 py-3 text-sm w-full'"
+              [buttonStyles]="{ 'background-color': 'transparent' }"
+              [iconPosition]="'left'">
+            </app-custom-button>
+            
+            <app-custom-button
+              [label]="'Generate Ads & Creatives'"
+              [icon]="'pi pi-image'"
+              [routerLink]="['/ads/generate']"
+              [tooltipText]="'Generate new ad creatives'"
+              tooltipPosition="top"
+              [buttonClass]="'p-button-outlined text-white border-gray-600 hover:bg-navy-light transition px-6 py-3 text-sm w-full'"
+              [buttonStyles]="{ 'background-color': 'transparent' }"
+              [iconPosition]="'left'">
+            </app-custom-button>
+            
+            <app-custom-button
+              [label]="'Allocate Smart Budget'"
+              [icon]="'pi pi-dollar'"
+              [routerLink]="['/budget/allocate']"
+              [tooltipText]="'Manage and allocate campaign budgets'"
+              tooltipPosition="top"
+              [buttonClass]="'p-button-outlined text-white border-gray-600 hover:bg-navy-light transition px-6 py-3 text-sm w-full'"
+              [buttonStyles]="{ 'background-color': 'transparent' }"
+              [iconPosition]="'left'">
+            </app-custom-button>
+            
+            <app-custom-button
+              [label]="'View Audience Report'"
+              [icon]="'pi pi-users'"
+              [routerLink]="['/audience/report']"
+              [tooltipText]="'View detailed audience analytics'"
+              tooltipPosition="top"
+              [buttonClass]="'p-button-outlined text-white border-gray-600 hover:bg-navy-light transition px-6 py-3 text-sm w-full'"
+              [buttonStyles]="{ 'background-color': 'transparent' }"
+              [iconPosition]="'left'">
+            </app-custom-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 rounded-lg border border-gray-700">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-white">Recent Activity</h3>
+            <span class="bg-green-500 text-white px-2 py-1 rounded text-xs">Latest Updates</span>
+          </div>
+          <div class="space-y-4">
+            <div *ngFor="let activity of recentActivities" class="p-3 rounded-md bg-gray-900 hover:bg-gray-700 transition-colors">
+              <div class="flex items-center mb-1">
+                <span class="text-xs font-semibold text-blue-400 mr-2">{{ activity.date | date:'MMM d' }}</span>
+                <div class="flex-grow h-px bg-blue-400 opacity-20"></div>
+              </div>
+              <p class="text-sm text-gray-300">{{ activity.description }}</p>
+            </div>
+            <div *ngIf="recentActivities.length === 0" class="p-4 text-center">
+              <p class="text-gray-400">No recent activity to display</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,9 +5,9 @@ import { CommonModule } from '@angular/common';
 import { Observable, of, throwError, Subscription, Subject } from 'rxjs';
 import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { AudienceReport } from '../../interfaces/audience-report';
 import { Pipe, PipeTransform } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AudienceReport } from '../../interfaces/audience-report';
 
 
 @Pipe({
@@ -21,108 +21,27 @@ export class ReplaceUnderscorePipe implements PipeTransform {
 }
 
 @Component({
-  // Changed selector name to reflect its reusable purpose
   selector: 'app-audience-report',
-  template: `
-    <div *ngIf="loading" class="text-center p-6 text-text">
-      <p>Loading audience report...</p>
-    </div>
-
-    <div *ngIf="error && !loading" class="text-red-500 bg-red-100 border border-red-400 rounded p-4 mb-6">
-      <p>Error: {{ error }}</p>
-    </div>
-
-    <div *ngIf="!loading && !error && audienceReport?.['analysis'] as analysis" class="report-container p-6 bg-background text-text shadow-md">
-
-      <h2 class="text-3xl font-bold text-center text-primary mb-8">Audience Analysis Report</h2>
-
-      <div *ngIf="analysis.summary as summary" class="report-section mb-8 p-6 bg-background border border-primary rounded-md shadow-sm">
-        <h3 class="text-xl font-semibold text-primary border-b-2 border-primary/50 pb-2 mb-4">Summary</h3>
-        <div class="summary-item mb-3 leading-relaxed flex items-start">
-          <strong class="mr-2 text-primary inline-block min-w-[150px]">Primary Persona:</strong>
-          <span class="text-text">{{ summary.primary_persona || 'N/A' }}</span>
-        </div>
-        <div class="summary-item mb-3 leading-relaxed flex items-start">
-          <strong class="mr-2 text-primary inline-block min-w-[150px]">Visual Style Suggestion:</strong>
-          <span class="text-text">{{ summary.visual_style || 'N/A' }}</span>
-        </div>
-        <div class="summary-item mb-3 leading-relaxed flex items-start">
-          <strong class="mr-2 text-primary inline-block min-w-[150px]">Domain:</strong>
-          <span class="text-text">{{ summary.domain || 'N/A' }}</span>
-        </div>
-        <div class="summary-item mb-3 leading-relaxed flex items-start">
-          <strong class="mr-2 text-primary inline-block min-w-[150px]">Detected Caption Intent:</strong>
-          <span class="text-text">{{ summary.caption || 'N/A' }}</span>
-        </div>
-        <div class="summary-item mb-3 leading-relaxed flex items-start">
-          <strong class="mr-2 text-primary inline-block min-w-[150px]">Identified Trends:</strong>
-          <span *ngIf="summary.trends?.length > 0; else noTrends" class="text-text">
-            {{ summary.trends.join(', ') }}
-          </span>
-          <ng-template #noTrends><span class="text-text">N/A</span></ng-template>
-        </div>
-        <div class="summary-item mb-0 leading-relaxed flex items-start">
-          <strong class="mr-2 text-primary inline-block min-w-[150px]">Identified Themes:</strong>
-          <span *ngIf="summary.themes?.length > 0; else noThemes" class="text-text">
-            {{ summary.themes.join(', ') }}
-          </span>
-          <ng-template #noThemes><span class="text-text">N/A</span></ng-template>
-        </div>
-      </div>
-
-      <div *ngIf="analysis['demographics'] as demographics" class="report-section mb-8 p-6 bg-background border border-primary rounded-md shadow-sm">
-        <h3 class="text-xl font-semibold text-primary border-b-2 border-primary/50 pb-2 mb-4">Detailed Demographics</h3>
-
-        <div *ngFor="let category of getSortedKeys(demographics)" class="demographic-category mb-6">
-
-          <h4 class="text-lg font-medium text-accent mt-6 mb-3">{{ category | titlecase | replaceUnderscore }}</h4>
-
-          <ng-container *ngIf="isObject(demographics[category]); else singleValue">
-            <div class="chart-container p-4 bg-background border border-primary/30 rounded-md shadow-inner">
-              <ngx-charts-bar-vertical
-                [view]="[700, 300]"
-                [results]="getNgxChartData(demographics[category])"
-                [xAxis]="true"
-                [yAxis]="true"
-                [legend]="true"
-                [showXAxisLabel]="true"
-                [showYAxisLabel]="true"
-                [xAxisLabel]="'Demographic Group'"
-                [yAxisLabel]="'Percentage'"
-                [colorScheme]="colorScheme">
-              </ngx-charts-bar-vertical>
-            </div>
-          </ng-container>
-
-          <ng-template #singleValue>
-              <p class="mb-3 py-2 text-text/70 italic">{{ demographics[category] }}</p>
-          </ng-template>
-
-        </div>
-          <p *ngIf="getSortedKeys(demographics).length === 0" class="text-text/70 italic">No demographic categories found.</p>
-      </div>
-
-      <p *ngIf="!analysis.summary && !analysis['demographics']" class="text-text/70 italic text-center">Analysis data is incomplete.</p>
-
-      </div>
-    `,
+  templateUrl: './audience-report.component.html', // Use templateUrl if HTML is in separate file
   styleUrls: ['./audience-report.component.css'],
   standalone: true,
-  // Only import dependencies needed for the report display itself
   imports: [CommonModule, ReplaceUnderscorePipe, NgxChartsModule],
-  // Keep AudienceService provided here, or provide it higher up if preferred
   providers: [AudienceService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AudienceReportComponent implements OnInit, OnDestroy, OnChanges {
 
-  @Input() adId: string | null = null; // Input property
+  @Input() adId: string | null = null;
 
-  audienceReport: AudienceReport | null | { [key: string]: any } = null;
+  audienceReport: AudienceReport | null = null;
+  xaiReport: AudienceReport | null = null; // New property to store XAI specific report
   loading: boolean = false;
+  loadingXAI: boolean = false; // New loading state for XAI
   error: string = '';
+  xaiError: string = ''; // New error state for XAI
+  showXAI: boolean = false;
 
-  view: [number, number] = [700, 300]; // Consider making this an @Input() too
+  view: [number, number] = [700, 300];
 
   colorScheme = {
     domain: [
@@ -137,24 +56,20 @@ export class AudienceReportComponent implements OnInit, OnDestroy, OnChanges {
     private audienceService: AudienceService
   ) {}
 
-  // React to input property changes
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['adId'] && changes['adId'].currentValue !== changes['adId'].previousValue) {
         console.log('Ad ID input changed, loading report:', this.adId);
-        // Trigger loadReport only if the adId is valid
+        this.resetReportStates(); // Reset all states
         if (this.adId) {
-           this.loadReport();
+           this.loadReport(); // Load main report
         } else {
            this.error = 'Ad ID not provided.';
-           this.audienceReport = null;
-           this.loading = false;
         }
     }
   }
 
   ngOnInit(): void {
       console.log('AudienceReportComponent initialized');
-      // Load the report if adId is already provided on init
       if (this.adId) {
         this.loadReport();
       }
@@ -165,24 +80,31 @@ export class AudienceReportComponent implements OnInit, OnDestroy, OnChanges {
     this.unsubscribe$.complete();
   }
 
+  private resetReportStates(): void {
+    this.loading = false;
+    this.loadingXAI = false;
+    this.error = '';
+    this.xaiError = '';
+    this.audienceReport = null;
+    this.xaiReport = null; // Clear XAI report too
+    this.showXAI = false;
+  }
+
   private loadReport(): void {
     if (!this.adId) {
       this.error = 'Ad ID is missing.';
-      this.audienceReport = null;
-      this.loading = false;
       console.warn(this.error);
       return;
     }
 
     this.loading = true;
     this.error = '';
-    this.audienceReport = null;
 
-    this.audienceService.getAudienceReport(this.adId)
+    this.audienceService.getAudienceReport(this.adId) // Call without xai=true
       .pipe(
         map(response => {
-          if (!response || typeof response !== 'object') {
-            throw new Error('Invalid API response format');
+          if (!response || typeof response !== 'object' || !response['analysis']) {
+            throw new Error('Invalid API response format or missing analysis data');
           }
           return response;
         }),
@@ -196,20 +118,67 @@ export class AudienceReportComponent implements OnInit, OnDestroy, OnChanges {
       )
       .subscribe(report => {
         this.loading = false;
-        if (report && report['analysis']) {
+        if (report) {
           this.audienceReport = report;
-          console.log('API Response stored:', report);
-        } else if (report === null && !this.error) {
+          console.log('Main API Response stored:', report);
+        } else if (!this.error) {
            this.error = 'Received empty report data.';
            console.warn('Received null report data.');
-        } else if (report && !report['analysis']){
-             this.error = 'API response received but missing "analysis" data.';
-             console.warn('API response missing analysis:', report);
         }
       });
   }
 
-  // Keep these helper methods
+  loadXAIReport(): void {
+    if (!this.adId) {
+      this.xaiError = 'Ad ID is missing for XAI report.';
+      return;
+    }
+
+    // Only load XAI report if it hasn't been loaded already
+    if (this.xaiReport && this.xaiReport['analysis']?.xai?.heatmap) {
+      this.showXAI = true; // Just show it if already loaded
+      return;
+    }
+
+    this.loadingXAI = true;
+    this.xaiError = '';
+
+    this.audienceService.getAudienceReport(this.adId, true) // Call with xai=true
+      .pipe(
+        map(response => {
+          if (!response || typeof response !== 'object' || !response['analysis'] || !response['analysis'].xai?.heatmap) {
+            throw new Error('XAI report invalid or missing heatmap data');
+          }
+          return response;
+        }),
+        catchError((err) => {
+          this.xaiError = `Failed to load XAI report: ${err?.message || 'Unknown error'}`;
+          console.error('Error fetching XAI report:', err);
+          this.loadingXAI = false;
+          return of(null);
+        }),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(report => {
+        this.loadingXAI = false;
+        if (report) {
+          this.xaiReport = report;
+          this.showXAI = true; // Show XAI section upon successful load
+          console.log('XAI API Response stored:', report);
+        } else if (!this.xaiError) {
+           this.xaiError = 'Received empty XAI report data.';
+           console.warn('Received null XAI report data.');
+        }
+      });
+  }
+
+  toggleXAISection(): void {
+    this.showXAI = !this.showXAI;
+    if (this.showXAI) {
+      this.loadXAIReport(); // Load XAI report only when showing the section
+    }
+  }
+
   getSortedKeys(obj: any): string[] {
       if (!obj || typeof obj !== 'object') {
           return [];

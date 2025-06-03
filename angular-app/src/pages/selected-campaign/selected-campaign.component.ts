@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from '../../layout/component/app.sidebar';
+import { AppTopbar } from '../../layout/component/app.topbar';
 import { PlusIcon, PenLine, User, Plus  } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { CustomButtonComponent } from '../../layout/widgets/button-icon.component';
 
 @Component({
   selector: 'app-selected-campaign',
-  imports: [SidebarComponent, LucideAngularModule, CommonModule, RouterModule],
+  imports: [SidebarComponent, LucideAngularModule, CommonModule, RouterModule, AppTopbar, ButtonModule, TooltipModule, CustomButtonComponent],
   templateUrl: './selected-campaign.component.html'
 })
 export class SelectedCampaignComponent implements OnInit {

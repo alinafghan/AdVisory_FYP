@@ -1,24 +1,323 @@
-.carousel-container {
-    overflow-x: auto;
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    -ms-overflow-style: none; /* Internet Explorer and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-  
-.carousel-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Opera */
-  }
+/* Complete reset of styles to ensure proper edge-to-edge gradient */
 
-.animated-text {
-    font-size: 30px; /* Increased font size */
-    color: var(--text);
-    opacity: 0;
-    transform: translateY(50px); /* Increased the initial translateY value to make the movement more noticeable */
-    animation: fadeInUp 2s ease-out forwards; /* Increased animation duration */
-    animation-delay: 0.5s; /* Added delay for the animation to start */
-    font-weight: bold; /* Added bold font weight */
-    text-align: center; /* Centered the text */ 
+/* :root {
+  --section-gap: 24px;
+  --section-skew-Y: 8deg;  Reduced skew angle to minimize corner gap issues 
+   --text-dark: #111827;
+  --background-white: #ffffff;
+} */
+
+/* Global resets to prevent default margins/padding */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--background-white);
+  color: var(--text-dark);
 }
 
+.moving-gradient-page {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling */
+}
+
+/* Hero section with gradient */
+.section_top {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  /* Increased from 100vh to 120vh for more height */
+  min-height: 725px;
+  /* Increased minimum height */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  margin-bottom: -2px;
+  /* Remove any gap at the bottom */
+}
+
+/* Background gradient wrapper - positioned absolutely to cover the entire section */
+.section_background-wrap {
+  position: absolute;
+  top: -20%;
+  /* Move it up much further */
+  left: -20%;
+  /* Extend much further beyond the left edge */
+  right: -20%;
+  /* Extend much further beyond the right edge */
+  width: 140%;
+  /* Make it significantly wider than the viewport */
+  height: 180%;
+  /* Much taller to ensure complete coverage */
+  transform: skewY(var(--section-skew-Y));
+  transform-origin: left bottom;
+  z-index: 1;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Canvas styling to ensure it fills the entire container */
+#gradient-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+/* Content area with proper padding */
+.gradient-area {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* Align content to the top */
+  padding: 45px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.gradient-title-area {
+  position: relative;
+  z-index: 10;
+  margin-top: 0;
+  /* Reset margin-top */
+  margin-left: 0;
+  margin-right: auto;
+  width: fit-content;
+  text-align: left;
+  /* Default to left alignment, overridden by left-text */
+}
+
+.gradient-title-area.left-text {
+  text-align: left;
+  /* Align text to the left */
+  margin-left: 0;
+  /* Remove auto left margin */
+  margin-right: auto;
+  /* Keep auto right margin for potential width adjustments */
+  width: fit-content;
+  /* Adjust width to content */
+}
+
+/* Text styling */
+.text {
+  line-height: 1;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.section-title-1 {
+  white-space: normal !important; /* Override any white-space settings */
+  line-height: 1.2; /* Add some breathing room between lines */
+  display: block; /* Ensure proper block display */
+  width: auto; /* Let the width be determined by content */
+}
+
+.headline-line {
+  display: block; /* Force each line to be on its own row */
+}
+
+/* This will make sure the text flows as sentences rather than breaking after each word */
+.section-title-1 span {
+  display: inline; /* Make spans inline by default */
+}
+
+/* Then explicitly break where needed */
+.line-break {
+  display: block;
+  margin-top: 0.1em; /* Small spacing between lines */
+}
+
+/* Responsive adjustments for font size */
+@media (min-width: 450px) {
+  .section-title-1 {
+    font-size: 30px;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-title-1 {
+    font-size: 40px;
+  }
+  /* ... other rules ... */
+}
+
+@media (min-width: 1024px) {
+  .section-title-1 {
+    font-size: 50px;
+    width: 600px;
+  }
+}
+
+.text-above {
+  position: relative;
+  z-index: 3;
+}
+
+.text-under {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  /* Add or ensure the color is set to white */
+  color: white;
+}
+
+.text-under-blended {
+  mix-blend-mode: color-burn;
+  opacity: 0.7;
+}
+
+.text-under-overlay {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: translateY(5px);
+  /* Adjust vertical position */
+}
+
+.subtitle {
+  margin-top: 16px;
+  font-size: 24px;
+  font-weight: 400;
+  color: white;
+  /* Change text color to white for better visibility */
+  max-width: 600px;
+}
+
+/* Content section (white background) */
+.content-section {
+  background-color: var(--background-white);
+  position: relative;
+  z-index: 5;
+  padding: 60px var(--section-gap);
+  min-height: 40vh;
+  /* Give some height to the content section */
+  margin-top: -10px;
+  /* Much more aggressive negative margin to eliminate gap */
+  box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.15);
+  /* Stronger shadow to hide any remaining line */
+  position: relative;
+}
+
+/* Pseudo-element to cover any potential gaps */
+.content-section::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background-color: var(--background-white);
+  z-index: 4;
+}
+
+app-navbar {
+  position: relative;
+  /* Or absolute, fixed, or sticky depending on desired behavior */
+  z-index: 3;
+  /* Make sure this is higher than gradient-area's z-index (2) */
+  width: 100%;
+  /* Ensure it takes up full width */
+  /* You might also want padding or margin here to position it */
+  /* top: 0; left: 0; */
+  /* Use these if position is absolute or fixed */
+}
+
+.lowercase-text {
+  text-transform: none;
+  /* Override the uppercase from the .text class */
+}
+
+.small-heading {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 12px;
+}
+
+.cta-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--accent); /* Orange/red color from screenshot */
+  color: white;
+  text-decoration: none;
+  padding: 14px 18px;
+  border-radius: 20px; /* Fully rounded corners */
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin-top: 32px; /* Space between headline and button */
+  transition: all 0.3s ease;
+  width: fit-content; /* Only as wide as needed */
+  min-width: 220px; /* Minimum width */
+}
+
+/* Arrow icon container */
+.arrow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  border-radius: 50%; /* Circular background */
+  width: 36px;
+  height: 36px;
+  margin-left: 12px;
+  transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.cta-button:hover {
+  background-color: var(); /* Slightly darker on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+}
+
+.cta-button:hover .arrow-icon {
+  background-color: rgba(255, 255, 255, 0.3); /* Brighter on hover */
+  transform: translateX(3px); /* Arrow shifts right slightly */
+}
+
+.insight-section {
+  margin-top: 100px; /* Adjust this value to control the spacing */
+}
+/* In your CSS file */
+
+.insight-section .section-title-1 {
+  white-space: nowrap !important; /* Prevent text from wrapping */
+  overflow: hidden;             /* Hide any overflowing content */
+  text-overflow: ellipsis;      /* Optionally show an ellipsis if it still overflows */
+  width: auto;
+}
+/* ... rest of your CSS ... */
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .cta-button {
+    padding: 16px 20px;
+    font-size: 16px;
+    margin-top: 28px;
+  }
+  
+  .arrow-icon {
+    width: 32px;
+    height: 32px;
+  }
+}

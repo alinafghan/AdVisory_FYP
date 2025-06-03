@@ -1,26 +1,42 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, AfterViewInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { ButtonComponent } from '../../components/button/button.component';
-import { LucideAngularModule, FileIcon, ChartBar, ChartNoAxesColumn, User, ArrowRight, DollarSign } from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
+
+declare const Gradient: any;
 
 @Component({
-  standalone: true,
-  selector: 'app-home',
-  imports: [RouterModule, CommonModule, NavbarComponent, FooterComponent, ButtonComponent, LucideAngularModule], 
+  selector: 'app-landing-page',
   templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.css',
+  styleUrls: ['./landing-page.component.css'],
+  standalone: true,
+  imports: [
+    FooterComponent,
+    NavbarComponent,
+    LucideAngularModule
+  ]
 })
-export class LandingPageComponent {
-  logoPath = 'assets/logos/advisory-logo.png';
-  readonly FileIcon = FileIcon;
-  readonly ChartBar = ChartBar;
-  readonly NoAxesColumn = ChartNoAxesColumn;
-  readonly User = User;
-  readonly ArrowRight = ArrowRight;
-  readonly DollarSign = DollarSign;
+export class LandingPageComponent implements AfterViewInit {
+  gradientInstance: any;
+
+  // Tilt angle matching the CSS --section-skew-Y (positive now)
+  tiltAngleDegrees = 12; // CHANGED: from -12 to 12 to match updated CSS
+
+  ngAfterViewInit(): void {
+    // Initialize the gradient with custom settings
+    this.gradientInstance = new Gradient();
+
+    // Set angle (convert degrees to radians)
+    // We don't need to add 180 degrees anymore, as we're fixing it in CSS
+    this.gradientInstance.angle = this.tiltAngleDegrees * Math.PI / 180;
+
+    // Optional customizations for the gradient effect
+    // this.gradientInstance.amp = 50; // Amplitude of the noise - try different values
+    // this.gradientInstance.speed = 0.07; // Speed of the animation
+    // this.gradientInstance.freqX = 0.012; // Frequency of the horizontal movement
+    // this.gradientInstance.freqY = 0.012; // Frequency of the vertical movement
+
+    // Initialize the gradient on the canvas
+    this.gradientInstance.initGradient('#gradient-canvas');
+  }
 }
-
-

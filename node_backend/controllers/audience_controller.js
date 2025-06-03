@@ -1,8 +1,10 @@
+// audience_controller.js
 const AdImageModel = require("../models/ad_image_model");
 const axios = require("axios");
 
 exports.analyzeAudience = async (req, res) => {
-  const adImageId = req.params.adId; // This is the _id of the AdImage
+  const adImageId = req.params.adId;
+  const getXaiReport = req.query.xai === 'true'; // Check for ?xai=true in the URL
 
   try {
     const adImage = await AdImageModel.findById(adImageId);
@@ -13,14 +15,21 @@ exports.analyzeAudience = async (req, res) => {
     }
 
     const imageData = adImage.imageData; // Base64 encoded image data
+    let flaskApiResponse;
 
-    // Send the base64 image data to your Flask API
-    const flaskApiResponse = await axios.post(
-      "http://localhost:5000/analyze",
-      {
-        image_data: imageData, // Assuming your Flask endpoint expects 'image_data'
-      }
-    );
+    if (getXaiReport) {
+        console.log(`Sending image for XAI analysis to Flask for ad ID: ${adImageId}`);
+        flaskApiResponse = await axios.post(
+            "http://localhost:5000/analyze-xai", // New XAI endpoint in Flask
+            { image_data: imageData }
+        );
+    } else {
+        console.log(`Sending image for standard analysis to Flask for ad ID: ${adImageId}`);
+        flaskApiResponse = await axios.post(
+            "http://localhost:5000/analyze", // Original standard analysis endpoint
+            { image_data: imageData }
+        );
+    }
 
     if (!flaskApiResponse.data) {
       return res
@@ -28,12 +37,11 @@ exports.analyzeAudience = async (req, res) => {
         .json({ error: "Failed to get analysis from Flask API" });
     }
 
-    // Send the analysis report back to the frontend
     res.status(200).json(flaskApiResponse.data);
   } catch (error) {
-    console.error("Error analyzing audience:", error);
+    console.error("Error analyzing audience:", error.response ? error.response.data : error.message);
     res
       .status(500)
-      .json({ error: "Internal server error during analysis" });
+      .json({ error: "Internal server error during analysis", details: error.response ? error.response.data : error.message });
   }
 };

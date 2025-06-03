@@ -1,51 +1,28 @@
 import os
 import logging
-from flask import Flask, request, jsonify  # Flask-related imports
-from flask_cors import CORS
-##first do pip install flask and xgboost
 import base64
-from io import BytesIO
-import os
-import xgboost as xgb
+import io
 import numpy as np
 import requests
-from flask_cors import CORS
-from flask import Flask, request, jsonify, send_file
 import pandas as pd
-from trends_analyzer import TrendAnalyzer  
-import logging
-from gradio_client import Client
-from transformers import pipeline
-from dotenv import load_dotenv
-import openai
-from rembg_helper import remove_background
-from diffusers import DiffusionPipeline
-from PIL import Image
-import replicate
-import io
-import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from PIL import Image
-from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
+import xgboost as xgb
 import cvxpy as cp
 from scipy.optimize import curve_fit
+from PIL import Image
+from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+from gradio_client import Client
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+from dotenv import load_dotenv
+import openai
+import torch
+import replicate
 
-app = Flask(__name__)
-import requests  #  For making HTTP requests
-import pandas as pd # For working with data.
-import numpy as np # For numerical computation
-import xgboost as xgb # For using XGBoost
-from gradio_client import Client # For using Gradio
-from dotenv import load_dotenv # For loading environment variables.
-import openai # For using OpenAI.
-import torch # For PyTorch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline # For Hugging Face Transformers
-import base64 # For encoding and decoding base64
-from PIL import Image # For image processing
-import io # For handling byte streams
-import matplotlib.pyplot as plt # For plotting (if needed)
-from audience_predictor import SmartAudiencePredictor 
+# Assuming these are your local modules
+from audience_predictor import SmartAudiencePredictor
+from rembg_helper import remove_background
+# from trends_analyzer import TrendAnalyzer # Uncomment if you enable trends again
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -56,8 +33,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 CORS(app)  #  Apply CORS to all routes
 audience_predictor = SmartAudiencePredictor()
-
-CORS(app)  
 
 # # Initialize the TrendAnalyzer
 # analyzer = TrendAnalyzer()
@@ -627,18 +602,19 @@ def allocate_budget():
     res3 = run_optimization(alpha, beta, B)
     return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)
 
+@app.route('/analyze', methods=['POST']) 
 
-
-@app.route('/analyze', methods=['POST'])  # Make sure route is in app.py
-def analyze_audience():  #  Make sure function is app.py
+def analyze_audience(): 
+    
     try:
         data = request.get_json()
+        
         image_data = data['image_data']
+        
+        header, encoded = image_data.split(",",1) 
 
-        # Extract the base64 data *without* the header
-        header, encoded = image_data.split(",",
-                                           1)  # Split the header from the base64 data
         image_bytes = base64.b64decode(encoded)
+
         image = Image.open(io.BytesIO(image_bytes))
 
         # Perform analysis using the SmartAudiencePredictor instance
@@ -654,6 +630,42 @@ def analyze_audience():  #  Make sure function is app.py
         error_message = f"Error analyzing audience: {str(e)}"
         print(error_message)  # Log the error for debugging
         return jsonify({'error': error_message}), 500
-        
+
+
+@app.route('/analyze-xai', methods=['POST'])
+def analyze_image_xai():
+    try:
+        data = request.get_json()
+        image_data_b64 = data.get('image_data')
+
+        if not image_data_b64:
+            app.logger.error("/analyze-xai: Missing image_data.")
+            return jsonify({'error': 'Missing image_data'}), 400
+
+        header, encoded = image_data_b64.split(",", 1)
+        image_bytes = base64.b64decode(encoded)
+        image = Image.open(io.BytesIO(image_bytes))
+
+        results = audience_predictor.generate_report(image, generate_xai=True)
+
+        # --- CORRECTED ACCESS TO HEATMAP DATA ---
+        heatmap_data = results.get("analysis", {}).get("xai", {}).get("heatmap")
+
+        if heatmap_data:
+            app.logger.debug(f"/analyze-xai: Heatmap data found and extracted. Length: {len(heatmap_data)}")
+        else:
+            app.logger.warning("/analyze-xai: No heatmap data or empty heatmap in results (after .get()). Check nesting.")
+
+        return jsonify({
+            'message': 'XAI analysis successful',
+            'analysis': results
+        }), 200
+    except Exception as e:
+        error_message = f"Error in analyze_image_xai route: {str(e)}"
+        app.logger.error(f"Error in /analyze-xai route: {error_message}", exc_info=True)
+        return jsonify({'error': error_message}), 500
+
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

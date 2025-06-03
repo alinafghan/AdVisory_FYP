@@ -1,17 +1,34 @@
+export interface XaiData {
+  heatmap?: string;
+  [key: string]: any; // Keep this if XAI can have other dynamic properties
+}
+
+// This interface is needed because 'xai' is nested inside 'analysis'
+export interface AnalysisData {
+  xai?: XaiData;
+  [key: string]: any; // Keep this if 'analysis' can have other dynamic properties besides 'xai'
+}
+
 export interface AudienceReport {
-  summary?: { // Make summary optional in case it's not always present
-      primary_persona?: string;
-      visual_style?: string;
-      domain?: string; // Add the missing properties
-      caption?: string;
-      trends?: string[];
-      themes?: string[];
-      content_type?: string; // Added based on one of the errors, ensure it is correct
+  summary?: {
+    primary_persona?: string;
+    visual_style?: string;
+    domain?: string;
+    caption?: string;
+    trends?: string[];
+    themes?: string[];
+    content_type?: string;
   };
-  detailed_demographics?: { // Make detailed_demographics optional
-      [key: string]: { // Use a general index signature
-          [key: string]: number;
-      };
+
+  // This needs to match the backend's key, which is 'demographics' based on your HTML
+  demographics?: {
+    [key: string]: {
+      [key: string]: number;
+    };
   };
-  [key: string]: any; // Add this index signature to the AudienceReport interface to handle any other properties
+
+  // 'analysis' is now explicitly defined, which resolves the index signature error
+  analysis?: AnalysisData;
+
+  // Do not add a top-level index signature here
 }
