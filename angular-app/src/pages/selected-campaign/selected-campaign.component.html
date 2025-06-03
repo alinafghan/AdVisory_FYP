@@ -1,0 +1,95 @@
+<div class="flex min-h-screen">
+  <app-topbar class="fixed top-0 left-0 right-0 z-50"></app-topbar>
+  <app-sidebar class="fixed left-0 top-0 bottom-0 z-40"></app-sidebar>
+  <div class="flex-1 flex flex-col ml-64 pt-16 pl-12 pr-8">
+    <div class="flex justify-between items-center mt-8 mb-2">
+      <h1 class="text-4xl font-bold">
+        Campaign {{ campaign.campaignName }}
+      </h1>
+      <app-custom-button
+        [label]="'Launch Campaign'"
+        [icon]="'pi pi-arrow-right'"
+        [iconPosition]="'right'"
+        [routerLink]="'/launch'"
+        [tooltipText]="'Launch this campaign'"
+        [tooltipPosition]="'top'"
+        [buttonClass]="'border border-gray-600 rounded-full px-8 py-3 text-white hover:bg-navy-light transition duration-300'"
+        [buttonStyles]="{ 'background-color': '#0f0f14' }"
+      ></app-custom-button>
+    </div>
+
+    <p class="text-gray-300 mb-10">Manage {{ campaign.campaignName }}</p>
+    <hr class="border-gray-700 mb-8" />
+
+    <!-- Ads Section -->
+    <div class="mb-12 w-full">
+      <div class="overflow-x-auto scrollbar-hide pb-4 w-full">
+        <div class="flex space-x-6 w-max">
+          <div
+            *ngFor="let ad of ads"
+            class="flex-shrink-0 w-64 h-80 bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-600 transition duration-300"
+          >
+            <div class="h-48 bg-gray-200">
+              <img
+                [src]="ad.imageData"
+                alt="Ad preview"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div class="p-4 flex flex-col justify-between h-32 space-y-2">
+              <app-custom-button
+  [label]="ad.caption ? 'View Caption' : 'Write Caption'"
+  [icon]="'pi pi-pencil'"
+  [iconPosition]="'right'"
+  [routerLink]="'/caption?ad=' + ad._id"
+  [tooltipText]="ad.caption || 'Write caption for this ad'"
+  [tooltipPosition]="'top'"
+  [buttonClass]="'p-button-outlined p-button-sm text-sm border-gray-500 text-gray-300 hover:text-white hover:border-gray-400 transition w-full overflow-hidden whitespace-nowrap truncate text-left'"
+  [buttonStyles]="{ 'background-color': 'transparent' }"
+></app-custom-button>
+
+              <app-custom-button
+                [label]="'View Audiences'"
+                [icon]="'pi pi-users'"
+                [iconPosition]="'right'"
+                [routerLink]="['/targetaudience', ad._id]"
+                [tooltipText]="'View target audiences for this ad'"
+                [tooltipPosition]="'top'"
+                [buttonClass]="'bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 text-sm rounded transition duration-200'"
+              ></app-custom-button>
+            </div>
+          </div>
+
+          <!-- Add new ad card - FIXED: Use lucide-plus instead of lucide-icon with img -->
+          <a href="/flux" class="hover:opacity-80 transition">
+            <div
+              class="flex-shrink-0 w-64 h-80 bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-600 flex items-center justify-center transition duration-300"
+            >
+              <lucide-icon 
+                [name]="'plus'"
+                class="size-20 text-gray-400 hover:text-white transition"
+              ></lucide-icon>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-gray-700 mb-8" />
+
+    <!-- Campaign Details -->
+    <div class="pb-8">
+      <h2 class="text-3xl font-bold mb-8">Details</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <h3 class="text-xl text-gray-300 mb-3">Platform:</h3>
+          <p id="platform" class="text-white text-lg">Social Media</p>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+          <h3 class="text-xl text-gray-300 mb-3">Industry:</h3>
+          <p id="industry" class="text-white text-lg">Retail</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

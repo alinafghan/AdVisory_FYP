@@ -1,0 +1,4 @@
+/* This file should be processed by Tailwind CLI or PostCSS, not included directly in your HTML or Angular styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
