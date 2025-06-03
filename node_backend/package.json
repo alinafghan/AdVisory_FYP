@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@angular/forms": "^19.2.8",
+    "@swimlane/ngx-charts": "^22.0.0-alpha.1",
+    "axios": "^1.7.9",
     "apify-client": "^2.12.4",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.1",

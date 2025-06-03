@@ -1,0 +1,45 @@
+<div class="flex min-h-screen">
+  <app-topbar class="fixed top-0 left-0 right-0 z-50"></app-topbar>
+  <app-sidebar class="fixed left-0 top-0 bottom-0 z-40"></app-sidebar>
+
+  <div class="flex-1 flex flex-col ml-64 pt-16 pl-12 pr-8">
+    <div class="mt-8 text-center">
+      <h1 class="text-4xl font-bold mb-4">Campaign Manager Tools</h1>
+      <p class="text-gray-300 max-w-2xl mx-auto">
+        Manage everything to do with your social media advertising
+        campaigns, all in one place.
+      </p>
+    </div>
+
+    <div class="flex justify-center mt-12">
+      <app-custom-button
+        [label]="'Create New Campaign'"
+        [icon]="'pi pi-plus'"
+        [routerLink]="['/campaign']"
+        [tooltipText]="'Create new campaigns'"
+        tooltipPosition="top"
+        [buttonClass]="'p-button-outlined text-white border-gray-600 hover:bg-navy-light transition px-6 py-3 text-lg'"
+        [buttonStyles]="{ 'background-color': '#0f0f14' }"
+        [iconPosition]="'right'" (onClick)="onCreateCampaignClick($event)"
+      ></app-custom-button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 pb-8">
+      <app-card-widget
+        *ngFor="let campaign of campaigns"
+        [title]="'Campaign'"
+        [value]="campaign.campaignName || 'Unnamed Campaign'"
+        [primaryText]="campaign.status || 'Active'"
+        [showManageButton]="true"
+        [routerLink]="['/selected_campaign', campaign.campaignId]"
+        [manageButtonRouterLink]="['/selected_campaign', campaign.campaignId]"
+        [manageButtonText]="'Manage'"
+        [manageButtonIconClass]="'pi pi-arrow-up-right'"
+        [manageButtonBgColorClass]="'bg-blue-500 hover:bg-blue-600'"
+        [manageButtonSizeClass]="'px-3 py-1 text-sm'"
+        [manageButtonTooltip]="'Manage details for ' + (campaign.campaignName || 'this campaign')"
+      >
+      </app-card-widget>
+    </div>
+  </div>
+</div>

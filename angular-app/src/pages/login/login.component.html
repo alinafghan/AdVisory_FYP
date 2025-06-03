@@ -1,0 +1,79 @@
+<div class="moving-gradient-page-login">
+  
+    <!-- Gradient Background Section -->
+    <section class="section_top-login">
+      <div class="section_background-wrap-login">
+        <canvas
+          id="gradient-canvas"
+          data-js-darken-top
+          data-transition-in
+        ></canvas>
+      </div>
+    </section>
+  
+    <!-- Content with proper z-index -->
+    <div class="login-content-wrap">
+      <app-navbar></app-navbar>
+  
+      <div class="flex items-center justify-center flex-grow p-4 md:p-8">
+        <div class="login-card elevated-card rounded-xl flex w-full max-w-md overflow-hidden">
+          <!-- Login form - now full width since we removed the SVG side -->
+          <div class="w-full p-6 md:p-8 flex flex-col justify-center">
+            <div class="mb-8 text-center">
+              <h1 class="text-2xl font-normal text-text">Welcome back</h1>
+              <p class="text-gray-400 text-sm mt-2">Sign in to continue your experience</p>
+            </div>
+  
+            <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-5">
+              <div>
+                <label for="username" class="block text-sm text-gray-400 mb-1.5">Username</label>
+                <input type="text" id="username" name="username" [(ngModel)]="user.username" required
+                  class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200">
+              </div>
+  
+              <div>
+                <label for="password" class="block text-sm text-gray-400 mb-1.5">Password</label>
+                <input type="password" id="password" name="password" [(ngModel)]="user.password" required
+                  class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200">
+              </div>
+  
+              <div class="flex items-center justify-between text-xs mt-1">
+                <div class="flex items-center">
+                  <input type="checkbox" id="remember" class="mr-1.5 h-3.5 w-3.5 accent-primary">
+                  <label for="remember" class="text-gray-400">Remember me</label>
+                </div>
+                <a href="/reset-password" class="text-primary hover:text-accent transition-colors">Forgot password?</a>
+              </div>
+  
+              <button type="submit"
+                class="w-full py-2.5 bg-primary text-background rounded-full font-normal hover:bg-accent transition-all duration-200">
+                Sign In
+              </button>
+            </form>
+  
+            <div class="my-5 flex items-center">
+              <div class="flex-grow h-px bg-[#1a2530]"></div>
+              <p class="mx-4 text-xs text-gray-500">or continue with</p>
+              <div class="flex-grow h-px bg-[#1a2530]"></div>
+            </div>
+  
+            <button type="button"
+              class="w-full py-2.5 px-4 bg-[#1877F2] text-white rounded-full font-normal hover:bg-[#166FE5] transition-all duration-200 flex items-center justify-center"
+              data-width="250px" data-size="medium" data-button-type="continue_with" data-use-continue-as="false"
+              data-auto-logout-link="true" (click)="onfblogin()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="mr-2">
+                <path fill="white" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C18.34 21.21 22 17.06 22 12.06C22 6.53 17.5 2.04 12 2.04Z" />
+              </svg>
+              Continue with Facebook
+            </button>
+  
+            <div class="mt-6 text-center">
+              <p class="text-sm text-gray-400">Not registered yet? <a href="/signup" class="text-primary hover:text-accent transition-colors">Create an account</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <app-footer></app-footer>
+    </div>
+  </div>

@@ -24,5 +24,9 @@ export class AuthService {
     signup(formData: FormData): Observable<any> {
       return this.http.post('http://localhost:3000/auth/signup', formData);
     }
+
+    getCurrentUser(): Observable<any> {
+      return this.http.get<any>('http://localhost:3000/api/current-user');
+    }
       
 }

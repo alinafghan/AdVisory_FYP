@@ -1,0 +1,136 @@
+<div class="bg-background min-h-screen flex flex-col justify-center">
+  <app-navbar></app-navbar>
+
+  <div class="flex items-center justify-center flex-grow p-4 md:p-8">
+    <div class="bg-[#070d10] rounded-xl shadow-xl flex w-full max-w-4xl overflow-hidden">
+      <div class="hidden md:flex md:w-1/2 items-center justify-center p-6">
+        <div class="svg-container">
+          <div class="svg-wrapper">
+            <img src="assets/svg/third.svg" alt="Animated SVG" class="svg-animated" />
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
+        <div class="mb-8 text-center">
+          <h2 class="text-2xl font-normal text-text">Create Your Account</h2>
+          <p class="text-gray-400 text-sm mt-2">Join AdVisory to transform your advertising strategy</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" #signupForm="ngForm" class="space-y-5">
+          <div>
+            <label for="username" class="block text-sm text-gray-400 mb-1.5">Username</label>
+            <input type="text" id="username" [(ngModel)]="username" name="username" required
+              class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200" />
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm text-gray-400 mb-1.5">Email</label>
+            <input type="email" id="email" [(ngModel)]="email" name="email" required
+              class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="firstName" class="block text-sm text-gray-400 mb-1.5">First Name</label>
+              <input type="text" id="firstName" [(ngModel)]="firstName" name="firstName" required
+                class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200" />
+            </div>
+
+            <div>
+              <label for="businessName" class="block text-sm text-gray-400 mb-1.5">Business Name</label>
+              <input type="text" id="businessName" [(ngModel)]="businessName" name="businessName" required
+                class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200" />
+            </div>
+          </div>
+
+          <div>
+            <label for="businessType" class="block text-sm text-gray-400 mb-1.5">Business Type</label>
+            <input type="text" id="businessType" [(ngModel)]="businessType" name="businessType" required
+              class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200" />
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm text-gray-400 mb-1.5">Password</label>
+            <input type="password" id="password" [(ngModel)]="password" name="password" required
+              class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200" />
+          </div>
+
+          <div>
+            <label for="businessLogo" class="block text-sm text-gray-400 mb-1.5">Business Logo</label>
+            <div class="relative">
+              <input type="file" id="businessLogo" (change)="onFileSelected($event)"
+                class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-primary file:text-background hover:file:bg-accent" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 text-xs mt-1">
+            <div class="flex items-center">
+              <input type="checkbox" id="terms" class="mr-1.5 h-3.5 w-3.5 accent-primary">
+              <label for="terms" class="text-gray-400">I agree to the <a href="#" class="text-primary hover:text-accent transition-colors">Terms of Service</a></label>
+            </div>
+          </div>
+
+          <button type="submit" [disabled]="!signupForm.valid"
+            class="w-full py-2.5 bg-primary text-background rounded-full font-normal hover:bg-accent transition-all duration-200">
+            Create Account
+          </button>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-sm text-gray-400">Already have an account? <a href="/login" class="text-primary hover:text-accent transition-colors">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>
+
+<style>
+  .svg-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #04090b;
+    border-radius: 8px;
+  }
+
+  .svg-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .svg-animated {
+    max-width: 85%;
+    max-height: 85%;
+    opacity: 0.9;
+    transition: opacity 1s ease;
+  }
+
+  .svg-animated.visible {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Select the SVG element
+  const svg = document.querySelector('.svg-animated');
+
+  // Create an Intersection Observer
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.5 });
+
+  // Observe the SVG
+  observer.observe(svg);
+</script>

@@ -1,0 +1,11 @@
+/* example usage::
+<!-- Big Bold Heading -->
+<app-text type="heading" [content]="'One Solution. Zero Hassle. <br> Ad Campaigns Done Right.'"></app-text>
+
+<!-- Normal Text -->
+<app-text type="normal" [content]="'AdVisory is an AI-powered platform that creates and optimizes social media ads with intelligent content generation and real-time performance tracking.'"></app-text>
+
+<!-- Clickable Text (Link) -->
+<app-text type="link" [content]="'Home'" [linkHref]="'#'"></app-text>
+*/
+
