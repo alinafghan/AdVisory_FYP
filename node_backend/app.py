@@ -2,7 +2,6 @@
 import base64
 from io import BytesIO
 import os
-import xgboost as xgb
 import numpy as np
 import requests
 from flask_cors import CORS

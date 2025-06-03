@@ -1,5 +1,4 @@
 flask
-xgboost
 gradio_client
 flask-cors
 numpy
@@ -9,3 +8,6 @@ pytrends
 python-dotenv
 openai
 cvxpy
+rembg
+onnxruntime
+diffusers
