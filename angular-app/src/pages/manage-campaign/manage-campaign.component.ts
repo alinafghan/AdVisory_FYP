@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../layout/component/app.sidebar';
 import { LucideAngularModule, Route } from 'lucide-angular';
 import { ArrowRight } from 'lucide-angular/src/icons';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppTopbar } from '../../layout/component/app.topbar';
@@ -25,11 +25,22 @@ export class ManageCampaignComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.fetchCampaigns();
+    const token = localStorage.getItem('authToken');
+            if (!token) {
+              console.error('No auth token found');
+              return;
+            }
+        
+            const headers = new HttpHeaders({
+              Authorization: `Bearer ${token}`,
+            });
+    this.fetchCampaigns(headers);
+
+
   }
 
-  fetchCampaigns() {
-    this.http.get<string[]>('http://localhost:3000/ads/getAllCampaigns').subscribe(
+  fetchCampaigns(headers: HttpHeaders): void {
+    this.http.get<string[]>('http://localhost:3000/ads/getAllCampaigns', {headers}).subscribe(
       (response) => {
         this.campaigns = response;
         console.log('Fetched campaigns:', response);

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { AdDataService } from '../../services/ad-data-service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
-import { FluxService } from "../image-gen/image-gen.service";
+import { FluxService } from '../../reusable-components/image-gen/image-gen.service';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
@@ -57,9 +57,27 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadExistingData();
     this.checkForOngoingGeneration();
-    this.http.get('http://localhost:3000/ads/getAllCampaigns').subscribe((data: any) => {
-  this.campaigns = data;
+    const token = localStorage.getItem('authToken');
+if (!token) {
+  console.error('No auth token found');
+  return;
+}
+
+const headers = new HttpHeaders({
+  Authorization: `Bearer ${token}`,
 });
+
+this.http.get<any[]>('http://localhost:3000/ads/getAllCampaigns', { headers }).subscribe(
+  (data) => {
+    this.campaigns = data;
+    console.log('Fetched campaigns in CompetitorAdsComponent:', data);
+  },
+  (error) => {
+    console.error('Error fetching campaigns:', error);
+  }
+);
+
+    
 
   }
   showDropdown = false;
@@ -372,7 +390,6 @@ checkImageData(): void {
             imageFile: `ad-${adNumber}-image.png`,
             generatedBy: 'AdVisory AI',
             timestamp: new Date().toISOString(),
-            businessName: ad.businessName || 'Unknown',
             campaignName: ad.campaignName || 'Unknown',
             keyword: ad.keyword || 'Unknown'
           };

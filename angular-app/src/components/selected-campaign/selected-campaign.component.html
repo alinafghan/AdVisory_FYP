@@ -104,16 +104,20 @@
       Launch Campaign
     </button>
   </a>
-
+<div class="mt-8">
   <button
-  [disabled]="isAnalyzing"
-  (click)="runCompetitorAnalysis()"
-  class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded flex items-center justify-center"
->
-  <span [ngClass]="{ 'animate-pulse': isAnalyzing }">
-    {{ isAnalyzing ? 'Running...' : 'Run Competitor Analysis' }}
-  </span>
-</button>
+    (click)="runCompetitorAnalysis()"
+    [disabled]="isAnalyzing"
+    class="border border-gray-600 rounded-full px-8 py-3 hover:bg-navy-light transition duration-300 flex items-center gap-2"
+    [ngStyle]="{ 'background-color': '#0f0f14' }"
+  >
+    <div *ngIf="isAnalyzing" class="animate-pulse w-2.5 h-2.5 bg-white rounded-full"></div>
+    <span>
+      {{ isAnalyzing ? 'Running Competitor Analysis...' : 'Run Competitor Analysis' }}
+    </span>
+  </button>
+</div>
+
  
 
 </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar.component';
+import { SidebarComponent } from '../../layout/component/app.sidebar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule } from 'lucide-angular';
@@ -73,7 +73,6 @@ runCompetitorAnalysis() {
 
   const adGenerationPayload = {
     keyword,
-    businessName: this.campaign.businessName || 'Unnamed Business',
     businessType: this.campaign.industry || 'general',
     campaignName: this.campaign.campaignName,
   };
