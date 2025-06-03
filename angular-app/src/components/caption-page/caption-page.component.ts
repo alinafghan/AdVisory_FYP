@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdDataService } from '../../services/ad-data.service';
+import { AdDataService } from '../../services/ad-data-service';
 
 @Component({
   selector: 'app-caption-page',
@@ -18,6 +18,7 @@ export class CaptionPageComponent implements OnInit {
   ad?: any;
   isLoading: boolean = false;
   captionSource: 'text' | 'image' = 'text';
+  error?: string;
 
   constructor(
     private http: HttpClient, 
@@ -34,7 +35,8 @@ export class CaptionPageComponent implements OnInit {
       if (adImageId) {
         this.fetchAdImage(adImageId);
       } else {
-        console.error('No ad image ID found in the URL or service.');
+        this.error = 'No ad image ID found in the URL or service.';
+        console.error(this.error);
       }
     }
   }
@@ -50,53 +52,66 @@ export class CaptionPageComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Error fetching ad:', error);
+          this.error = 'Error fetching ad image.';
+          console.error(this.error, error);
         }
       });
   }
 
   generateCaption() {
+    this.error = undefined;
     this.caption = undefined;
     this.isLoading = true;
-  
+    
     if (!this.textPrompt?.trim()) {
-      alert('Please enter a text prompt.');
+      this.error = 'Please enter a text prompt.';
       this.isLoading = false;
       return;
     }
-  
+    
     const body = {
       text_prompt: this.textPrompt
     };
-  
-    this.http.post<{ caption: string }>('http://127.0.0.1:5000/generate-caption', body)
+    
+    // Log request for debugging
+    console.log('Sending caption request:', body);
+    
+    this.http.post<any>('http://127.0.0.1:5000/generate-caption', body)
       .subscribe({
         next: (response) => {
-          this.caption = response.caption.replace(/^"|"$/g, '');
-          console.log('Clean caption:', this.caption);
+          console.log('Raw caption response:', response);
+          
+          // Check if response has caption property
+          if (response && response.caption) {
+            // Handle double quotes that might be escaped in JSON
+            this.caption = response.caption.replace(/^"(.*)"$/, '$1');
+            console.log('Clean caption:', this.caption);
+          } else {
+            this.error = 'Invalid response format from API';
+            console.error(this.error, response);
+          }
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error generating caption:', error);
-          this.caption = 'Error generating caption.';
+          this.error = 'Error generating caption. Please try again.';
+          console.error(this.error, error);
           this.isLoading = false;
         }
       });
   }
-  
-
-
+    
   saveAdWithCaption() {
     if (!this.ad?.id || !this.caption) {
-      console.error('Ad ID or caption is missing.');
+      this.error = 'Ad ID or caption is missing.';
+      console.error(this.error);
       return;
     }
-  
+    
     const payload = {
       id: this.ad.id,
       caption: this.caption
     };
-  
+    
     this.http.put('http://localhost:3000/adImages/update_caption', payload)
       .subscribe({
         next: (response) => {
@@ -104,7 +119,8 @@ export class CaptionPageComponent implements OnInit {
           alert('Caption saved successfully!');
         },
         error: (error) => {
-          console.error('Error saving caption:', error);
+          this.error = 'Failed to save caption.';
+          console.error(this.error, error);
           alert('Failed to save caption.');
         }
       });

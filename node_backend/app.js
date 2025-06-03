@@ -12,7 +12,9 @@ const adRouter = require("./routes/adsRouter");
 const budgetRouter = require("./routes/budgetRouter");
 const adImageRouter = require("./routes/adImageRouter"); // Add the new ad image router
 const image_routes= require("./routes/imageRoute") //product ad
-
+const caption_router = require("./routes/captionRouter");
+const competitorAdsRouter = require("./routes/competitorAdsRouter");
+const generateInspiredAdsRouter = require("./routes/generateInspiredAdsRouter");
 const app = express();
 
 // Connect to MongoDB
@@ -41,6 +43,9 @@ app.use("/user", userRouter);
 app.use("/trends", trendsRoutes);
 app.use("/adImages", adImageRouter); // Add the new route for ad images
 app.use('/api/image', image_routes); // Product-ad
+app.use('/caption', caption_router); // Caption generation
+app.use("/competitor-ads", competitorAdsRouter); // Competitor ads scraping
+app.use("/generate-inspired-ads", generateInspiredAdsRouter); // Inspired ads generation
 
 // Default route (optional)
 app.get("/", (req, res) => {

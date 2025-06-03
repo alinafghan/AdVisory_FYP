@@ -14,17 +14,18 @@ import { ProductAdComponent } from '../components/productad-page/productad.compo
 import { ProductAdCustomComponent } from '../components/productad-page/productadcustom.component';
 import { PipelineComponent } from '../components/pipeline/pipeline.component';
 import { LandingComponent } from '../components/home/home.component';
+import { CompetitorAdsComponent } from '../components/competitor-ads/competitor-ads.component';
 import { TosPageComponent } from '../pages/tos-page/tos-page.component';
 import { PpPageComponent } from '../pages/pp-page/pp-page.component';
 
 
 export const routes: Routes = [
     {path:'landing', component: LandingComponent},
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
+    {path: '', redirectTo: '/home', pathMatch: 'full' },
+    {path: 'home', component: HomeComponent },
     {path: 'budget', component: BudgetPageComponent},
     {path: 'trends', component: TrendsComponent},
-    { path: 'flux', component: FluxPageComponent },
+    {path: 'flux', component: FluxPageComponent },
     {path: 'metrics', component: MetricsPageComponent},
     {path: 'login', component : LoginComponent},
     {path:'terms_of_service', component : TosPageComponent},
@@ -32,11 +33,12 @@ export const routes: Routes = [
     {path: 'signup', component: SignupPageComponent},
     {path:'manage_campaign', component : ManageCampaignComponent},
     {path: 'selected_campaign/:campaignId', component : SelectedCampaignComponent},
-    {path: 'campaign', component : CampaignComponent},
     // {path: '**', redirectTo: '/home'}
-    { path: 'caption', component: CaptionPageComponent },
+    {path: 'caption', component: CaptionPageComponent },
     {path: 'productad', component : ProductAdComponent},
     {path: 'productadcustom', component : ProductAdCustomComponent},
     {path:'pipeline', component: PipelineComponent},
-
+    { path: 'campaign', component: CampaignComponent },
+    { path: 'competitor-ads', component: CompetitorAdsComponent },
+    { path: '**', redirectTo: 'campaign' }
 ];
