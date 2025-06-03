@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FluxService {
+
   private apiUrl = 'http://localhost:5000/flux';
   private gptApiUrl = 'http://localhost:5000/generate-ad-image';
   private enhanceUrl = 'http://localhost:5000/enhance';
@@ -13,8 +14,8 @@ export class FluxService {
 
   constructor(private http: HttpClient) {}
 
-  getAllCampaigns(): Observable<any> {
-    return this.http.get('http://localhost:3000/ads/getAllCampaigns');
+  getAllCampaigns(headers: HttpHeaders): Observable<any> {
+    return this.http.get('http://localhost:3000/ads/getAllCampaigns', {headers});
   }
 
   addImageToCampaign(data: any): Observable<any> {

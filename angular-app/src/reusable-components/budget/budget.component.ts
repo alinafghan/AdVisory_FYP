@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -24,11 +24,20 @@ export class BudgetComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.fetchCampaigns();
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          console.error('No auth token found');
+          return;
+        }
+    
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        });
+    this.fetchCampaigns(headers);
   }
 
-  fetchCampaigns() {
-    this.http.get<string[]>('http://localhost:3000/ads/getAllCampaigns').subscribe(
+  fetchCampaigns(headers: HttpHeaders) {
+    this.http.get<string[]>('http://localhost:3000/ads/getAllCampaigns', {headers}).subscribe(
       (response) => {
         this.campaigns = response;
       },

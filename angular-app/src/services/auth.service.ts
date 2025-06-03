@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
-import { Observable, Subject } from 'rxjs'; // Import Observable for HTTP calls
+import { Observable } from 'rxjs'; // Import Observable for HTTP calls
 import { User } from '../interfaces/user'; 
 declare var FB: any;
 

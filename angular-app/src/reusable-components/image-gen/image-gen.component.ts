@@ -4,6 +4,7 @@ import { CommonModule } from "@angular/common";
 import { FluxService } from "./image-gen.service";
 import { FormsModule } from "@angular/forms";
 import { AdDataService } from "../../services/ad-data-service";
+import { HttpHeaders } from "@angular/common/http";
 
 @Component({
   selector: "app-flux-page",
@@ -78,7 +79,16 @@ export class FluxPageComponent implements OnInit {
   constructor(private fluxService: FluxService, private adDataService: AdDataService) {}
 
   ngOnInit() {
-    this.fluxService.getAllCampaigns().subscribe(data => {
+         const token = localStorage.getItem('authToken');
+            if (!token) {
+              console.error('No auth token found');
+              return;
+            }
+        
+            const headers = new HttpHeaders({
+              Authorization: `Bearer ${token}`,
+            });
+    this.fluxService.getAllCampaigns(headers).subscribe(data => {
       this.campaigns = data;
     });
   }
@@ -164,37 +174,37 @@ editImageFiles: File[] = [];
     // Check if the selected model requires image editing
     if (this.selectedModel === 'Edit Images') {
         // --- Existing Edit Image Logic (no change needed here based on the new error) ---
-        if (!this.editImageFiles.length || !this.textPrompt) {
-             this.errorMessage = 'Both image(s) and prompt are required for editing.';
-             this.isLoading = false;
-             return;
-        }
+      if (!this.editImageFiles.length || !this.textPrompt) {
+        this.errorMessage = 'Both image(s) and prompt are required for editing.';
+        this.isLoading = false;
+        return;
+      }
   
-        const enhancementParts: string[] = [];
-        if (this.lighting) enhancementParts.push('${this.lighting} lighting');
-        if (this.colors) enhancementParts.push('color scheme: ${this.colors}');
-        if (this.style) enhancementParts.push('style: ${this.style}');
+      const enhancementParts: string[] = [];
+      if (this.lighting) enhancementParts.push('${this.lighting} lighting');
+      if (this.colors) enhancementParts.push('color scheme: ${this.colors}');
+      if (this.style) enhancementParts.push('style: ${this.style}');
   
-        const enhancementText = enhancementParts.length
-            ? ` in ${enhancementParts.join(', ')}`
-            : '';
-        const fullPrompt = '${this.textPrompt.trim()}${enhancementText}';
+      const enhancementText = enhancementParts.length
+      ? ` in ${enhancementParts.join(', ')}`
+      : '';
+      const fullPrompt = '${this.textPrompt.trim()}${enhancementText}';
   
-        console.log('Sending request to Edit Image API with prompt:', fullPrompt);
+      console.log('Sending request to Edit Image API with prompt:', fullPrompt);
   
-        this.fluxService.editImage(fullPrompt, this.editImageFiles)
-            .subscribe({
-                next: (res) => {
-                    // Assuming res.imageBase64 is returned by the /edit-image endpoint
-                    if (res && res.imageBase64) { // Add check for response data
-                        this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
-                    } else {
-                         this.errorMessage = 'Image editing response missing image data.';
-                         console.error('Edit image response:', res);
-                    }
-                    this.isLoading = false;
-                },
-                error: (err) => {
+      this.fluxService.editImage(fullPrompt, this.editImageFiles)
+        .subscribe({
+          next: (res) => {
+          // Assuming res.imageBase64 is returned by the /edit-image endpoint
+          if (res && res.imageBase64) { // Add check for response data
+            this.generatedImage = `data:image/png;base64,${res.imageBase64}`;
+          } else {
+            this.errorMessage = 'Image editing response missing image data.';
+            console.error('Edit image response:', res);
+          }
+            this.isLoading = false;
+          },
+            error: (err) => {
                     console.error('Image editing failed:', err);
                     this.errorMessage = err?.error?.error || 'Image editing failed. Check console for details.';
                     this.isLoading = false;
