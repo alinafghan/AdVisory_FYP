@@ -1,5 +1,5 @@
 // flux-page.component.ts
-import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
+import { Component, OnInit, ElementRef, ViewChild, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FluxService } from "./image-gen.service";
 import { FormsModule } from "@angular/forms";
@@ -17,6 +17,8 @@ export class FluxPageComponent implements OnInit {
   @ViewChild('imageUpload') imageUpload!: ElementRef;
   @ViewChild('maskUpload') maskUpload!: ElementRef;
 
+   @Output() imageGenerated = new EventEmitter<{ adId: string }>();
+  
   modelOptions: string[] = ["Flux", "GPT Image", "Edit Image"];
   selectedModel: string = "Flux";
 
@@ -341,6 +343,7 @@ browseMaskImage() {
         if (adImageId) {
           this.adDataService.setAdImageId(adImageId);
           console.log('[Submit] Stored adImageId in service:', adImageId);
+          this.imageGenerated.emit({ adId: adImageId });
         } else {
           console.warn('[Submit] No adImageId in response.');
         }

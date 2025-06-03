@@ -1,17 +1,9 @@
 <div class="bg-background min-h-screen flex flex-col justify-center">
-  <app-navbar></app-navbar>
+  <app-topbar></app-topbar>
 
   <div class="flex items-center justify-center flex-grow p-4 md:p-8">
-    <div class="bg-[#070d10] rounded-xl shadow-xl flex w-full max-w-4xl overflow-hidden">
-      <div class="hidden md:flex md:w-1/2 items-center justify-center p-6">
-        <div class="svg-container">
-          <div class="svg-wrapper">
-            <img src="assets/svg/third.svg" alt="Animated SVG" class="svg-animated" />
-          </div>
-        </div>
-      </div>
-
-      <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
+    <div class="bg-[#070d10] rounded-xl shadow-xl flex w-full max-w-md overflow-hidden">
+      <div class="w-full p-6 md:p-8 flex flex-col justify-center">
         <div class="mb-8 text-center">
           <h2 class="text-2xl font-normal text-text">Create Your Account</h2>
           <p class="text-gray-400 text-sm mt-2">Join AdVisory to transform your advertising strategy</p>
@@ -86,51 +78,3 @@
 
   <app-footer></app-footer>
 </div>
-
-<style>
-  .svg-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: #04090b;
-    border-radius: 8px;
-  }
-
-  .svg-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-
-  .svg-animated {
-    max-width: 85%;
-    max-height: 85%;
-    opacity: 0.9;
-    transition: opacity 1s ease;
-  }
-
-  .svg-animated.visible {
-    opacity: 1;
-  }
-</style>
-
-<script>
-  // Select the SVG element
-  const svg = document.querySelector('.svg-animated');
-
-  // Create an Intersection Observer
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.5 });
-
-  // Observe the SVG
-  observer.observe(svg);
-</script>

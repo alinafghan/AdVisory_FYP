@@ -3,16 +3,16 @@ import { User } from '../../interfaces/user';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { LucideAngularModule, Facebook } from 'lucide-angular';
+import { AppTopbar } from '../../layout/component/app.topbar';
 
 // Declare the Gradient object if it's a global script
 declare const Gradient: any;
 
 @Component({
     selector: 'login',
-    imports: [FormsModule, NavbarComponent, FooterComponent, LucideAngularModule],
+    imports: [FormsModule, FooterComponent, LucideAngularModule, AppTopbar],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })

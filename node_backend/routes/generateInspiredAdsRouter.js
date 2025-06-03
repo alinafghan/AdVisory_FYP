@@ -176,7 +176,7 @@ Format:
       campaignName,    };
 
     const generationPromises = ideas.map(idea =>
-      generateImagewithFlux(idea.image_prompt, idea.caption, commonMetadata)
+      generateImagewithGPT(idea.image_prompt, idea.caption, commonMetadata)
     );
 
     const storedAds = (await Promise.all(generationPromises)).filter(Boolean);
