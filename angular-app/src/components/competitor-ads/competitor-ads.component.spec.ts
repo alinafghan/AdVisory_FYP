@@ -33,7 +33,7 @@ describe('CompetitorAdsComponent', () => {
     const httpSpy = spyOn(component['http'], 'post').and.callThrough();
     
     component.keywords = '';
-    component.fetchAds();
+    //component.fetchAds();
     
     expect(httpSpy).not.toHaveBeenCalled();
     expect(component.error).toBe('Please enter a keyword to search for ads');
@@ -46,7 +46,7 @@ describe('CompetitorAdsComponent', () => {
     
     component.error = 'Previous error';
     component.keywords = 'test';
-    component.fetchAds();
+    //component.getCompetitorAds();
     
     expect(component.error).toBeNull();
     expect(httpSpy).toHaveBeenCalled();

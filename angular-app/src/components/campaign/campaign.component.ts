@@ -72,8 +72,8 @@ export class CampaignComponent {
 
         const adGenerationPayload = {
         keyword: keywords,
-        businessName: "Drop Coffee",    
-        businessType: "food",
+         businessName: name || 'Unnamed Business',
+    businessType: industry || 'general',
         // businessLogo: "https://example.com/logo.png", 
         //TODO        
         campaignName: name,

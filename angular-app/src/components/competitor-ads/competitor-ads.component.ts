@@ -182,30 +182,48 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
    * Handle generation status updates
    */
   private handleGenerationStatusUpdate(response: any): void {
-    console.log('📊 Generation status update:', response);
+  console.log('📊 Generation status update:', response);
 
-    if (response.generatedAds && response.generatedAds.length > 0) {
-      // Update generated ads
-      this.generatedAds = response.generatedAds;
-      this.adDataService.setGeneratedAds(this.generatedAds);
-      
-      // Update image loading states
-      this.initializeImageLoadingStates();
+  if (response.generatedAds && response.generatedAds.length > 0) {
+    this.generatedAds = response.generatedAds;
+
+    // ✅ FIXED: Initialize genImageLoaded using INDEX as key (consistent with template)
+    for (let i = 0; i < this.generatedAds.length; i++) {
+      if (this.genImageLoaded[i] === undefined) {
+        this.genImageLoaded[i] = false;
+      }
     }
 
-    // Update status
-    if (response.status === 'completed') {
-      this.generationStatus = 'completed';
-      this.loadingGeneratedAds = false;
-      this.generationProgress = 100;
-      
-      // Clear job ID as it's completed
-      this.currentJobId = null;
-      this.adDataService.clearCurrentJobId();
-      
-      console.log('🎉 Generation completed! Total ads:', this.generatedAds.length);
-    }
+    this.adDataService.setGeneratedAds(this.generatedAds);
   }
+
+  if (response.status === 'completed') {
+    this.generationStatus = 'completed';
+    this.loadingGeneratedAds = false;
+    this.generationProgress = 100;
+    this.currentJobId = null;
+    this.adDataService.clearCurrentJobId();
+    console.log('🎉 Generation completed! Total ads:', this.generatedAds.length);
+  }
+}
+/**
+ * Debug method to check image data - ADD THIS METHOD
+ */
+checkImageData(): void {
+  console.log('🔍 Debugging image data:');
+  console.log('Generated ads count:', this.generatedAds.length);
+  
+  this.generatedAds.forEach((ad, index) => {
+    console.log(`Ad ${index}:`, {
+      hasImageBase64: !!ad.imageBase64,
+      imageBase64Length: ad.imageBase64?.length || 0,
+      imageBase64Preview: ad.imageBase64?.substring(0, 50) + '...',
+      caption: ad.caption?.substring(0, 30) + '...',
+      loadingState: this.genImageLoaded[index]
+    });
+  });
+}
+
 
   /**
    * Trigger regeneration (for when user wants to generate new ads)
@@ -251,28 +269,31 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
   }
 
   private initializeImageLoadingStates(): void {
-    // Initialize competitor ads image loading states
-    this.competitorAds.forEach(ad => {
-      if (ad.id && this.imageLoaded[ad.id] === undefined) {
-        this.imageLoaded[ad.id] = false;
-      }
-    });
+  // Initialize competitor ads image loading states
+  this.competitorAds.forEach(ad => {
+    if (ad.id && this.imageLoaded[ad.id] === undefined) {
+      this.imageLoaded[ad.id] = false;
+    }
+  });
 
-    // Initialize generated ads image loading states
-    this.generatedAds.forEach(ad => {
-      if (ad.caption && this.genImageLoaded[ad.caption] === undefined) {
-        this.genImageLoaded[ad.caption] = false;
-      }
-    });
-  }
+  // ✅ FIXED: Initialize generated ads using INDEX as key
+  this.generatedAds.forEach((ad, index) => {
+    if (this.genImageLoaded[index] === undefined) {
+      this.genImageLoaded[index] = false;
+    }
+  });
+}
 
   handleImageLoad(identifier: string, type: 'competitor' | 'generated'): void {
-    if (type === 'competitor') {
-      this.imageLoaded[identifier] = true;
-    } else {
-      this.genImageLoaded[identifier] = true;
-    }
+  if (type === 'competitor') {
+    this.imageLoaded[identifier] = true;
+  } else {
+    // ✅ FIXED: Convert string identifier to number for generated ads
+    const index = parseInt(identifier, 10);
+    this.genImageLoaded[index] = true;
+    console.log(`✅ Generated image ${index} loaded successfully`);
   }
+}
 
   /**
    * Download all generated ads as a ZIP file with improved error handling
@@ -492,6 +513,7 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
   objectEntries(obj: any): [string, any][] {
     return Object.entries(obj || {});
   }
+  
 
   getSocialPlatformIcon(platform: string): string {
     const icons: { [key: string]: string } = {
@@ -503,4 +525,68 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
     };
     return icons[platform] || 'bi bi-link-45deg';
   }
+  // Add these helper methods to your component class
+
+/**
+ * Get properly formatted image source
+ */
+getImageSrc(imageBase64: string): string {
+  if (!imageBase64) {
+    console.warn('⚠️ No image data provided');
+    return 'data:image/png;base64,'; // Empty data URL
+  }
+  
+  // Check if it already has data URL prefix
+  if (imageBase64.startsWith('data:')) {
+    return imageBase64;
+  }
+  
+  // Add data URL prefix if missing
+  return `data:image/png;base64,${imageBase64}`;
+}
+
+/**
+ * Handle image loading errors
+ */
+handleImageError(index: number, ad: any): void {
+  console.error(`❌ Failed to load generated image ${index}:`, {
+    hasImageBase64: !!ad.imageBase64,
+    imageBase64Length: ad.imageBase64?.length || 0,
+    imageBase64Preview: ad.imageBase64?.substring(0, 100) + '...'
+  });
+  
+  // Mark as loaded to hide spinner even on error
+  this.genImageLoaded[index] = true;
+}
+
+/**
+ * Debug method to call from browser console
+ */
+debugImages(): void {
+  console.log('🔍 Generated Ads Debug Info:');
+  console.log('Total ads:', this.generatedAds.length);
+  console.log('Loading states:', this.genImageLoaded);
+  
+  this.generatedAds.forEach((ad, index) => {
+    console.log(`\n📸 Ad ${index + 1}:`, {
+      caption: ad.caption?.substring(0, 50) + '...',
+      hasImageBase64: !!ad.imageBase64,
+      imageBase64Length: ad.imageBase64?.length || 0,
+      imageStartsWith: ad.imageBase64?.substring(0, 20),
+      isLoaded: this.genImageLoaded[index],
+      imageUrl: this.getImageSrc(ad.imageBase64)
+    });
+    
+    // Test if the base64 is valid
+    if (ad.imageBase64) {
+  try {
+    const binaryString = atob(ad.imageBase64.replace(/^data:image\/\w+;base64,/, ''));
+    console.log(`✅ Base64 is valid, decoded length: ${binaryString.length}`);
+  } catch (e) {
+    console.error(`❌ Invalid base64 for ad ${index + 1}:`, (e as Error).message);
+  }
+}
+  });
+}
+
 }

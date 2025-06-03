@@ -10,8 +10,6 @@ router.post('/analyze-image', async (req, res) => {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "HTTP-Referer": "https://yourdomain.com",
-        "X-Title": "AdVisory",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -37,6 +35,10 @@ Return a short, 2–3 sentence summary. Do not include unnecessary details, repe
     });
 
     const data = await response.json();
+    if (!data || !data.choices) {
+  console.error("OpenRouter response missing expected fields:", JSON.stringify(data, null, 2));
+}
+
     res.status(200).json(data);
   } catch (error) {
     console.error("Error analyzing image:", error);
