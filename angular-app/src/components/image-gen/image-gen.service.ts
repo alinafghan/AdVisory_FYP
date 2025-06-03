@@ -52,7 +52,7 @@ export class FluxService {
       formData.append('image', file); // appending multiple under same key
     });
   
-    return this.http.post<any>('http://127.0.0.1:5000/edit-image', formData);
+    return this.http.post<any>(this.editImageUrl, formData);
   }
   
   

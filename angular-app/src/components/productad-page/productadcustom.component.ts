@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MrrComponent } from './mrr.component';
 import { HttpClient } from '@angular/common/http'; 
-import { AdDataService } from "../../services/ad-data.service";
+import { AdDataService } from "../../services/ad-data-service";
 
 @Component({
   selector: 'app-productadcustom-page',
@@ -444,7 +444,6 @@ submitComposedImageToCampaign() {
           console.log('Upload successful', response);
           alert('Image successfully added to campaign!');
 
-          // ✅ Store adImageId in adDataService if present
           const adImageId = response?.adImage?.id;
           if (adImageId) {
             this.adDataService.setAdImageId(adImageId);
