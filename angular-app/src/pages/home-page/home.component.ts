@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { SidebarComponent } from '../../layout/component/app.sidebar';
 import { LoggedInNavbarComponent } from '../../components/loggedin-navbar/loggedin-navbar.component';
 import { LucideAngularModule } from 'lucide-angular/src/icons';
 import { ArrowRight } from 'lucide-angular';
