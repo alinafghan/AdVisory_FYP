@@ -1,27 +1,22 @@
-from io import BytesIO
-import os, base64, xgboost as xgb, numpy as np, requests, pandas as pd, openai, torch, logging, cvxpy as cp
+import os, base64, numpy as np, requests, openai, torch, logging, cvxpy as cp
 from flask_cors import CORS
 from flask import Flask, request, jsonify, send_file
-import pandas as pd
-from trends_analyzer import TrendAnalyzer  
 from gradio_client import Client
 from transformers import pipeline
 from dotenv import load_dotenv
 import openai
 from rembg_helper import remove_background
 # from diffusers import DiffusionPipeline
-from PIL import Image
 import replicate
 import io
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-from PIL import Image
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from scipy.optimize import curve_fit
 from flask import Flask, jsonify
-import tempfile, json, uuid, time, shutil, re
+import tempfile
 from datetime import datetime
 
 

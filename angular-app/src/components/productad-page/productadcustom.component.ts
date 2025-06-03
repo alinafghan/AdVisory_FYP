@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MrrComponent } from './mrr.component';
-import { HttpClient } from '@angular/common/http'; 
+import { HttpClient , HttpHeaders} from '@angular/common/http'; 
 import { AdDataService } from "../../services/ad-data-service";
 
 @Component({
@@ -70,8 +70,17 @@ selectedCampaign: string | null = null;
   constructor(private http: HttpClient, private adDataService: AdDataService) {} 
 
   ngOnInit() {
+      const token = localStorage.getItem('authToken');
+            if (!token) {
+              console.error('No auth token found');
+              return;
+            }
+        
+            const headers = new HttpHeaders({
+              Authorization: `Bearer ${token}`,
+            });
     this.productImage = sessionStorage.getItem('uploadedImage'); // Retrieve from session storage
-    this.fetchUserCampaigns();
+    this.fetchUserCampaigns(headers);
   }
 
   ngAfterViewInit() {
@@ -335,11 +344,11 @@ generateCustomBackground() {
 }
 
 // fetch campaigns for a user
-fetchUserCampaigns() {
+fetchUserCampaigns(headers: HttpHeaders) {
   //const userId = sessionStorage.getItem('businessId'); // assuming you saved userId during login
   //if (!userId) return;
 
-  this.http.get<any[]>(`http://localhost:3000/ads/getAllCampaigns`).subscribe(
+  this.http.get<any[]>(`http://localhost:3000/ads/getAllCampaigns`, {headers}).subscribe(
     (data) => {
       console.log('Campaigns fetched:', data);
       this.campaigns = data;
