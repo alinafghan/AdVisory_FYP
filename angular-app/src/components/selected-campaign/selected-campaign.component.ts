@@ -76,7 +76,6 @@ runCompetitorAnalysis() {
     businessName: this.campaign.businessName || 'Unnamed Business',
     businessType: this.campaign.industry || 'general',
     campaignName: this.campaign.campaignName,
-    campaignFocus: this.campaign.campaignFocus || 'branding'
   };
 
   // Show loading UI before data returns

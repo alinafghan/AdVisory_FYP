@@ -5,7 +5,6 @@ const AdIdeaSchema = new mongoose.Schema({
   businessName: String,
   businessDomain: String,
   campaignName: String,
-  campaignFocus: String,
   imagePrompt: String,
   caption: String,
   imageBase64: String, // or store URL if you save locally
