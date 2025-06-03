@@ -6,7 +6,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
-const APIFY_TOKEN = process.env.APIFY_API_TOKEN2;
+const APIFY_TOKEN = process.env.APIFY_API_TOKEN;
 const CACHE_DIR = path.join(__dirname, '../cache');
 const CACHE_METADATA = path.join(CACHE_DIR, 'cache_metadata.json');
 const client = new ApifyClient({ token: APIFY_TOKEN });

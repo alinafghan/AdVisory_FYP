@@ -62,6 +62,13 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
 });
 
   }
+  showDropdown = false;
+
+getCampaignNameById(id: string): string {
+  const campaign = this.campaigns.find(c => c._id === id);
+  return campaign?.name || '';
+}
+
 
   ngOnDestroy(): void {
     if (this.statusPollingSubscription) {
@@ -619,9 +626,6 @@ const adsToSubmit = this.generatedAds.map(ad => ({
 }));
 
 
-  
-
-  
 
   let successCount = 0;
   let errorCount = 0;

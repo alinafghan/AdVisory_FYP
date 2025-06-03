@@ -200,10 +200,34 @@
             <h2 class="text-xl font-semibold text-indigo-400 mb-1">Inspired Ads </h2>
             <p class="text-gray-500 text-sm">AI-generated advertisements based on competitor insights and your brand</p>
           </div>
-          <select [(ngModel)]="selectedCampaignId" class="text-sm bg-dark-700 text-white px-3 py-2 rounded border border-gray-600">
-  <option value="" disabled selected>Select Campaign</option>
-  <option *ngFor="let campaign of campaigns" [value]="campaign._id">{{ campaign.name }}</option>
-</select>
+          <div class="relative inline-block text-left" (clickOutside)="showDropdown = false">
+  <button
+    type="button"
+    class="inline-flex justify-center items-center gap-2 px-4 py-2 bg-dark-700 text-sm font-medium text-white border border-gray-600 rounded-md shadow-sm hover:bg-dark-600 transition-all"
+    (click)="showDropdown = !showDropdown"
+  >
+    {{ getCampaignNameById(selectedCampaignId) || 'Select Campaign' }}
+    <svg class="w-4 h-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.585l3.71-3.355a.75.75 0 011.02 1.1l-4 3.625a.75.75 0 01-1.02 0l-4-3.625a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+    </svg>
+  </button>
+
+  <div
+    *ngIf="showDropdown"
+    class="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-dark-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+  >
+    <div class="py-1">
+      <button
+        *ngFor="let campaign of campaigns"
+        (click)="selectedCampaignId = campaign._id; showDropdown = false"
+        class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-accent-purple hover:text-white"
+      >
+        {{ campaign.name }}
+      </button>
+    </div>
+  </div>
+</div>
+
 
           <!-- Bulk Actions -->
           <div *ngIf="generatedAds.length > 0 && !loadingGeneratedAds" class="bulk-actions rounded-lg px-4 py-3">
