@@ -6,6 +6,7 @@ const fetch = require("node-fetch"); // Import node-fetch to make HTTP requests
 
 //ROUTERS
 const userRouter = require("./routes/UserRouter");
+const audienceRouter = require('./routes/audienceRouter');
 const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
 const adRouter = require("./routes/adsRouter");

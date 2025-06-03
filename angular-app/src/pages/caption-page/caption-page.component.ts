@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdDataService } from '../../services/ad-data.service';
+import { AdDataService } from '../../services/ad-data-service';
 
 @Component({
   selector: 'app-caption-page',

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { LucideAngularModule } from 'lucide-angular';
+import { LucideAngularModule, Plus } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 import { AdDataService } from '../../services/ad-data-service';
-
 import { SidebarComponent } from '../../layout/component/app.sidebar';
 import { AppTopbar } from '../../layout/component/app.topbar';
 import { ButtonModule } from 'primeng/button';
@@ -13,13 +12,23 @@ import { CustomButtonComponent } from '../../layout/widgets/button-icon.componen
 
 @Component({
   selector: 'app-selected-campaign',
-  imports: [SidebarComponent, LucideAngularModule, CommonModule, RouterModule, AppTopbar, ButtonModule, TooltipModule, CustomButtonComponent],
+  imports: [
+    SidebarComponent, 
+    LucideAngularModule, 
+    CommonModule, 
+    RouterModule, 
+    AppTopbar, 
+    ButtonModule, 
+    TooltipModule, 
+    CustomButtonComponent
+  ],
   templateUrl: './selected-campaign.component.html'
 })
 export class SelectedCampaignComponent implements OnInit {
   campaignId!: string;
   campaign: any;
   ads: any[] = [];
+  isAnalyzing: boolean = false;
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private adDataService: AdDataService) {}
 
@@ -53,58 +62,57 @@ export class SelectedCampaignComponent implements OnInit {
         next: (response) => {
           this.ads = response;
           console.log('Ads:', this.ads);
-          this.ads.forEach(ad => {
-            console.log('Ad ID in Selected Campaign:', ad?._id); 
-          });
-
+          this.ads.forEach(ad => {
+            console.log('Ad ID in Selected Campaign:', ad?._id);
+          });
         },
         error: (err) => {
           console.error('Error fetching ads:', err);
         },
       });
   }
-  isAnalyzing: boolean = false;
-runCompetitorAnalysis() {
-  if (!this.campaign?.keywords?.length) {
-    console.error('No keyword found');
-    return;
-  }
 
-  this.isAnalyzing = true;
-
-  const keyword = Array.isArray(this.campaign.keywords)
-    ? this.campaign.keywords[0]
-    : this.campaign.keywords;
-
-  const adGenerationPayload = {
-    keyword,
-    businessName: this.campaign.businessName || 'Unnamed Business',
-    businessType: this.campaign.industry || 'general',
-    campaignName: this.campaign.campaignName,
-    campaignFocus: this.campaign.campaignFocus || 'branding'
-  };
-
-  // Show loading UI before data returns
-  this.adDataService.setCompetitorAds([]);
-  this.adDataService.setGeneratedAds([]);
-
-  // Call API first
-  this.http.post('http://localhost:3000/generate-inspired-ads/get', adGenerationPayload).subscribe(
-    (res: any) => {
-      console.log('🎨 Inspired ads response:', res);
-
-      this.adDataService.setCompetitorAds(res.competitorAds || []);
-      this.adDataService.setGeneratedAds(res.generatedAds || []);
-      this.isAnalyzing = false;
-
-      // ✅ Now that data is stored, navigate
-      this.router.navigate(['/competitor-ads']);
-    },
-    (err) => {
-      console.error('❌ Error generating ads:', err);
-      this.isAnalyzing = false;
-      alert('Failed to analyze competitor ads.');
+  runCompetitorAnalysis() {
+    if (!this.campaign?.keywords?.length) {
+      console.error('No keyword found');
+      return;
     }
-  );
-}
+
+    this.isAnalyzing = true;
+
+    const keyword = Array.isArray(this.campaign.keywords)
+      ? this.campaign.keywords[0]
+      : this.campaign.keywords;
+
+    const adGenerationPayload = {
+      keyword,
+      businessName: this.campaign.businessName || 'Unnamed Business',
+      businessType: this.campaign.industry || 'general',
+      campaignName: this.campaign.campaignName,
+      campaignFocus: this.campaign.campaignFocus || 'branding'
+    };
+
+    // Show loading UI before data returns
+    this.adDataService.setCompetitorAds([]);
+    this.adDataService.setGeneratedAds([]);
+
+    // Call API first
+    this.http.post('http://localhost:3000/generate-inspired-ads/get', adGenerationPayload).subscribe(
+      (res: any) => {
+        console.log('🎨 Inspired ads response:', res);
+
+        this.adDataService.setCompetitorAds(res.competitorAds || []);
+        this.adDataService.setGeneratedAds(res.generatedAds || []);
+        this.isAnalyzing = false;
+
+        // ✅ Now that data is stored, navigate
+        this.router.navigate(['/competitor-ads']);
+      },
+      (err) => {
+        console.error('❌ Error generating ads:', err);
+        this.isAnalyzing = false;
+        alert('Failed to analyze competitor ads.');
+      }
+    );
+  }
 }

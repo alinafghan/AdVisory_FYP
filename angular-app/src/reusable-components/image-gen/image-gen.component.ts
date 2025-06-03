@@ -162,7 +162,7 @@ editImageFiles: File[] = [];
     this.isLoading = true; // Show loading indicator
   
     // Check if the selected model requires image editing
-    if (this.selectedModel === 'Edit Image') {
+    if (this.selectedModel === 'Edit Images') {
         // --- Existing Edit Image Logic (no change needed here based on the new error) ---
         if (!this.editImageFiles.length || !this.textPrompt) {
              this.errorMessage = 'Both image(s) and prompt are required for editing.';

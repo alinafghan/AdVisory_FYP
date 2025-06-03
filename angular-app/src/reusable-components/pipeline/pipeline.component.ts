@@ -6,36 +6,29 @@ import { FluxPageComponent } from '../../reusable-components/image-gen/image-gen
 import {CaptionPageComponent} from '../../reusable-components/caption-page/caption-page.component';
 import { BudgetComponent } from '../budget/budget.component';
 import { Router } from '@angular/router';
-<<<<<<< HEAD:angular-app/src/reusable-components/pipeline/pipeline.component.ts
-import { ChooseComponent } from '../../reusable-components/image-gen/choose.component';
-import { ProductAdComponent } from '../../reusable-components/productad-page/productad.component';
-import { ProductAdCustomComponent } from '../../reusable-components/productad-page/productadcustom.component';
-@Component({
-  selector: 'app-pipeline',
-  standalone: true,
-  imports: [ FormsModule, CommonModule, CampaignComponent, ChooseComponent, FluxPageComponent, 
-    ProductAdComponent, ProductAdCustomComponent,CaptionPageComponent, BudgetComponent],
-=======
-import { CompetitorAdsComponent } from '../competitor-ads/competitor-ads.component';
-
-
+import { CompetitorAdsComponent } from '../../components/competitor-ads/competitor-ads.component';
+import { AudienceReportComponent } from '../audience-report/audience-report.component';
 import { ChooseComponent } from '../image-gen/choose.component';
 import { ProductAdComponent } from '../productad-page/productad.component';
 import { ProductAdCustomComponent } from '../productad-page/productadcustom.component';
+
 @Component({
   selector: 'app-pipeline',
   standalone: true,
   imports: [ FormsModule, CommonModule, CampaignComponent, ChooseComponent, FluxPageComponent, ProductAdComponent, 
-    ProductAdCustomComponent,CaptionPageComponent, TrendsComponent, BudgetComponent, CompetitorAdsComponent],
->>>>>>> origin/main:angular-app/src/components/pipeline/pipeline.component.ts
+    ProductAdCustomComponent,CaptionPageComponent, BudgetComponent, CompetitorAdsComponent, AudienceReportComponent],
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
-steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'];
+  steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'];
   currentStep = 0;
   selectedOption: string | null = null; // track what user selected
+  
+  // Add the missing adId property
+  adId: string = ''; // Initialize with empty string or get from somewhere
 
   constructor(private router: Router) {}
+  
   // flag for if user selects product ad, then they can continue to productadcustom page
   isProductAdCustomPage = false;
 
@@ -51,7 +44,6 @@ steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'];
     }
   }
   
-
   prevStep() {
     if (this.currentStep === 3 && !this.selectedOption) {
       this.currentStep = 1; // Skip back directly to Choose if no option selected
@@ -72,12 +64,13 @@ steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'];
   finish() {
     this.router.navigate(['/home']);
   }
+  
   //navigating to productadcustom if productad is selected  
   handleContinue() {
     this.isProductAdCustomPage = true;
   }
+  
   onCampaignCreated() {
     this.nextStep(); // Move to the next step in the pipeline (competitor-ads)
   }
-  
 }

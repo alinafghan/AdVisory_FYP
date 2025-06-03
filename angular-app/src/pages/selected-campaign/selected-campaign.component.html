@@ -60,14 +60,14 @@
             </div>
           </div>
 
-          <!-- Add new ad card -->
+          <!-- Add new ad card - FIXED: Use lucide-plus instead of lucide-icon with img -->
           <a href="/flux" class="hover:opacity-80 transition">
             <div
               class="flex-shrink-0 w-64 h-80 bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-600 flex items-center justify-center transition duration-300"
             >
-              <lucide-icon
-                [img]="plusIcon"
-                class="my-icon size-20 text-gray-400 hover:text-white transition"
+              <lucide-icon 
+                [name]="'plus'"
+                class="size-20 text-gray-400 hover:text-white transition"
               ></lucide-icon>
             </div>
           </a>
