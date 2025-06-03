@@ -6,4 +6,4 @@
 **/__pycache__
 **/package.json
 **/cache/
-**/node_backend/cache/
+node_backend/cache

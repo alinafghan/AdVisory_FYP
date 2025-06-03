@@ -5,21 +5,38 @@ const FB_user = require("../models/facebook_user_model");
 
 // Register a new user with additional business details
 const register = async (req, res, next) => {
-  return res.status(200).json({ message: "Jugaar" });
+  const {
+    username,
+    email,
+    password,
+    firstName,
+    businessName,
+    businessType,
+    businessLogo,
+  } = req.body;
+  console.log(req.body);
 
-  const { username, id, email, password, firstName, businessName, businessType, businessLogo } = req.body;
-  console.log(req.body)
+  const id = Math.floor(Math.random() * 1000000000); // 💡 random number
 
   try {
     // Check if the required fields are provided
-    if (!username || !email || !password || !firstName || !businessName || !businessType || businessLogo) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      !firstName ||
+      !businessName ||
+      !businessType
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     // Check if the user already exists by username or email
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      return res.status(404).json({ message: "This username or email already exists, please try another." });
+      return res.status(404).json({
+        message: "This username or email already exists, please try another.",
+      });
     }
 
     // Decode the base64 image
@@ -27,8 +44,7 @@ const register = async (req, res, next) => {
 
     // Optionally, save the logo to a file or cloud storage, here we're saving it locally
     //const logoPath = `uploads/${Date.now()}_business_logo.png`;
-    //fs.writeFileSync(logoPath, businessLogoBuffer);
-
+    //fs.writeFileSync(logoPath, businessLogoBuffer)
 
     // Create a new user
     const user = new User({
@@ -140,9 +156,12 @@ const fbcallback = async (req, res) => {
 
     res.redirect(`http://localhost:4200/login?token=${token}`);
   } catch (error) {
-    console.error("Facebook OAuth Error:", error.response?.data || error.message);
+    console.error(
+      "Facebook OAuth Error:",
+      error.response?.data || error.message
+    );
     res.redirect("http://localhost:4200/login?error=facebook_auth_failed");
   }
 };
 
-module.exports = {register, login, fblogin, fbcallback };
+module.exports = { register, login, fblogin, fbcallback };
