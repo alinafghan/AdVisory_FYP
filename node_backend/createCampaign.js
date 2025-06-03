@@ -16,7 +16,6 @@ mongoose.connect(process.env.MONGO_URI)
       industry: "Fashion",
       businessId: "67fed46a8ec968f1c324eb50",
       keywords: "fashion, clothes", 
-      campaignFocus: "Spring Collection Launch",
     });
 
     return newCampaign.save();

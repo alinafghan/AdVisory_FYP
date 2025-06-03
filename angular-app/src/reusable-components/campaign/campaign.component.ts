@@ -55,7 +55,6 @@ export class CampaignComponent {
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
       keywords: ['', Validators.required],
-      campaignFocus: ['', Validators.required],
     });
   }
 
@@ -70,7 +69,7 @@ export class CampaignComponent {
       return;
     }
 
-    const { name, industry, platform, startDate, endDate, keywords, campaignFocus } = this.campaignForm.value;
+    const { name, industry, platform, startDate, endDate, keywords } = this.campaignForm.value;
     const duration = `${startDate} to ${endDate}`;
 
     const newCampaign = {
@@ -82,7 +81,6 @@ export class CampaignComponent {
       platform,
       duration,
       keywords,
-      campaignFocus
     };
 
     this.http.post(this.apiUrl, newCampaign).subscribe(
@@ -97,7 +95,6 @@ export class CampaignComponent {
         // businessLogo: "https://example.com/logo.png", 
         //TODO        
         campaignName: name,
-        campaignFocus: campaignFocus
       };
     this.adDataService.setCompetitorAds([]);  // will show loading UI
     this.adDataService.setGeneratedAds([]);
