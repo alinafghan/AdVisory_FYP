@@ -1,0 +1,81 @@
+<div class="flex-1 p-6 bg-background text-text flex flex-col items-center min-h-screen">
+  <h1 class="text-4xl font-bold pt-10 text-center mb-6 text-white">Create Ad Captions</h1>
+
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+    <!-- LEFT: Input & Preview -->
+    <div class="rounded-lg p-6 bg-[#0a0a0a] w-full flex flex-col justify-between">
+      <!-- Text Prompt Input -->
+      <div class="mb-6">
+        <label for="textPrompt" class="block text-sm font-medium text-white mb-2.5"></label>
+        <input
+          type="text"
+          id="textPrompt"
+          [(ngModel)]="textPrompt"
+          placeholder="Describe your ad"
+          class="w-full h-10 px-3.5 py-2.5 rounded-md bg-black border border-white text-white focus:outline-none focus:border-gray-300"
+        />
+      </div>
+
+      <!-- Ad Preview -->
+      <div class="rounded-lg bg-[#0a0a0a] w-full flex flex-col">
+        <h3 class="text-lg font-semibold text-white mb-4 text-center">Ad Preview</h3>
+
+        <div *ngIf="ad.imageData" class="mb-4">
+          <img
+            [src]="ad.imageData"
+            alt="Ad Image"
+            class="w-full h-auto rounded-lg shadow-md mb-3 object-contain"
+          />
+          <p class="text-xs text-gray-400 text-center">Prompt Used: {{ ad.prompt }}</p>
+        </div>
+
+        <div *ngIf="!ad.imageUrl && !ad.imageData" class="text-gray-500 italic text-center">
+          No ad to display.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Generate Button + Output -->
+    <div class="rounded-lg p-6 bg-[#0a0a0a] w-full flex flex-col items-center justify-start">
+      <!-- Generate Button -->
+      <button
+        (click)="generateCaption()"
+        class="w-full h-12 mb-6 rounded-md bg-black border border-black text-white font-medium text-base flex items-center justify-center gap-2 hover:bg-gray-900 transition-colors duration-200"
+      >
+        <span>Generate Caption</span>
+        <svg
+          class="ml-2"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M5 12h14M12 5l7 7-7 7"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <!-- Generated Caption -->
+      <div *ngIf="caption" class="w-full">
+        <label class="block text-sm font-medium text-white mb-2.5 text-center">Generated Caption</label>
+        <p class="p-4 border border-white rounded-md bg-black text-gray-300 text-center">{{ caption }}</p>
+      </div>
+
+      <!-- Save Button -->
+      <div *ngIf="caption && (ad.imageData || ad.imageUrl)" class="mt-4 w-full">
+        <button
+          (click)="saveAdWithCaption()"
+          class="w-full h-12 rounded-md bg-black border border-white text-white font-medium text-base flex items-center justify-center gap-2 hover:bg-gray-900 transition-colors duration-200"
+        >
+          <span>Save Caption with Ad</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

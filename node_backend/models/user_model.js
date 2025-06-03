@@ -6,9 +6,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  id: { 
-    type: String, 
-    required: true 
+  id: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   },
   businessLogo: {
     type: String, // URL to the uploaded business logo
-    required: true, 
+    // required: true,
   },
   createdAt: {
     type: Date,

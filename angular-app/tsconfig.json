@@ -15,6 +15,7 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
+    "lib": ["es2022", "dom"],
     "paths": {
       "@spartan-ng/ui-tabs-helm": [
         ".\\libs/ui/ui-tabs-helm/src/index.ts"

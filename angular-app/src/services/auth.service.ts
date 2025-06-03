@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
-import { Observable, Subject } from 'rxjs'; // Import Observable for HTTP calls
+import { Observable } from 'rxjs'; // Import Observable for HTTP calls
 import { User } from '../interfaces/user'; 
 declare var FB: any;
 
@@ -23,6 +23,10 @@ export class AuthService {
 
     signup(formData: FormData): Observable<any> {
       return this.http.post('http://localhost:3000/auth/signup', formData);
+    }
+
+    getCurrentUser(): Observable<any> {
+      return this.http.get<any>('http://localhost:3000/api/current-user');
     }
       
 }

@@ -1,0 +1,110 @@
+<!-- Main Content Area -->
+<div class="flex-1 p-6 bg-background text-text flex flex-col items-center">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-4xl font-bold pt-10 text-center mb-2">Create Campaign</h1>
+    <form
+      [formGroup]="campaignForm"
+      (ngSubmit)="createCampaign()"
+      class="space-y-6 max-w-xl mx-auto mt-10"
+    >
+      <hlm-form-field>
+        <input
+          class="w-80"
+          hlmInput
+          formControlName="name"
+          type="text"
+          placeholder="Campaign Name"
+        />
+      </hlm-form-field>
+
+      <brn-select
+        class="inline-block"
+        placeholder="Select an industry"
+        formControlName="industry"
+      >
+        <hlm-select-trigger class="w-80">
+          <hlm-select-value />
+        </hlm-select-trigger>
+
+        <hlm-select-content>
+          <hlm-option value="tech">Technology</hlm-option>
+          <hlm-option value="retail">Retail</hlm-option>
+          <hlm-option value="finance">Finance</hlm-option>
+          <hlm-option value="food">Food</hlm-option>
+          <hlm-option value="healthcare">Healthcare</hlm-option>
+          <hlm-option value="beauty">Beauty</hlm-option>
+          <hlm-option value="entertainment">Entertainment</hlm-option>
+          <hlm-option value="fashion">Fashion</hlm-option>
+          <hlm-option value="education">Education</hlm-option>
+
+        </hlm-select-content>
+      </brn-select>
+
+      <hlm-date-picker
+        class="w-80"
+        [min]="minDate"
+        [max]="maxDate"
+        formControlName="startDate"
+      >
+        <span>Pick a start date</span>
+      </hlm-date-picker>
+
+      <hlm-date-picker
+        class="w-80"
+        [min]="minDate"
+        [max]="maxDate"
+        formControlName="endDate"
+      >
+        <span>Pick an end date date</span>
+      </hlm-date-picker>
+
+      <brn-select
+        class="inline-block"
+        placeholder="Select a platform"
+        formControlName="platform"
+      >
+        <hlm-select-trigger class="w-80">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content class="w-56">
+          <hlm-option value="facebook">Facebook</hlm-option>
+          <hlm-option value="instagram">Instagram</hlm-option>
+          <hlm-option value="linkedin">LinkedIn</hlm-option>
+        </hlm-select-content>
+      </brn-select>
+            <hlm-form-field>
+        <input
+          class="w-80"
+          hlmInput
+          formControlName="keywords"
+          type="text"
+          placeholder="Keywords"
+        />
+      </hlm-form-field>
+            
+
+      <!-- Proceed Button -->
+      <div class="flex justify-end mt-10">
+        <button
+          type="submit"
+          class="px-6 py-3 proceed-btn text-white flex items-center"
+        >
+          Create
+          <svg
+            class="h-5 w-5 ml-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            />
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

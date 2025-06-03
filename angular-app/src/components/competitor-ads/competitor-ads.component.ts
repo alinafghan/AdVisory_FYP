@@ -374,7 +374,6 @@ checkImageData(): void {
             timestamp: new Date().toISOString(),
             businessName: ad.businessName || 'Unknown',
             campaignName: ad.campaignName || 'Unknown',
-            campaignFocus: ad.campaignFocus || 'Unknown',
             keyword: ad.keyword || 'Unknown'
           };
           adsFolder.file(`ad-${adNumber}-info.json`, JSON.stringify(adInfo, null, 2));

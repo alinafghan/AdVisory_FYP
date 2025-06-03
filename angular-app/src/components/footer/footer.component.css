@@ -1,0 +1,7 @@
+/* You can add any specific styling here that's not covered by Tailwind */
+/* For example, if you want to style the container or specific elements further */
+.container {
+    max-width: 1200px; /* Adjust as needed */
+    margin-left: auto;
+    margin-right: auto;
+  }
