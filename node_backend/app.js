@@ -10,33 +10,27 @@ const trendsRoutes = require("./routes/TrendsModelRoute");
 const authRouter = require("./routes/authRouter");
 const adRouter = require("./routes/adsRouter");
 const budgetRouter = require("./routes/budgetRouter");
-const adImageRouter = require("./routes/adImageRouter");
-const audienceRouter = require("./routes/audienceRouter");
-const AdModel = require("./models/ad_model");
-const AdImageModel = require("./models/ad_image_model");
-const mongoose = require("mongoose");
+const adImageRouter = require("./routes/adImageRouter"); // Add the new ad image router
+const image_routes= require("./routes/imageRoute") //product ad
+const caption_router = require("./routes/captionRouter");
+const competitorAdsRouter = require("./routes/competitorAdsRouter");
+const generateInspiredAdsRouter = require("./routes/generateInspiredAdsRouter");
 const app = express();
 
-connectDB(); // Call connectDB once
+// Connect to MongoDB
+connectDB();
 
-// Consolidated middleware setup
-app.use(cors({ origin: "http://localhost:4200", credentials: true }));
-app.use(express.json({ limit: "50mb" })); // For JSON request bodies
-app.use(express.urlencoded({ limit: "50mb", extended: false })); // For URL-encoded request bodies
-
-const image_routes= require("./routes/imageRoute") //product ad
-
-// Middleware (you already set up CORS and body-parser above, these are redundant)
-// app.use(cors());
-// app.use(bodyParser.json({ limit: "50mb" })); // Increase payload limit for image data
-// app.use(express.json({ limit: "50mb" }));
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(
-//   cors({
-//     origin: "http://localhost:4200",
-//     credentials: true, // Allow sending cookies (if needed)
-//   })
-// );
+// Middleware
+app.use(cors());
+app.use(bodyParser.json({ limit: "50mb" })); // Increase payload limit for image data
+app.use(express.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+    credentials: true, // Allow sending cookies (if needed)
+  })
+);
 app.use(express.json({ limit: "500mb" })); // Increase body size limit for JSON payload
 app.use(express.urlencoded({ limit: "500mb", extended: true })); // Increase body size limit for form data
 console.log("Its working");
@@ -93,6 +87,9 @@ app.get("/api/test", (req, res) => {
 });
 app.use("/adImages", adImageRouter); // This line is fine, it's using the router
 app.use('/api/image', image_routes); // Product-ad
+app.use('/caption', caption_router); // Caption generation
+app.use("/competitor-ads", competitorAdsRouter); // Competitor ads scraping
+app.use("/generate-inspired-ads", generateInspiredAdsRouter); // Inspired ads generation
 
 app.get("/", (req, res) => {
     res.send("Server is running!");

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "nodemon --ignore 'cache/*' app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,13 +14,19 @@
     "@angular/forms": "^19.2.8",
     "@swimlane/ngx-charts": "^22.0.0-alpha.1",
     "axios": "^1.7.9",
+    "apify-client": "^2.12.4",
+    "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "fs-extra": "^11.3.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.0",
-    "node-fetch": "^2.7.0"
+    "multer": "^2.0.0",
+    "node-fetch": "^2.7.0",
+    "openai": "^4.103.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

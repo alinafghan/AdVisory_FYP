@@ -6,6 +6,7 @@ import { FluxPageComponent } from '../../reusable-components/image-gen/image-gen
 import {CaptionPageComponent} from '../../reusable-components/caption-page/caption-page.component';
 import { BudgetComponent } from '../budget/budget.component';
 import { Router } from '@angular/router';
+<<<<<<< HEAD:angular-app/src/reusable-components/pipeline/pipeline.component.ts
 import { ChooseComponent } from '../../reusable-components/image-gen/choose.component';
 import { ProductAdComponent } from '../../reusable-components/productad-page/productad.component';
 import { ProductAdCustomComponent } from '../../reusable-components/productad-page/productadcustom.component';
@@ -14,10 +15,23 @@ import { ProductAdCustomComponent } from '../../reusable-components/productad-pa
   standalone: true,
   imports: [ FormsModule, CommonModule, CampaignComponent, ChooseComponent, FluxPageComponent, 
     ProductAdComponent, ProductAdCustomComponent,CaptionPageComponent, BudgetComponent],
+=======
+import { CompetitorAdsComponent } from '../competitor-ads/competitor-ads.component';
+
+
+import { ChooseComponent } from '../image-gen/choose.component';
+import { ProductAdComponent } from '../productad-page/productad.component';
+import { ProductAdCustomComponent } from '../productad-page/productadcustom.component';
+@Component({
+  selector: 'app-pipeline',
+  standalone: true,
+  imports: [ FormsModule, CommonModule, CampaignComponent, ChooseComponent, FluxPageComponent, ProductAdComponent, 
+    ProductAdCustomComponent,CaptionPageComponent, TrendsComponent, BudgetComponent, CompetitorAdsComponent],
+>>>>>>> origin/main:angular-app/src/components/pipeline/pipeline.component.ts
   templateUrl: './pipeline.component.html',
 })
 export class PipelineComponent {
-  steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6'];
+steps = ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'];
   currentStep = 0;
   selectedOption: string | null = null; // track what user selected
 
@@ -27,7 +41,7 @@ export class PipelineComponent {
 
   //if user chooses not to generate an ad, they can skip to caption page
   nextStep() {
-    if (this.currentStep === 1 && !this.selectedOption) {
+    if (this.currentStep === 2 && !this.selectedOption) {
       this.currentStep = 3;
     } else {
       this.currentStep++;
@@ -61,6 +75,9 @@ export class PipelineComponent {
   //navigating to productadcustom if productad is selected  
   handleContinue() {
     this.isProductAdCustomPage = true;
+  }
+  onCampaignCreated() {
+    this.nextStep(); // Move to the next step in the pipeline (competitor-ads)
   }
   
 }

@@ -18,14 +18,49 @@ from dotenv import load_dotenv
 import openai
 import torch
 import replicate
+from io import BytesIO
+import os, base64, xgboost as xgb, numpy as np, requests, pandas as pd, openai, torch, logging, cvxpy as cp
+from flask_cors import CORS
+from flask import Flask, request, jsonify, send_file
+import pandas as pd
+from trends_analyzer import TrendAnalyzer  
+from gradio_client import Client
+from transformers import pipeline
+from dotenv import load_dotenv
+import openai
+from rembg_helper import remove_background
+# from diffusers import DiffusionPipeline
+from PIL import Image
+import replicate
+import io
+import torch
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from PIL import Image
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
+from scipy.optimize import curve_fit
+from flask import Flask, jsonify
+import tempfile, json, uuid, time, shutil, re
+from datetime import datetime
 
 # Assuming these are your local modules
 from audience_predictor import SmartAudiencePredictor
 from rembg_helper import remove_background
 # from trends_analyzer import TrendAnalyzer # Uncomment if you enable trends again
 
-# Initialize Flask app
 app = Flask(__name__)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+
+CACHE_DIR = os.path.join(tempfile.gettempdir(), 'facebook_ad_cache')
+os.makedirs(CACHE_DIR, exist_ok=True)
+CACHE_METADATA = os.path.join(CACHE_DIR, 'cache_metadata.json')
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -129,33 +164,36 @@ audience_predictor = SmartAudiencePredictor()
 
 @app.route('/flux', methods=['POST'])
 def flux():
-    data = request.get_json()
-
-    prompt = data.get('prompt')
-    seed = data.get('seed')
-    randomize_seed = data.get('randomize_seed')
-    width = data.get('width') #576
-    height = data.get('height') #1024
-    num_inference_steps = data.get('num_inference_steps') #4
-
-    flux_client = Client("black-forest-labs/FLUX.1-schnell")
-    result = flux_client.predict(
-		prompt=prompt,
-        seed=0,
-        randomize_seed=True,
-        width=width,
-        height=height,
-        num_inference_steps=4,
-        api_name="/infer")
-    print(result)
-
-    image_path = result[0]  
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as f:
-            encoded_image = base64.b64encode(f.read()).decode("utf-8")
-        return jsonify({'Generated Image': encoded_image})
-    else:
-        return jsonify({'error': 'Image generation failed.'}), 500
+    try: 
+        data = request.get_json()
+        prompt = data.get('prompt')
+        seed = data.get('seed')
+        randomize_seed = data.get('randomize_seed')
+        width = data.get('width') #576
+        height = data.get('height') #1024
+        num_inference_steps = data.get('num_inference_steps') #4
+        
+        flux_client = Client("black-forest-labs/FLUX.1-schnell")
+        result = flux_client.predict(
+            prompt=prompt,
+            seed=0,
+            randomize_seed=True,
+            width=width,
+            height=height,
+            num_inference_steps=4,
+            api_name="/infer")
+        print(result)
+        
+        image_path = result[0]  
+        if os.path.exists(image_path):
+            with open(image_path, "rb") as f:
+                encoded_image = base64.b64encode(f.read()).decode("utf-8")
+            return jsonify({'Generated Image': encoded_image})
+    except Exception as e:
+        # Catch specific Gradio quota errors and notify user clearly
+        if "exceeded your GPU quota" in str(e):
+            return jsonify({'error': 'You have exceeded your GPU quota. Please wait or upgrade your plan.'}), 429
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/generate-ad-image', methods=['POST'])
 def generate_ad_image():
@@ -240,6 +278,8 @@ def generate_caption():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
+
 
 ######################### ENHANCE ################################
 
@@ -369,7 +409,6 @@ def edit_image():
             with open(image_path, 'wb') as f:
                 f.write(image_data)
 
-            # Return response with the image URL for download
             return jsonify({
                 'message': 'Image edited and saved successfully.',
                 'imageBase64': image_base64,
@@ -668,4 +707,5 @@ def analyze_image_xai():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 5000))  # Use Render’s dynamic port
+    app.run(debug=True, host='0.0.0.0', port=port)

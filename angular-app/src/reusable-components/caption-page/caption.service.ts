@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CaptionService {
-  private apiUrl = 'http://127.0.0.1:5000/generate-caption';
+  private apiUrl = 'http://localhost:3000/caption/generate-caption';
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +27,15 @@ export class CaptionService {
   generateCaptionFromImage(imageBase64: string): Observable<{ caption: string }> {
     return this.http.post<{ caption: string }>(this.apiUrl, {
       image_base64: imageBase64
+    });
+  }
+  /**
+   * Generate a caption based on image
+   * @param imageUrl The base64 encoded image data
+   */
+  generateCaptionFromImageUrl(imageUrl: string): Observable<{ caption: string }> {
+    return this.http.post<{ caption: string }>(this.apiUrl, {
+      imageUrl: imageUrl
     });
   }
 
