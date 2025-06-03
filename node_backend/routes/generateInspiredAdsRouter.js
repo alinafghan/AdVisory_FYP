@@ -11,9 +11,9 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 router.post('/get', async (req, res) => {
     console.log("Request body:", req.body);
 
-  const { keyword, businessName, businessType, campaignName, campaignFocus } = req.body;
+  const { keyword, businessName, businessType, campaignName} = req.body;
 
-  if (!keyword || !businessName || !businessType || !campaignName || !campaignFocus) {
+  if (!keyword || !businessName || !businessType || !campaignName) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
   console.log("no missing fields");
@@ -62,7 +62,7 @@ You are a social media marketing assistant. Based on the following competitor im
 
 ${analyzedDescriptions.map((desc, i) => `Ad ${i + 1}: ${desc}`).join('\n')} and captions: ${ads.map((ad, i) => `Ad ${i + 1}: ${ad.body_text}`).join('\n')}
 
-Generate 4 new ad ideas for a campaign by "${businessName}" in the "${businessType}" domain. The campaign is titled "${campaignName}" and focuses on "${campaignFocus}".
+Generate 4 new ad ideas for a campaign by "${businessName}" in the "${businessType}" domain. The campaign is titled "${campaignName}"".
 
 Each idea should include:
 - An image description prompt (for AI image generation)
@@ -173,12 +173,10 @@ Format:
       keyword,
       businessName,
       businessType,
-      campaignName,
-      campaignFocus
-    };
+      campaignName,    };
 
     const generationPromises = ideas.map(idea =>
-      generateImagewithFlux(idea.image_prompt, idea.caption, commonMetadata)
+      generateImagewithGPT(idea.image_prompt, idea.caption, commonMetadata)
     );
 
     const storedAds = (await Promise.all(generationPromises)).filter(Boolean);

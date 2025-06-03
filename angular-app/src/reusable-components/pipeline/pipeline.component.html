@@ -1,8 +1,7 @@
 <body>
   <div class="flex mx-auto bg-background relative min-h-screen">
     <div class="mx-auto mt-10 items-center flex flex-col w-full">
-      
-      <!-- Progress Bar -->
+
       <div class="progress-bar w-[512px] h-4 bg-[#2c2b2e] rounded-full overflow-hidden mb-5">
         <div
           class="h-full transition-all duration-300"
@@ -11,7 +10,6 @@
         ></div>
       </div>
 
-      <!-- Step Content -->
       <ng-container [ngSwitch]="currentStep">
         <div *ngSwitchCase="0">
           <app-campaign (campaignCreated)="onCampaignCreated()"></app-campaign>
@@ -27,7 +25,7 @@
 
         <div *ngSwitchCase="3">
           <ng-container *ngIf="selectedOption === 'textPrompt'">
-            <app-flux-page></app-flux-page>
+            <app-flux-page (imageGenerated)="handleImageGenerated($event)"></app-flux-page>
           </ng-container>
           <ng-container *ngIf="selectedOption === 'uploadPhoto'">
             <ng-container *ngIf="!isProductAdCustomPage">
@@ -52,10 +50,8 @@
         </div>
       </ng-container>
 
-      <!-- Navigation Buttons -->
       <div class="absolute top-1/2 left-0 transform -translate-y-1/2 flex justify-between w-full px-10">
-        
-        <!-- Back Button -->
+
         <button
           class="transition transform hover:scale-110"
           (click)="prevStep()"
@@ -68,7 +64,6 @@
           </svg>
         </button>
 
-        <!-- Next Button -->
         <button
           class="transition transform hover:scale-110"
           *ngIf="currentStep < steps.length - 1"
@@ -81,7 +76,6 @@
           </svg>
         </button>
 
-        <!-- Finish Button -->
         <button
           class="transition transform hover:scale-110"
           *ngIf="currentStep === steps.length - 1"

@@ -1,6 +1,8 @@
-<div class="moving-gradient-page-login">
-  
-    <!-- Gradient Background Section -->
+<div class="flex min-h-screen">
+  <app-topbar class="fixed top-0 left-0 right-0 z-50"></app-topbar>
+
+  <div class="moving-gradient-page-login">
+
     <section class="section_top-login">
       <div class="section_background-wrap-login">
         <canvas
@@ -10,53 +12,50 @@
         ></canvas>
       </div>
     </section>
-  
-    <!-- Content with proper z-index -->
+
     <div class="login-content-wrap">
-      <app-navbar></app-navbar>
-  
+
       <div class="flex items-center justify-center flex-grow p-4 md:p-8">
         <div class="login-card elevated-card rounded-xl flex w-full max-w-md overflow-hidden">
-          <!-- Login form - now full width since we removed the SVG side -->
           <div class="w-full p-6 md:p-8 flex flex-col justify-center">
             <div class="mb-8 text-center">
               <h1 class="text-2xl font-normal text-text">Welcome back</h1>
               <p class="text-gray-400 text-sm mt-2">Sign in to continue your experience</p>
             </div>
-  
+
             <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-5">
               <div>
                 <label for="username" class="block text-sm text-gray-400 mb-1.5">Username</label>
                 <input type="text" id="username" name="username" [(ngModel)]="user.username" required
                   class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200">
               </div>
-  
+
               <div>
                 <label for="password" class="block text-sm text-gray-400 mb-1.5">Password</label>
                 <input type="password" id="password" name="password" [(ngModel)]="user.password" required
                   class="w-full p-2.5 bg-[#0c1317] border border-[#1a2530] text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-200">
               </div>
-  
+
               <div class="flex items-center justify-between text-xs mt-1">
                 <div class="flex items-center">
                   <input type="checkbox" id="remember" class="mr-1.5 h-3.5 w-3.5 accent-primary">
                   <label for="remember" class="text-gray-400">Remember me</label>
                 </div>
-                <a href="/reset-password" class="text-primary hover:text-accent transition-colors">Forgot password?</a>
+                <a href="/reset-password" class="text-[color:var(--accent)] hover:text-[color:var(--secondary)] transition-colors">Forgot password?</a>
               </div>
-  
+
               <button type="submit"
-                class="w-full py-2.5 bg-primary text-background rounded-full font-normal hover:bg-accent transition-all duration-200">
+                class="w-full py-2.5 bg-[color:var(--accent)] text-background rounded-full font-normal hover:bg-[color:var(--secondary)] transition-all duration-200">
                 Sign In
               </button>
             </form>
-  
+
             <div class="my-5 flex items-center">
               <div class="flex-grow h-px bg-[#1a2530]"></div>
               <p class="mx-4 text-xs text-gray-500">or continue with</p>
               <div class="flex-grow h-px bg-[#1a2530]"></div>
             </div>
-  
+
             <button type="button"
               class="w-full py-2.5 px-4 bg-[#1877F2] text-white rounded-full font-normal hover:bg-[#166FE5] transition-all duration-200 flex items-center justify-center"
               data-width="250px" data-size="medium" data-button-type="continue_with" data-use-continue-as="false"
@@ -66,14 +65,17 @@
               </svg>
               Continue with Facebook
             </button>
-  
+
             <div class="mt-6 text-center">
-              <p class="text-sm text-gray-400">Not registered yet? <a href="/signup" class="text-primary hover:text-accent transition-colors">Create an account</a></p>
+              <p class="text-sm text-gray-400">Not registered yet?
+                <a href="/signup" class="text-[color:var(--accent)] hover:text-[color:var(--secondary)] transition-colors">Create an account</a>
+              </p>
             </div>
           </div>
         </div>
       </div>
-  
+
       <app-footer></app-footer>
     </div>
   </div>
+</div>

@@ -57,7 +57,6 @@ const postCampaign = async (req, res) => {
       duration,
       businessId,
       keywords,
-      campaignFocus,
     } = req.body;
 
     if (!campaignId || !businessId) {
@@ -74,7 +73,6 @@ const postCampaign = async (req, res) => {
       duration,
       businessId,
       keywords,
-      campaignFocus,
     });
 
     const campaign = await newCampaign.save();

@@ -2,6 +2,9 @@ import { Component, AfterViewInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { LucideAngularModule } from 'lucide-angular';
+import { AppTopbar } from '../../layout/component/app.topbar';
+import { CustomButtonComponent } from '../../layout/widgets/button-icon.component';
+import { FeaturesWidget } from '../../layout/widgets/features-widget.component';
 
 declare const Gradient: any;
 
@@ -12,8 +15,11 @@ declare const Gradient: any;
   standalone: true,
   imports: [
     FooterComponent,
+    FeaturesWidget,
+    CustomButtonComponent,
     NavbarComponent,
-    LucideAngularModule
+    LucideAngularModule,
+    AppTopbar
   ]
 })
 export class LandingPageComponent implements AfterViewInit {
