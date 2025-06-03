@@ -4,12 +4,6 @@ const User = require("../models/user_model");
 const getCurrentUser = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log("hello CHECKPOINT");
-
-    console.log(
-      "getting the current user from user controoler this is req.user._id",
-      req.user._id
-    );
 
     // const user = await User.findById(userId).select("-password"); // exclude password
     const user = await User.findById(userId).select("-password");

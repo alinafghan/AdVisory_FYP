@@ -4,8 +4,6 @@ import base64
 import io
 import numpy as np
 import requests
-import pandas as pd
-import xgboost as xgb
 import cvxpy as cp
 from scipy.optimize import curve_fit
 from PIL import Image
@@ -18,8 +16,6 @@ from dotenv import load_dotenv
 import openai
 import torch
 import replicate
-from io import BytesIO
-import os, base64, xgboost as xgb, numpy as np, requests, pandas as pd, openai, torch, logging, cvxpy as cp
 import os, base64, numpy as np, requests, openai, torch, logging, cvxpy as cp
 from flask_cors import CORS
 from flask import Flask, request, jsonify, send_file
@@ -66,98 +62,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 CORS(app)  #  Apply CORS to all routes
 audience_predictor = SmartAudiencePredictor()
 
-# # Initialize the TrendAnalyzer
-# analyzer = TrendAnalyzer()
-
-# @app.route('/analyze', methods=['POST'])
-# def analyze_trends():
-#     try:
-#         data = request.get_json()
-#         keywords = data.get('keywords', [])
-        
-#         if not keywords:
-#             return jsonify({'error': 'No keywords provided'}), 400
-            
-#         # Process pipeline
-#         processed_data = analyzer.fetch_trend_data(keywords)
-#         if not processed_data:
-#             return jsonify({'error': 'Failed to fetch trend data'}), 500
-            
-#         models, forecasts = analyzer.train_prediction_models(processed_data)
-#         if not forecasts:
-#             return jsonify({'error': 'Failed to generate forecasts'}), 500
-            
-#         insights = analyzer.get_trend_insights(forecasts)
-#         if not insights:
-#             return jsonify({'error': 'Failed to generate insights'}), 500
-            
-#         recommendations = analyzer.generate_ad_recommendations(insights)
-#         if not recommendations:
-#             return jsonify({'error': 'Failed to generate recommendations'}), 500
-            
-#         return jsonify({
-#             'insights': insights,
-#             'recommendations': recommendations
-#         })
-        
-#     except Exception as e:
-#         logger.error(f"Error in analyze_trends: {str(e)}")
-#         return jsonify({'error': str(e)}), 500
-
-# @app.route('/predictions/<keyword>', methods=['GET'])
-# def get_predictions(keyword):
-#     try:
-#         # Fetch trend data for single keyword
-#         processed_data = analyzer.fetch_trend_data([keyword])
-#         if not processed_data or keyword not in processed_data:
-#             return jsonify({'error': f'No data available for {keyword}'}), 404
-            
-#         # Generate predictions
-#         models, forecasts = analyzer.train_prediction_models({keyword: processed_data[keyword]})
-#         if not forecasts or keyword not in forecasts:
-#             return jsonify({'error': 'Failed to generate predictions'}), 500
-            
-#         # Extract prediction data
-#         forecast_data = forecasts[keyword][['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(30)
-#         prediction_data = forecast_data.to_dict(orient='records')
-        
-#         return jsonify({
-#             'keyword': keyword,
-#             'predictions': prediction_data
-#         })
-        
-#     except Exception as e:
-#         logger.error(f"Error in get_predictions: {str(e)}")
-#         return jsonify({'error': str(e)}), 500
-    
-# @app.route('/search', methods=['POST'])
-# def search_trends():
-#     try:
-#         data = request.get_json()
-#         query = data.get('query', '').strip().lower()
-
-#         if not query:
-#             return jsonify({'error': 'Search query is required'}), 400
-
-#         # Fetch all trends (or use cached data)
-#         all_trends = fetch_all_trends()  # Replace with your logic to fetch all trends
-
-#         # Filter trends based on the search query
-#         filtered_trends = {
-#             keyword: insight
-#             for keyword, insight in all_trends.items()
-#             if query in keyword.lower()
-#         }
-
-#         return jsonify({
-#             'insights': filtered_trends,
-#             'recommendations': []  # Add logic to filter recommendations if needed
-#         })
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-
-################################trends end###############################################
 
 @app.route('/flux', methods=['POST'])
 def flux():
@@ -588,6 +492,14 @@ def run_optimization(alpha, beta, B):
         "dual_obj": compute_dual(alpha, beta, lam, B)
     }
 
+spend_history = [
+    [500, 1000, 1000, 2000, 300],   # Ad 0
+    [5000, 9000, 7000, 5000, 6500],       # Ad 1
+    [3000, 5000, 1090, 3490, 4502],   # Ad 2
+    [5000, 5920 , 7509, 7390, 4590],    # Ad 3
+    [1000, 2000, 3000, 800, 1000] # Ad 4
+]
+
 @app.route("/allocate", methods=["POST"])
 def allocate_budget():
     data = request.get_json()
@@ -626,14 +538,20 @@ def allocate_budget():
     x2 = np.array(res2["x_opt"])
 
     for i in range(n_ads):
-        xi = np.array([x1[i], x2[i]])
-        yi = np.array(conv[i])  # must be length >=2
-        yi_full = conv[i]
-        if len(yi_full) < 2:
-           yi = np.array([yi_full[0], yi_full[0]])
-        else:
-            yi = np.array(yi_full[:2])
+        xi = np.maximum(np.array(spend_history[i]), 1e-6)
+        yi = np.maximum(np.array(conv[i]), 1e-3)
         alpha[i], beta[i] = stage3_estimate_alpha_beta(xi, yi)
+
+    # for i in range(n_ads):
+        # xi = np.array([x1[i], x2[i]])
+        # yi = np.array(conv[i])  # must be length >=2
+        # yi_full = conv[i]
+        # if len(yi_full) < 2:
+        #    yi = np.array([yi_full[0], yi_full[0]])
+        # else:
+        #     yi = np.array(yi_full[:2])
+        # alpha[i], beta[i] = stage3_estimate_alpha_beta(xi, yi)
+
 
     res3 = run_optimization(alpha, beta, B)
     return jsonify(stage=stage, α=alpha.tolist(), β=beta.tolist(), **res3)

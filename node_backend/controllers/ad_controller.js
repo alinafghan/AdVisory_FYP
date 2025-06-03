@@ -110,10 +110,6 @@ const getCampaign = async (req, res) => {
 const getAllCampaigns = async (req, res) => {
   try {
     const businessId = req.user._id;
-    console.log(
-      "getting all campaigns for the current users business id from req.user._id authentiate this is req.user._id",
-      businessId
-    );
     const campaigns = await Campaign.find({ businessId }).sort({
       businessId: 1,
     });
