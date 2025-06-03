@@ -7,9 +7,10 @@ import { FormsModule } from '@angular/forms';
 import { AdDataService } from '../../services/ad-data-service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
+import { FluxService } from "../image-gen/image-gen.service";
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
-// Declare JSZip for TypeScript
-declare var JSZip: any;
 
 @Component({
   selector: 'app-competitor-ads',
@@ -36,6 +37,9 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
   // Image loading states
   imageLoaded: { [key: string]: boolean } = {};
   genImageLoaded: { [key: string]: boolean } = {};
+  
+  campaigns: any[] = [];
+  selectedCampaignId: string = '';
 
   // Fixes for binding in HTML
   ads: any[] = [];
@@ -46,12 +50,17 @@ export class CompetitorAdsComponent implements OnInit, OnDestroy {
   constructor(
     private adDataService: AdDataService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private fluxService: FluxService
   ) {}
 
   ngOnInit(): void {
     this.loadExistingData();
     this.checkForOngoingGeneration();
+    this.http.get('http://localhost:3000/ads/getAllCampaigns').subscribe((data: any) => {
+  this.campaigns = data;
+});
+
   }
 
   ngOnDestroy(): void {
@@ -316,7 +325,7 @@ checkImageData(): void {
       }
 
       const zip = new JSZip();
-      const adsFolder = zip.folder('generated-ads');
+      const adsFolder = zip.folder('generated-ads')!;
       
       console.log('📁 Created zip folder, processing ads...');
       
@@ -587,6 +596,50 @@ debugImages(): void {
   }
 }
   });
+}
+showToast = false;
+
+submitAllToCampaign(): void {
+  if (!this.generatedAds.length) {
+    alert('No ads available to add to campaign.');
+    return;
+  }
+  if (!this.selectedCampaignId) {
+  alert('Please select a campaign to add the ads.');
+  return;
+}
+const adsToSubmit = this.generatedAds.map(ad => ({
+  campaignId: this.selectedCampaignId,
+  prompt: ad.imagePrompt || 'No prompt available',
+  imageData: ad.imageBase64,
+  width: 1024,
+  height: 1024,
+  model: ad.model || 'gpt-image-1',
+  caption: ad.caption || ''
+}));
+
+
+  
+
+  
+
+  let successCount = 0;
+  let errorCount = 0;
+
+  adsToSubmit.forEach((adData, index) => {
+    this.fluxService.addImageToCampaign(adData).subscribe({
+      next: (res) => {
+        console.log(`[Submit ${index}] Success`, res);
+        successCount++;
+      },
+      error: (err) => {
+        console.error(`[Submit ${index}] Failed`, err);
+        errorCount++;
+      }
+    });
+  });
+  this.showToast = true;
+  setTimeout(() => this.showToast = false, 3000);
 }
 
 }
