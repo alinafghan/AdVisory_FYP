@@ -38,6 +38,22 @@ export class SelectedCampaignComponent implements OnInit {
     this.fetchCampaignDetails();
   }
 
+  deleteAd(adId: string) {
+      this.http
+    .delete(`http://localhost:3000/adImages/deleteAdImage/${adId}`)
+    .subscribe({
+      next: (response) => {
+        console.log('Ad image deleted successfully:', response);
+        // Optionally refresh the ad list
+        this.fetchAdsForCampaign();
+      },
+      error: (err) => {
+        console.error('Error deleting ad image:', err);
+      }
+    });
+  }
+
+
   fetchCampaignDetails() {
     this.http
       .get(`http://localhost:3000/ads/getCampaign/${this.campaignId}`)

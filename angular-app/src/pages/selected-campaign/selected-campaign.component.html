@@ -3,9 +3,7 @@
   <app-sidebar class="fixed left-0 top-0 bottom-0 z-40"></app-sidebar>
   <div class="flex-1 flex flex-col ml-64 pt-16 pl-12 pr-8">
     <div class="flex justify-between items-center mt-8 mb-2">
-      <h1 class="text-4xl font-bold">
-        Campaign {{ campaign.campaignName }}
-      </h1>
+      <h1 class="text-4xl font-bold">Campaign {{ campaign.campaignName }}</h1>
       <app-custom-button
         [label]="'Launch Campaign'"
         [icon]="'pi pi-arrow-right'"
@@ -13,7 +11,9 @@
         [routerLink]="'/launch'"
         [tooltipText]="'Launch this campaign'"
         [tooltipPosition]="'top'"
-        [buttonClass]="'border border-gray-600 rounded-full px-8 py-3 text-white hover:bg-navy-light transition duration-300'"
+        [buttonClass]="
+          'border border-gray-600 rounded-full px-8 py-3 text-white hover:bg-navy-light transition duration-300'
+        "
         [buttonStyles]="{ 'background-color': '#0f0f14' }"
       ></app-custom-button>
     </div>
@@ -38,15 +38,17 @@
             </div>
             <div class="p-4 flex flex-col justify-between h-32 space-y-2">
               <app-custom-button
-  [label]="ad.caption ? 'View Caption' : 'Write Caption'"
-  [icon]="'pi pi-pencil'"
-  [iconPosition]="'right'"
-  [routerLink]="'/caption?ad=' + ad._id"
-  [tooltipText]="ad.caption || 'Write caption for this ad'"
-  [tooltipPosition]="'top'"
-  [buttonClass]="'p-button-outlined p-button-sm text-sm border-gray-500 text-gray-300 hover:text-white hover:border-gray-400 transition w-full overflow-hidden whitespace-nowrap truncate text-left'"
-  [buttonStyles]="{ 'background-color': 'transparent' }"
-></app-custom-button>
+                [label]="ad.caption ? 'View Caption' : 'Write Caption'"
+                [icon]="'pi pi-pencil'"
+                [iconPosition]="'right'"
+                [routerLink]="'/caption?ad=' + ad._id"
+                [tooltipText]="ad.caption || 'Write caption for this ad'"
+                [tooltipPosition]="'top'"
+                [buttonClass]="
+                  'p-button-outlined p-button-sm text-sm border-gray-500 text-gray-300 hover:text-white hover:border-gray-400 transition w-full overflow-hidden whitespace-nowrap truncate text-left'
+                "
+                [buttonStyles]="{ 'background-color': 'transparent' }"
+              ></app-custom-button>
 
               <app-custom-button
                 [label]="'View Audiences'"
@@ -55,8 +57,16 @@
                 [routerLink]="['/targetaudience', ad._id]"
                 [tooltipText]="'View target audiences for this ad'"
                 [tooltipPosition]="'top'"
-                [buttonClass]="'bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 text-sm rounded transition duration-200'"
+                [buttonClass]="
+                  'bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 text-sm rounded transition duration-200'
+                "
               ></app-custom-button>
+              <button
+                (click)="deleteAd(ad._id)"
+                class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm rounded transition duration-200"
+              >
+                Delete
+              </button>
             </div>
           </div>
 
@@ -65,7 +75,7 @@
             <div
               class="flex-shrink-0 w-64 h-80 bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-600 flex items-center justify-center transition duration-300"
             >
-              <lucide-icon 
+              <lucide-icon
                 [name]="'plus'"
                 class="size-20 text-gray-400 hover:text-white transition"
               ></lucide-icon>

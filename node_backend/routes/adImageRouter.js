@@ -24,7 +24,7 @@ router.get("/campaign/:campaignId", getAdImagesForCampaign);
 router.get("/:imageId", getAdImageById);
 
 // Delete an ad image
-router.delete("/:imageId", deleteAdImage);
+router.delete("/deleteAdImage/:imageId", deleteAdImage);
 
 router.put("/update_caption", updateAdWithCaption);
 
