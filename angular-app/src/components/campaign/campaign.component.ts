@@ -11,6 +11,9 @@ import { HlmSelectContentDirective, HlmSelectOptionComponent, HlmSelectValueDire
 import { HlmSelectTriggerComponent } from '@spartan-ng/ui-select-helm';
 import { HlmDatePickerComponent } from '@spartan-ng/ui-datepicker-helm';
 import { AdDataService } from '../../services/ad-data-service';
+import { UserService } from '../../services/user.service';
+import { OnInit } from '@angular/core';
+
 
 @Component({
   selector: 'app-campaign',
@@ -18,6 +21,22 @@ import { AdDataService } from '../../services/ad-data-service';
   imports: [CommonModule, ReactiveFormsModule,HlmSelectContentDirective,HlmSelectOptionComponent, HlmSelectValueDirective,HlmSelectTriggerComponent,HlmDatePickerComponent, HlmFormFieldModule, HlmInputDirective, BrnSelectImports, HlmSelectImports],
 })
 export class CampaignComponent {
+
+  businessId: string = '';
+
+  ngOnInit(): void {
+    this.userService.getCurrentUser().subscribe(
+      (user: any) => {
+        this.businessId = user._id;
+        console.log('✅ Logged-in business ID:', this.businessId);
+      },
+      (err) => {
+        console.error('❌ Error fetching current user:', err);
+        alert('Failed to get current user. Some features may not work.');
+      }
+    );
+  }
+  
   @Output() campaignCreated = new EventEmitter<void>(); // Add this output event
 
   campaignForm: FormGroup;
@@ -28,7 +47,7 @@ export class CampaignComponent {
      public maxDate = new Date(2030, 11, 31);
   apiUrl = 'http://localhost:3000/ads/postCampaign';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private adDataService: AdDataService) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private adDataService: AdDataService,  private userService: UserService) {
     this.campaignForm = this.fb.group({
       name: ['', Validators.required],
       industry: ['', Validators.required],
@@ -55,7 +74,8 @@ export class CampaignComponent {
 
     const newCampaign = {
       campaignId: this.generateRandomId(),
-      businessId: this.generateRandomId(),
+
+      businessId: this.businessId,
       campaignName: name,
       industry,
       platform,

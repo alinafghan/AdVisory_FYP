@@ -107,22 +107,13 @@ const getCampaign = async (req, res) => {
   }
 };
 
-// const getAllCampaigns = async (req, res) => {
-//   try {
-//     const campaigns = await Campaign.find({});
-
-//     if (campaigns.length === 0) {
-//       res.status(400).json({ error: "No campaigns found" });
-//     }
-//     res.status(200).json(campaigns);
-//   } catch (e) {
-//     console.error(e);
-//     res.status(500).json({ error: "internal server error" });
-//   }
-// };
 const getAllCampaigns = async (req, res) => {
   try {
-    const businessId = req.user.id;
+    const businessId = req.user._id;
+    console.log(
+      "getting all campaigns for the current users business id from req.user._id authentiate this is req.user._id",
+      businessId
+    );
     const campaigns = await Campaign.find({ businessId }).sort({
       businessId: 1,
     });

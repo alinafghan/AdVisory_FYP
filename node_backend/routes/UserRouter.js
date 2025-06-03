@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/user_model"); // Adjust the path if needed
-
+const { getCurrentUser } = require("../controllers/user_controller");
+const { authenticate } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Route to add a new user
@@ -26,5 +27,7 @@ router.post("/addUser", async (req, res) => {
       .json({ error: "Failed to add user", details: error.message });
   }
 });
+
+router.get("/me", authenticate, getCurrentUser);
 
 module.exports = router;
