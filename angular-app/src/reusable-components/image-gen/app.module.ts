@@ -7,8 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from '../../app/app.component';
 import { FluxPageComponent } from './image-gen.component';
 import { FormsModule } from '@angular/forms';
-import { CompetitorAdsComponent } from '../competitor-ads/competitor-ads.component'; // Adjust the import path as necessary
-
+import { CompetitorAdsComponent } from '../../components/competitor-ads/competitor-ads.component';
 @NgModule({
   declarations: [
     // other components

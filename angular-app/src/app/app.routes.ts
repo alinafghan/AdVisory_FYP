@@ -17,6 +17,8 @@ import { ProductAdComponent } from '../reusable-components/productad-page/produc
 import { ProductAdCustomComponent } from '../reusable-components/productad-page/productadcustom.component'; // Corrected path
 import { TosPageComponent } from '../pages/tos-page/tos-page.component';
 import { PpPageComponent } from '../pages/pp-page/pp-page.component';
+import { InspiredAdsPageComponent } from '../pages/inspired-ads-page/inspired-ads-page.component';
+import { ProductImagePageComponent } from '../pages/product-image-page/product-image-page.component';
 
 export const routes: Routes = [
   { path: 'landing', component: LandingPageComponent },
@@ -38,5 +40,7 @@ export const routes: Routes = [
   { path: 'targetaudience/:id', component: TargetAudienceComponent },
   { path: 'productad', component: ProductAdComponent },
   { path: 'productadcustom', component: ProductAdCustomComponent },
+  { path: 'inspired_ads', component: InspiredAdsPageComponent },
+  { path: 'product_images', component: ProductImagePageComponent },
 
 ];

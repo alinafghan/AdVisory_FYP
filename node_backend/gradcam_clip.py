@@ -1,7 +1,6 @@
 # gradcam_clip.py
 import torch
 import torch.nn.functional as F
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
 from open_clip import create_model_and_transforms, tokenize
 import matplotlib.pyplot as plt
 import numpy as np
